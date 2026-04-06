@@ -1255,30 +1255,61 @@ async function testConnection() {
   const status = document.getElementById('connStatus');
   status.innerHTML = '<span class="loading" style="border-top-color:var(--red);border-color:#ddd"></span> Testing...';
   try {
-    const res = await fetch(url + '?action=ping', {method:'GET'});
-    status.innerHTML = '✅ <span style="color:var(--green);">Koneksi berhasil!</span>';
+    const res = await callScriptGET(url, {action:'ping'});
+    if (res && (res.status === 'OK' || res.success !== false)) {
+      status.innerHTML = '✅ <span style="color:var(--green);">Koneksi berhasil! Apps Script siap.</span>';
+    } else {
+      status.innerHTML = '⚠️ <span style="color:var(--amber);">Terhubung tapi response tidak dikenali.</span>';
+    }
   } catch(e) {
     status.innerHTML = '❌ <span style="color:var(--red);">Gagal terhubung: ' + e.message + '</span>';
   }
 }
 
 // ══════════════════════════════════════════════════════
-// API CALLS
+// API CALLS — CORS-safe via GET + params
+// Apps Script harus handle doGet dengan parameter action
 // ══════════════════════════════════════════════════════
+function callScriptGET(url, params) {
+  return new Promise((resolve, reject) => {
+    const cbName = 'fm_cb_' + Date.now();
+    const urlParams = new URLSearchParams(params).toString();
+    const fullUrl = url + '?' + urlParams + '&callback=' + cbName;
+
+    window[cbName] = function(data) {
+      delete window[cbName];
+      document.getElementById(cbName)?.remove();
+      resolve(data);
+    };
+
+    const script = document.createElement('script');
+    script.id = cbName;
+    script.src = fullUrl;
+    script.onerror = () => {
+      delete window[cbName];
+      script.remove();
+      reject(new Error('Script load failed'));
+    };
+    setTimeout(() => {
+      if (window[cbName]) {
+        delete window[cbName];
+        script.remove();
+        reject(new Error('Timeout'));
+      }
+    }, 10000);
+    document.head.appendChild(script);
+  });
+}
+
 async function callScript(action, data, search, filters) {
   if (!SCRIPT_URL) return null;
   try {
-    const body = { action };
-    if (data)    body.data    = data;
-    if (search !== undefined) body.search  = search;
-    if (filters) body.filters = filters;
+    const params = { action };
+    if (data)               params.data    = JSON.stringify(data);
+    if (search !== undefined && search !== null) params.search = search;
+    if (filters)            params.filters = JSON.stringify(filters);
 
-    const res = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify(body)
-    });
-    return await res.json();
+    return await callScriptGET(SCRIPT_URL, params);
   } catch(e) {
     console.error('API error:', e);
     return null;

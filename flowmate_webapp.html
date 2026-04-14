@@ -1281,18 +1281,30 @@ async function simpanTransaksi() {
   const jam      = new Date().toTimeString().slice(0,8);
 
   let allOk = true;
-  for (let i = 0; i < draftParts.length; i++) {
-    const p = draftParts[i];
-    const txid = draftParts.length === 1 ? baseTxid : `${baseTxid}-${String(i+1).padStart(2,'0')}`;
-    const res = await callScript('tambahTransaksi', {
-      txid, tanggal, jam,
-      kodePart: p.kode, namaPart: p.nama,
-      jenis: p.jenis, qty: p.qty,
-      keterangan: p.ket,
-      signCMC, signProduksi: signProd, signNX, signPartControl: signPC
-    });
-    if (!res || !res.success) { allOk = false; break; }
+for (let i = 0; i < draftParts.length; i++) {
+  const p = draftParts[i];
+  const txid = baseTxid; // ✅ FIX: semua part pakai tiket yang sama
+
+  const res = await callScript('tambahTransaksi', {
+    txid,
+    tanggal,
+    jam,
+    kodePart: p.kode,
+    namaPart: p.nama,
+    jenis: p.jenis,
+    qty: p.qty,
+    keterangan: p.ket,
+    signCMC,
+    signProduksi: signProd,
+    signNX,
+    signPartControl: signPC
+  });
+
+  if (!res || !res.success) {
+    allOk = false;
+    break;
   }
+}
 
   btn.innerHTML = '💾 Simpan Transaksi';
   btn.disabled = false;

@@ -54,7 +54,6 @@ body {
 }
 .sidebar.collapsed { width: var(--sidebar-collapsed); }
 
-/* Brand */
 .sidebar-brand {
   display: flex;
   align-items: center;
@@ -90,7 +89,6 @@ body {
   margin-top: 1px;
 }
 
-/* Nav items */
 .sidebar-nav {
   flex: 1;
   padding: 10px 0;
@@ -121,30 +119,15 @@ body {
   border-left-color: var(--red);
   color: #fff;
 }
-.nav-icon {
-  font-size: 17px;
-  flex-shrink: 0;
-  width: 22px;
-  text-align: center;
-}
-.nav-label {
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: .2px;
-}
+.nav-icon { font-size: 17px; flex-shrink: 0; width: 22px; text-align: center; }
+.nav-label { font-size: 13px; font-weight: 500; letter-spacing: .2px; }
 
-/* Sidebar footer */
 .sidebar-footer {
   padding: 14px 16px;
   border-top: 1px solid rgba(255,255,255,0.08);
   overflow: hidden;
 }
-.sidebar-user {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  overflow: hidden;
-}
+.sidebar-user { display: flex; align-items: center; gap: 10px; overflow: hidden; }
 .user-avatar {
   width: 32px; height: 32px;
   border-radius: 50%;
@@ -157,7 +140,6 @@ body {
 .user-name { font-size: 12px; font-weight: 600; color: #fff; white-space: nowrap; }
 .user-role { font-size: 10px; color: rgba(255,255,255,0.4); white-space: nowrap; }
 
-/* Toggle btn */
 .sidebar-toggle {
   position: absolute;
   bottom: 64px;
@@ -175,6 +157,12 @@ body {
   box-shadow: var(--shadow);
 }
 .sidebar-toggle:hover { background: var(--red); color: #fff; border-color: var(--red); }
+
+.sidebar.collapsed .sidebar-brand { justify-content: center; padding: 12px 0; }
+.sidebar.collapsed .brand-icon { margin: 0 auto; font-size: 11px; padding: 4px 6px; }
+.sidebar.collapsed .brand-text { display: none; }
+.sidebar.collapsed .nav-label { display: none; }
+.sidebar.collapsed .sidebar-user .user-info { display: none; }
 
 /* ═══════════════════════ TOPBAR ═══════════════════════ */
 .topbar {
@@ -270,7 +258,6 @@ body {
   padding: 18px;
   box-shadow: var(--shadow);
   border-top: 3px solid var(--red);
-  position: relative;
 }
 .stat-card.green { border-top-color: var(--green); }
 .stat-card.amber { border-top-color: var(--amber); }
@@ -313,7 +300,6 @@ body {
 .form-control[readonly] { background: var(--gray-lt); color: var(--gray); }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
-.form-row-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; }
 
 /* Sign section */
 .sign-section {
@@ -336,7 +322,6 @@ body {
 }
 .sign-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 @media (min-width: 700px) { .sign-grid { grid-template-columns: repeat(4, 1fr); } }
-.sign-field { }
 .sign-label {
   font-size: 10px;
   font-weight: 700;
@@ -425,7 +410,7 @@ thead th {
   white-space: nowrap;
 }
 tbody td { padding: 10px 13px; border-bottom: 1px solid #F0F0F0; }
-tbody tr:hover { background: var(--red-lt); cursor: pointer; }
+tbody tr:hover { background: var(--red-lt); }
 tbody tr:nth-child(even) { background: #FAFAFA; }
 tbody tr:nth-child(even):hover { background: var(--red-lt); }
 .td-code { font-family: 'IBM Plex Mono', monospace; font-weight: 700; color: var(--red); font-size: 11px; }
@@ -442,10 +427,10 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
   font-weight: 700;
   letter-spacing: .3px;
 }
-.badge-supply { background: var(--blue-lt); color: var(--blue); }
+.badge-supply    { background: var(--blue-lt); color: var(--blue); }
 .badge-kebutuhan { background: var(--amber-lt); color: var(--amber); }
-.badge-ok { background: var(--green-lt); color: var(--green); }
-.badge-warn { background: var(--red-lt); color: var(--red); }
+.badge-ok        { background: var(--green-lt); color: var(--green); }
+.badge-warn      { background: var(--red-lt); color: var(--red); }
 
 /* ═══════════════════════ TICKET BOX ═══════════════════════ */
 .ticket-box {
@@ -506,7 +491,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
 .model-ext { font-size: 12px; font-weight: 600; color: var(--black); margin: 2px 0; }
 .model-type { font-size: 10px; color: var(--gray); }
 
-/* ═══════════════════════ RIWAYAT TICKET LIST ═══════════════════════ */
+/* ═══════════════════════ RIWAYAT ═══════════════════════ */
 .ticket-list-item {
   display: flex;
   align-items: center;
@@ -528,12 +513,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
 .tli-chevron { font-size: 11px; color: var(--gray); transition: transform .2s; }
 .tli-chevron.open { transform: rotate(90deg); }
 
-/* Ticket detail expand */
-.ticket-detail {
-  display: none;
-  background: #FAFAFA;
-  border-top: 1px solid #EEE;
-}
+.ticket-detail { display: none; background: #FAFAFA; border-top: 1px solid #EEE; }
 .ticket-detail.show { display: block; }
 .ticket-detail table thead th { background: #E8E8E8; color: var(--gray-dk); }
 .ticket-detail table tbody tr:hover { background: var(--red-lt); cursor: default; }
@@ -545,10 +525,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
   gap: 24px;
   flex-wrap: wrap;
 }
-.sign-box {
-  text-align: center;
-  min-width: 80px;
-}
+.sign-box { text-align: center; min-width: 80px; }
 .sign-box-label { font-size: 9px; font-weight: 700; text-transform: uppercase; color: var(--gray); letter-spacing: .5px; }
 .sign-box-value { font-size: 12px; font-weight: 600; color: var(--black); min-height: 18px; margin-top: 3px; }
 .ticket-export-btn {
@@ -584,6 +561,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
   max-width: 320px;
   box-shadow: var(--shadow-lg);
   border-left: 4px solid var(--red);
+  pointer-events: none;
 }
 .toast.show { opacity: 1; transform: translateY(0); }
 .toast.success { border-left-color: var(--green); }
@@ -616,17 +594,23 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
   gap: 10px;
 }
 
-/* ═══════════════════════ TOOLTIP ═══════════════════════ */
-.sidebar.collapsed .nav-item {
-  position: relative;
+/* ═══════════════════════ SETTING ═══════════════════════ */
+.setting-saved-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--green-lt);
+  color: var(--green);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity .3s;
 }
-.sidebar.collapsed .nav-label {
-  display: none;
-}
-.sidebar.collapsed .brand-text { display: none; }
-.sidebar.collapsed .sidebar-user .user-info { display: none; }
+.setting-saved-badge.show { opacity: 1; }
 
-/* ═══════════════════════ MOBILE OVERLAY ═══════════════════════ */
+/* ═══════════════════════ MOBILE ═══════════════════════ */
 .sidebar-overlay {
   display: none;
   position: fixed;
@@ -635,8 +619,6 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
   z-index: 199;
 }
 .sidebar-overlay.show { display: block; }
-
-/* ═══════════════════════ MOBILE TOGGLE ═══════════════════════ */
 .mobile-menu-btn {
   display: none;
   background: none;
@@ -648,42 +630,21 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
   margin-right: 8px;
 }
 
-/* ═══════════════════════ RESPONSIVE ═══════════════════════ */
 @media (max-width: 768px) {
-  .sidebar {
-    transform: translateX(-100%);
-    width: var(--sidebar-w) !important;
-  }
-  .sidebar.mobile-open {
-    transform: translateX(0);
-  }
+  .sidebar { transform: translateX(-100%); width: var(--sidebar-w) !important; }
+  .sidebar.mobile-open { transform: translateX(0); }
   .layout { margin-left: 0 !important; }
   .topbar { left: 0 !important; }
   .mobile-menu-btn { display: flex; }
   .sidebar-toggle { display: none; }
   .main { padding: 14px 16px; }
-  .form-row, .form-row-3, .form-row-4 { grid-template-columns: 1fr 1fr; }
+  .form-row, .form-row-3 { grid-template-columns: 1fr 1fr; }
   .stat-grid { grid-template-columns: repeat(2,1fr); }
   .model-grid { grid-template-columns: 1fr 1fr; }
   .sign-grid { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 480px) {
-  .form-row, .form-row-3, .form-row-4, .sign-grid { grid-template-columns: 1fr; }
-}
-/* FIX LOGO SAAT SIDEBAR COLLAPSE */
-.sidebar.collapsed .sidebar-brand {
-  justify-content: center;
-  padding: 12px 0;
-}
-
-.sidebar.collapsed .brand-icon {
-  margin: 0 auto;
-  font-size: 11px;
-  padding: 4px 6px;
-}
-
-.sidebar.collapsed .brand-text {
-  display: none;
+  .form-row, .form-row-3, .sign-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -698,34 +659,26 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
       <div class="brand-sub">Part Control System</div>
     </div>
   </div>
-
   <nav class="sidebar-nav">
-    <div class="nav-item active" onclick="showScreen('dashboard', this)">
-      <span class="nav-icon">📊</span>
-      <span class="nav-label">Dashboard</span>
+    <div class="nav-item active" onclick="showScreen('dashboard',this)">
+      <span class="nav-icon">📊</span><span class="nav-label">Dashboard</span>
     </div>
-    <div class="nav-item" onclick="showScreen('input', this)">
-      <span class="nav-icon">➕</span>
-      <span class="nav-label">Input Transaksi</span>
+    <div class="nav-item" onclick="showScreen('input',this)">
+      <span class="nav-icon">➕</span><span class="nav-label">Input Transaksi</span>
     </div>
-    <div class="nav-item" onclick="showScreen('produksi', this)">
-      <span class="nav-icon">🏭</span>
-      <span class="nav-label">Output Produksi</span>
+    <div class="nav-item" onclick="showScreen('produksi',this)">
+      <span class="nav-icon">🏭</span><span class="nav-label">Output Produksi</span>
     </div>
-    <div class="nav-item" onclick="showScreen('stok', this)">
-      <span class="nav-icon">📦</span>
-      <span class="nav-label">Stok Part</span>
+    <div class="nav-item" onclick="showScreen('stok',this)">
+      <span class="nav-icon">📦</span><span class="nav-label">Stok Part</span>
     </div>
-    <div class="nav-item" onclick="showScreen('riwayat', this)">
-      <span class="nav-icon">📋</span>
-      <span class="nav-label">Riwayat</span>
+    <div class="nav-item" onclick="showScreen('riwayat',this)">
+      <span class="nav-icon">📋</span><span class="nav-label">Riwayat</span>
     </div>
-    <div class="nav-item" onclick="showScreen('setting', this)">
-      <span class="nav-icon">⚙️</span>
-      <span class="nav-label">Setting</span>
+    <div class="nav-item" onclick="showScreen('setting',this)">
+      <span class="nav-icon">⚙️</span><span class="nav-label">Setting</span>
     </div>
   </nav>
-
   <div class="sidebar-footer">
     <div class="sidebar-user">
       <div class="user-avatar" id="userAvatar">OP</div>
@@ -735,7 +688,6 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
       </div>
     </div>
   </div>
-
   <div class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="Toggle sidebar">◀</div>
 </aside>
 
@@ -744,13 +696,12 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
 
 <!-- LAYOUT WRAPPER -->
 <div class="layout">
-  <!-- TOPBAR -->
   <div class="topbar">
     <div class="topbar-left">
       <button class="mobile-menu-btn" onclick="openMobileSidebar()">☰</button>
       <div>
         <div class="topbar-title" id="topbarTitle">Dashboard Monitoring</div>
-        <div class="topbar-date" id="dashDate" style="font-size:11px;color:#999;"></div>
+        <div style="font-size:11px;color:#999;" id="dashDate"></div>
       </div>
     </div>
     <div class="topbar-right">
@@ -758,9 +709,9 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
     </div>
   </div>
 
-  <!-- MAIN CONTENT -->
   <div class="main">
-    <!-- ═══════ SCREEN: DASHBOARD ═══════ -->
+
+    <!-- ═══════ DASHBOARD ═══════ -->
     <div id="screen-dashboard" class="screen active">
       <div class="section-header">
         <div>
@@ -811,7 +762,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
       </div>
     </div>
 
-    <!-- ═══════ SCREEN: INPUT TRANSAKSI ═══════ -->
+    <!-- ═══════ INPUT TRANSAKSI ═══════ -->
     <div id="screen-input" class="screen">
       <div class="section-header">
         <div>
@@ -822,7 +773,6 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
       <div class="card">
         <div class="ticket-label">No. Tiket Transaksi</div>
         <div class="ticket-box" id="ticketDisplay">WMPC-...</div>
-
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Tanggal</label>
@@ -836,7 +786,6 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
             </select>
           </div>
         </div>
-
         <div class="form-group">
           <label class="form-label">Cari Part (Kode atau Nama)</label>
           <div class="search-wrap">
@@ -847,7 +796,6 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
           </div>
           <div class="search-hint" id="searchHint">Ketik minimal 2 karakter untuk mencari</div>
         </div>
-
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Kode Part</label>
@@ -858,7 +806,6 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
             <input type="text" class="form-control" id="inputNama" readonly placeholder="Terisi otomatis">
           </div>
         </div>
-
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Qty</label>
@@ -869,8 +816,6 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
             <input type="text" class="form-control" id="inputKet" placeholder="Opsional">
           </div>
         </div>
-
-
         <div style="margin-top:14px;">
           <button class="btn btn-secondary" onclick="addToDraft()">＋ Tambah ke Daftar</button>
         </div>
@@ -881,30 +826,27 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
         <div id="draftList" class="draft-list">
           <div class="draft-empty">Belum ada part ditambahkan</div>
         </div>
-        
-                <!-- SIGN SECTION -->
         <div class="sign-section">
           <div class="sign-title">✍️ Tanda Tangan Transaksi</div>
           <div class="sign-grid">
-            <div class="sign-field">
+            <div>
               <span class="sign-label">CMC</span>
               <input type="text" class="sign-input" id="signCMC" placeholder="Nama...">
             </div>
-            <div class="sign-field">
+            <div>
               <span class="sign-label">Produksi</span>
               <input type="text" class="sign-input" id="signProduksi" placeholder="Nama...">
             </div>
-            <div class="sign-field">
+            <div>
               <span class="sign-label">NX</span>
               <input type="text" class="sign-input" id="signNX" placeholder="Nama...">
             </div>
-            <div class="sign-field">
+            <div>
               <span class="sign-label">Part Control</span>
               <input type="text" class="sign-input" id="signPartControl" placeholder="Nama...">
             </div>
           </div>
         </div>
-        
         <div class="btn-row">
           <button class="btn btn-primary" id="btnSimpan" onclick="simpanTransaksi()" style="flex:1;">
             💾 Simpan Transaksi
@@ -914,7 +856,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
       </div>
     </div>
 
-    <!-- ═══════ SCREEN: OUTPUT PRODUKSI ═══════ -->
+    <!-- ═══════ OUTPUT PRODUKSI ═══════ -->
     <div id="screen-produksi" class="screen">
       <div class="section-header">
         <div>
@@ -964,7 +906,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
       </div>
     </div>
 
-    <!-- ═══════ SCREEN: STOK PART ═══════ -->
+    <!-- ═══════ STOK PART ═══════ -->
     <div id="screen-stok" class="screen">
       <div class="section-header">
         <div>
@@ -998,7 +940,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
       </div>
     </div>
 
-    <!-- ═══════ SCREEN: RIWAYAT ═══════ -->
+    <!-- ═══════ RIWAYAT ═══════ -->
     <div id="screen-riwayat" class="screen">
       <div class="section-header">
         <div>
@@ -1006,8 +948,6 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
           <div class="section-sub" id="riwayatCount">Klik tiket untuk melihat detail</div>
         </div>
       </div>
-
-      <!-- Filter bar -->
       <div class="filter-bar">
         <div style="display:flex;flex-direction:column;gap:3px;flex:1;min-width:130px;">
           <label style="font-size:10px;font-weight:700;color:var(--gray-dk);text-transform:uppercase;letter-spacing:.4px;">Tanggal</label>
@@ -1030,48 +970,50 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
           <button class="btn btn-secondary btn-sm" onclick="resetFilter()">✕ Reset</button>
         </div>
       </div>
-
-      <!-- Ticket list -->
-      <div class="card" style="padding:0;" id="ticketListCard">
+      <div class="card" style="padding:0;">
         <div id="ticketListBody">
           <div style="padding:24px;text-align:center;color:#999;font-size:13px;">Memuat data...</div>
         </div>
       </div>
     </div>
 
-    <!-- ═══════ SCREEN: SETTING ═══════ -->
+    <!-- ═══════ SETTING ═══════ -->
     <div id="screen-setting" class="screen">
       <div class="section-title" style="margin-bottom:20px;">⚙️ Pengaturan</div>
       <div class="card">
         <div class="card-title">Koneksi Google Sheets</div>
         <div class="form-group">
           <label class="form-label">URL Apps Script (Web App)</label>
-          <input type="text" class="form-control" id="scriptUrl"
-            placeholder="https://script.google.com/macros/s/.../exec">
+          <input type="url" class="form-control" id="scriptUrl"
+            placeholder="https://script.google.com/macros/s/.../exec"
+            autocomplete="off" spellcheck="false">
           <div class="search-hint">Dapatkan URL dari Google Apps Script → Deploy → Web App</div>
         </div>
         <div class="form-group">
           <label class="form-label">Nama Operator</label>
-          <input type="text" class="form-control" id="operatorName" placeholder="Nama kamu">
+          <input type="text" class="form-control" id="operatorName" placeholder="Nama kamu" autocomplete="off">
         </div>
-        <div class="btn-row">
+        <div class="btn-row" style="align-items:center;">
           <button class="btn btn-primary" onclick="saveSetting()">💾 Simpan Setting</button>
           <button class="btn btn-secondary" onclick="testConnection()">🔗 Test Koneksi</button>
+          <span class="setting-saved-badge" id="savedBadge">✅ Tersimpan!</span>
         </div>
         <div id="connStatus" style="margin-top:12px;font-size:13px;"></div>
       </div>
       <div class="card">
         <div class="card-title">Informasi Sistem</div>
         <table style="font-size:13px;width:100%;">
-          <tr><td style="padding:6px 0;color:#777;width:160px;">Versi</td><td><strong>FLOWMATE v3.0</strong></td></tr>
+          <tr><td style="padding:6px 0;color:#777;width:160px;">Versi</td><td><strong>FLOWMATE v3.1</strong></td></tr>
           <tr><td style="padding:6px 0;color:#777;">Divisi</td><td>Washing Machine Division</td></tr>
           <tr><td style="padding:6px 0;color:#777;">Department</td><td>Production Department</td></tr>
           <tr><td style="padding:6px 0;color:#777;">Perusahaan</td><td>PT Sharp Electronics Indonesia</td></tr>
           <tr><td style="padding:6px 0;color:#777;">Total Parts</td><td id="infoTotalParts">1.127 part</td></tr>
           <tr><td style="padding:6px 0;color:#777;">Total Model</td><td id="infoTotalModels">108 model (77 Twintub + 25 Full Auto)</td></tr>
+          <tr><td style="padding:6px 0;color:#777;">URL Tersimpan</td><td id="infoUrlStatus" style="font-size:11px;font-family:monospace;word-break:break-all;color:#999;">–</td></tr>
         </table>
       </div>
     </div>
+
   </div><!-- end .main -->
 </div><!-- end .layout -->
 
@@ -1082,48 +1024,199 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
 // ══════════════════════════════════════════════════════
 // MASTER DATA
 // ══════════════════════════════════════════════════════
-const MASTER_PARTS=[["RMOT-A294QBEZ","WASH MOTOR"],["RMOT-A295QBEZ","SPIN DRY MOTOR"],["YRSNABZGY40QB","TBP 7JA127 BLU"],["PFTA-A103QBFZ","INNER LID (SMALL)"],["CKAG-A026QBKZ","SPIN BASKET ASS'Y SMALL"],["CFTA-A639QBKZ","WASH LID ASS'Y (ES-T1090)"],["CFTA-A640QBKZ","SPIN DRY LID ASS'Y ( ES-T1090-VK )"],["CFTA-A642QBKZ","WASH LID ASS'YY (ES-T1090PK)"],["CFTA-A643QBKZ","SPIN DRY LID ASS'Y"],["CFTA-A677QBKZ","WASH LID ASS'Y"],["CFTA-A678QBKZ","SPIN DRY LID ASS'Y"],["CFTA-A679QBKZ","WASH LID ASS'Y (ES-T871/971MD-BL)"],["CFTA-A680QBKZ","SPIN DRY LID ASS'Y (ES-T871/971DM-BL)"],["CFTA-A681QBKZ","WASH LID ASS'Y (ES-T871/971DM-PK)"],["CFTA-A682QBKZ","SPIN DRY LID ASS'Y (ES-T871/971DM-PK)"],["CFTA-A732QBKZ","WASHER LID ASS'Y (ES-T1270SJ-BL)"],["CFTA-A733QBKZ","SPIN DRY LID ASS'Y (ES-T1270SJ-BL)"],["CFTA-A734QBKZ","WASHER LID ASS'Y"],["CFTA-A735QBKZ","SPIN DRY LID ASS'Y"],["CKAG-A033QBKZ","SPIN BASKET ASS'Y (ES-T77/SMALL)"],["CKAG-A034QBKZ","SPIN BASKET ASS'Y (ES-T98/BIG)"],["CKAG-A035QBKZ","SPIN BASKET ASS'Y BIG"],["CKAG-A039QBKZ","SPIN BASKET ASS'Y SMALL"],["NPLYMA064QBFZ","PULLEY SMALL (EH,SW,MW TYPE)"],["NPUL-A095QBFA","PULSATOR (ES-T77DA-B)"],["NSFTPA010QBFZ","WASH ACTION SHAFT"],["PCAPHA009QBFA","PULSATOR CAP"],["PCOV-A686QBFZ","WATER SUPPLY COVER"],["PCOVPA021QBFZ","WATER PROOF COVER SMALL"],["PCOVPA022QBFZ","WATER PROOF COVER BIG"],["PFTA-A105QBFZ","INNER LID (BIG)"],["NPUL-A083QBFA","MINI PULSATOR"],["NPUL-A114QBFA","PULSATOR 50A W/BOSS"],["ZTAPEF20-000I","FILAMENT TAPE"],["LHLDW1033PEZZ","UNITY BAND"],["SSAKBA094QBEZ","POLY SHEET 1"],["SSAKBA096QBEZ","WATERPROOF POLY BAG"],["SSAKBA101QBEZ","POLY SHEET 5"],["ZNORIB152100I","RUBBER ADHESIVE"],["ZBANDP15-001I","STRAPPING BAND"],["LPLT-A115QBPZ","PULSATOR PLATE"],["CSW--A196QBKZ","LID SWITCH ASS'Y"],["CSW--A201QBKZ","LID SWITCH ASS'Y"],["LX-WZA129QBEZ","PULSATOR WASHER"],["PCOVQA010QBPZ","LID SWITCH COVER SMALL"],["GCOVHA029QBRA","COVER HIDING SCREW"],["GCOVHA029QBRB","COVER HIDING SCREW WO 12L"],["GCOVHA029QBRC","COVER HIDING SCREW"],["GCOVHA029QBRE","COVER HIDING SCREW"],["GCOVHA029QBRF","COVER HIDING SCREW"],["GCOVHA029QBRG","COVER HIDING SCREW"],["GCOVHA029QBRK","COVER HIDING SCREW"],["MJNT-A032QBEZ","BRAKE JOINT (ES-T98)"],["MJNT-A034QBEZ","BRAKE JOINT (ES-T1270SJ-BL)"],["MJNT-A035QBEZ","VALVE JOINT"],["MJNT-A036QBEZ","BRAKE JOINT"],["PSPO-A227QBPZ","CUSHION"],["MJNT-A021QBEZ","VALVE JOINT SMALL"],["MJNT-A022QBEZ","BRAKE JOINT SMALL"],["MJNT-A023QBEZ","VALVE JOINT BIG"],["MJNT-A024QBEZ","BRAKE JOINT BIG"],["MJNT-A026QBEZ","VALVE JOINT SMALL (MW TYPE)"],["MJNT-A029QBEZ","VALVE JOINT (ES-T77)"],["MJNT-A030QBEZ","BRAKE JOINT (ES-T77)"],["MJNT-A031QBEZ","VALVE JOINT (ES-T98)"],["QSWTBA006QBZZ","SPIN DRY TIMER SW"],["RMOT-A180QBEZ","WASH MOTOR (ES-T60S-W)"],["RMOT-A205QBEZ","WASH MOTOR"],["RMOT-A226QBEZ","SPIN DRY MOTOR"],["RMOT-A235QBEZ","SPIN DRY MOTOR (ES-T80CL-B)"],["CGUM-A022QBKZ","BELLOWS ASS'Y"],["CSPR-A233QBKZ","COIL SPRING ASS'Y"],["QSWTBA007QBZZ","SPIN DRY TIMER SW"],["RC-QZA245QBZZ","CAPACITOR"],["RC-QZA255QBZZ","CAPACITOR"],["RMOT-A253QBEZ","WASH MOTOR"],["RMOT-A254QBEZ","SPIN-DRY MOTOR"],["NBLT-A064QBEZ","V-BELT M-28"],["NBLT-A067QBEZ","V-BELT A33.5"],["UFTAPA003QBFZ","DISC COVER"],["PGIDMA036QBFA","WATER SUPPLY GUIDE BIG WHITE"],["PGIDMA036QBFB","WATER SUPPLY GUIDE BIG GRAY"],["PFILDA018QBFA","OVERFLOW FILTER WHITE"],["PFILDA019QBFA","OVERFLOW FILTER WHITE"],["GFTARA073QBFZ","BACK COVER (SMALL)"],["JKNBPA005QBFA","WATER SUPPLY KNOB"],["JKNBPA005QBFB","KNOB"],["CFTA-A403QBKZ","SPIN DRY LID ASS'Y SMALL (MW TYPE)"],["CFTA-A719QBKZ","SPIN DRY LID ASS'Y"],["CFTA-A744QBKZ","SPIN LID ASS'Y (ES-T89SJ-GR)"],["CFTA-A771QBKZ","SPIN DRY LID ASS'Y"],["CKNB-A007QBKZ","TIMER KNOB ASSY (VIOLET)"],["CKNB-A008QBKZ","TIMER KNOB ASSY (RED)"],["CKNB-A009QBKZ","TIMER KNOB ASSY"],["GFTARA094QBFZ","BACK COVER"],["GFTATA230QBFA","WASH LID"],["GFTATA288QBFA","WASH LID ASS'Y SMALL (MW TYPE)"],["HPNLTA075QBRB","CONTROL PANEL"],["HPNLTA077QBRA","CONTROL PANEL"],["HPNLTA098QBRA","CONTROL PANEL (SILK)"],["HPNLTA100QBRA","CONTROL PANEL (SILK) ES-T99SJ-BL"],["HPNLTA100QBRB","CONTROL PANEL (SILK) ES-T99SJ-PK"],["RMOT-A251QBEZ","WASH MOTOR"],["RMOT-A252QBEZ","SPIN DRY MOTOR"],["RMOT-A255QBEZ","WASH MOTOR"],["RMOT-A256QBEZ","SPIN DRY MOTOR"],["LSOU-A110QBFA","TUB (SMALL WHITE)"],["LSOU-A111QBFA","TUB (BIG WHITE)"],["LSOU-A128QBFA","TUB SMALL (MW TYPE)"],["LSOU-A152QBFA","TUB (ES-T77/SMALL WHITE)"],["LSOU-A161QBFA","TUB (ES-T98/BIG WHITE)"],["QACC-A092QBZZ","AC CORD (WITH GROUND WIRE SPIN)"],["TINS-A090QBRZ","OPERATION MANUAL + WARRANTY"],["TINS-A217QBRZ","OPERATION MANUAL + WARRANTY"],["TINS-A232QBRZ","OPERATION MANUAL + WARRANTY"],["TINS-A236QBRZ","OPERATION MANUAL + WARRANTY"],["TINS-A243QBRZ","OPERATION MANUAL + WARRANTY"],["SPAKCA581QBRZ","PACKING CASE"],["SPAKCA665QBRZ","PACKING CASE"],["SPAKCA850QBRZ","PACKING CASE"],["XBTS750P06000","SCREW (BASE ALL MODEL)"],["XWSS750-13000","SPRING WASHER"],["PSEL-A187QBPZ","SEAL PACKING 1"],["PSEL-A194QBPZ","SEAL PACKING 40"],["PSEL-A196QBPZ","SEAL PACKING 80"],["PSEL-A197QBPZ","SEAL PACKING A 100"],["PGUMMA015QBFZ","ANTIVIBRATION RUBBER"],["PVLVCA007QBFZ","SPIN DRY VALVE"],["QSW-MA020QBZZ","LID SWITCH (OMRON)"],["CPAD-A087QBFZ","TOP PAD ASS'Y"],["CPAD-A089QBFZ","BOTTOM PAD SK (SMALL)"],["CPAD-A090QBFZ","BOTTOM PAD SK"],["CPAD-A093QBFZ","TOP PAD ASS'Y (SMALL)"],["SPAKXA001QBEZ","UPPER HOLD"],["SPAKXA006QBEZ","BOTTOM SHEET (SMALL)"],["SPAKXA012QBEZ","BOTTOM SHEET (BIG)"],["LX-BZA452QBEZ","GROUND SCREW ASSY"],["LX-BZA458QBEZ","FLANGE SCREW"],["LX-HZA103QBEZ","SPECIAL SCREW"],["LX-HZA104QBEZ","HOLDER FIXING SCREW"],["GBDY-A055QBFA","TOP COVER (BIG WHITE)"],["GBDY-A055QBFB","TOP COVER (BIG GREY)"],["GBDY-A056QBFA","TOP COVER (SMALL WHITE)"],["GBDY-A058QBFA","TOP COVER (ES-T77/SMALL WHITE)"],["FDAI-A001QBKZ","BASE ASSY BIG (DINOC GRAY)"],["FDAI-A016QBKZ","BASE ASSY BIG (ES-T77)"],["FDAI-A017QBKZ","BASE ASSY BIG (ES-T98)"],["GDAI-A017QBFA","PLASTIC BASE ASSY SMALL"],["GDAI-A054QBFA","PLASTIC BASE"],["CVLV-A064QBKZ","DRAIN VALVE ASS'Y (6&7Kg)"],["CVLV-A065QBKZ","DRAIN VALVE ASS'Y (8&9Kgr)"],["CVLV-A086QBKZ","DRAIN VALVE ASS'Y"],["CHLD-A267QBKZ","SHAFT HOLDER ASS'Y"],["CHLD-A268QBKZ","BEARING HOLDER ASS'Y"],["CSPR-A231QBKZ","COIL SPRING ASS'Y"],["PHOS-A269QBFA","OUTER DRAIN HOSE"],["PHOS-A292QBFA","OUTER DRAIN HOSE"],["PHOS-A294QBEZ","WATER SUPPLY HOSE"]];
+let MASTER_PARTS = [
+  ["RMOT-A294QBEZ","WASH MOTOR"],["RMOT-A295QBEZ","SPIN DRY MOTOR"],
+  ["YRSNABZGY40QB","TBP 7JA127 BLU"],["PFTA-A103QBFZ","INNER LID (SMALL)"],
+  ["CKAG-A026QBKZ","SPIN BASKET ASS'Y SMALL"],["CFTA-A639QBKZ","WASH LID ASS'Y (ES-T1090)"],
+  ["CFTA-A640QBKZ","SPIN DRY LID ASS'Y ( ES-T1090-VK )"],["CFTA-A642QBKZ","WASH LID ASS'YY (ES-T1090PK)"],
+  ["CFTA-A643QBKZ","SPIN DRY LID ASS'Y"],["CFTA-A677QBKZ","WASH LID ASS'Y"],
+  ["CFTA-A678QBKZ","SPIN DRY LID ASS'Y"],["CFTA-A679QBKZ","WASH LID ASS'Y (ES-T871/971MD-BL)"],
+  ["CFTA-A680QBKZ","SPIN DRY LID ASS'Y (ES-T871/971DM-BL)"],["CFTA-A681QBKZ","WASH LID ASS'Y (ES-T871/971DM-PK)"],
+  ["CFTA-A682QBKZ","SPIN DRY LID ASS'Y (ES-T871/971DM-PK)"],["CFTA-A732QBKZ","WASHER LID ASS'Y (ES-T1270SJ-BL)"],
+  ["CFTA-A733QBKZ","SPIN DRY LID ASS'Y (ES-T1270SJ-BL)"],["CFTA-A734QBKZ","WASHER LID ASS'Y"],
+  ["CFTA-A735QBKZ","SPIN DRY LID ASS'Y"],["CKAG-A033QBKZ","SPIN BASKET ASS'Y (ES-T77/SMALL)"],
+  ["CKAG-A034QBKZ","SPIN BASKET ASS'Y (ES-T98/BIG)"],["CKAG-A035QBKZ","SPIN BASKET ASS'Y BIG"],
+  ["CKAG-A039QBKZ","SPIN BASKET ASS'Y SMALL"],["NPLYMA064QBFZ","PULLEY SMALL (EH,SW,MW TYPE)"],
+  ["NPUL-A095QBFA","PULSATOR (ES-T77DA-B)"],["NSFTPA010QBFZ","WASH ACTION SHAFT"],
+  ["PCAPHA009QBFA","PULSATOR CAP"],["PCOV-A686QBFZ","WATER SUPPLY COVER"],
+  ["PCOVPA021QBFZ","WATER PROOF COVER SMALL"],["PCOVPA022QBFZ","WATER PROOF COVER BIG"],
+  ["PFTA-A105QBFZ","INNER LID (BIG)"],["NPUL-A083QBFA","MINI PULSATOR"],
+  ["NPUL-A114QBFA","PULSATOR 50A W/BOSS"],["ZTAPEF20-000I","FILAMENT TAPE"],
+  ["LHLDW1033PEZZ","UNITY BAND"],["SSAKBA094QBEZ","POLY SHEET 1"],
+  ["SSAKBA096QBEZ","WATERPROOF POLY BAG"],["SSAKBA101QBEZ","POLY SHEET 5"],
+  ["ZNORIB152100I","RUBBER ADHESIVE"],["ZBANDP15-001I","STRAPPING BAND"],
+  ["LPLT-A115QBPZ","PULSATOR PLATE"],["CSW--A196QBKZ","LID SWITCH ASS'Y"],
+  ["CSW--A201QBKZ","LID SWITCH ASS'Y"],["LX-WZA129QBEZ","PULSATOR WASHER"],
+  ["PCOVQA010QBPZ","LID SWITCH COVER SMALL"],["GCOVHA029QBRA","COVER HIDING SCREW"],
+  ["GCOVHA029QBRB","COVER HIDING SCREW WO 12L"],["GCOVHA029QBRC","COVER HIDING SCREW"],
+  ["GCOVHA029QBRE","COVER HIDING SCREW"],["GCOVHA029QBRF","COVER HIDING SCREW"],
+  ["GCOVHA029QBRG","COVER HIDING SCREW"],["GCOVHA029QBRK","COVER HIDING SCREW"],
+  ["MJNT-A032QBEZ","BRAKE JOINT (ES-T98)"],["MJNT-A034QBEZ","BRAKE JOINT (ES-T1270SJ-BL)"],
+  ["MJNT-A035QBEZ","VALVE JOINT"],["MJNT-A036QBEZ","BRAKE JOINT"],
+  ["PSPO-A227QBPZ","CUSHION"],["MJNT-A021QBEZ","VALVE JOINT SMALL"],
+  ["MJNT-A022QBEZ","BRAKE JOINT SMALL"],["MJNT-A023QBEZ","VALVE JOINT BIG"],
+  ["MJNT-A024QBEZ","BRAKE JOINT BIG"],["MJNT-A026QBEZ","VALVE JOINT SMALL (MW TYPE)"],
+  ["MJNT-A029QBEZ","VALVE JOINT (ES-T77)"],["MJNT-A030QBEZ","BRAKE JOINT (ES-T77)"],
+  ["MJNT-A031QBEZ","VALVE JOINT (ES-T98)"],["QSWTBA006QBZZ","SPIN DRY TIMER SW"],
+  ["RMOT-A180QBEZ","WASH MOTOR (ES-T60S-W)"],["RMOT-A205QBEZ","WASH MOTOR"],
+  ["RMOT-A226QBEZ","SPIN DRY MOTOR"],["RMOT-A235QBEZ","SPIN DRY MOTOR (ES-T80CL-B)"],
+  ["CGUM-A022QBKZ","BELLOWS ASS'Y"],["CSPR-A233QBKZ","COIL SPRING ASS'Y"],
+  ["QSWTBA007QBZZ","SPIN DRY TIMER SW"],["RC-QZA245QBZZ","CAPACITOR"],
+  ["RC-QZA255QBZZ","CAPACITOR"],["RMOT-A253QBEZ","WASH MOTOR"],
+  ["RMOT-A254QBEZ","SPIN-DRY MOTOR"],["NBLT-A064QBEZ","V-BELT M-28"],
+  ["NBLT-A067QBEZ","V-BELT A33.5"],["UFTAPA003QBFZ","DISC COVER"],
+  ["PGIDMA036QBFA","WATER SUPPLY GUIDE BIG WHITE"],["PGIDMA036QBFB","WATER SUPPLY GUIDE BIG GRAY"],
+  ["PFILDA018QBFA","OVERFLOW FILTER WHITE"],["PFILDA019QBFA","OVERFLOW FILTER WHITE"],
+  ["GFTARA073QBFZ","BACK COVER (SMALL)"],["JKNBPA005QBFA","WATER SUPPLY KNOB"],
+  ["JKNBPA005QBFB","KNOB"],["CFTA-A403QBKZ","SPIN DRY LID ASS'Y SMALL (MW TYPE)"],
+  ["CFTA-A719QBKZ","SPIN DRY LID ASS'Y"],["CFTA-A744QBKZ","SPIN LID ASS'Y (ES-T89SJ-GR)"],
+  ["CFTA-A771QBKZ","SPIN DRY LID ASS'Y"],["CKNB-A007QBKZ","TIMER KNOB ASSY (VIOLET)"],
+  ["CKNB-A008QBKZ","TIMER KNOB ASSY (RED)"],["CKNB-A009QBKZ","TIMER KNOB ASSY"],
+  ["GFTARA094QBFZ","BACK COVER"],["GFTATA230QBFA","WASH LID"],
+  ["GFTATA288QBFA","WASH LID ASS'Y SMALL (MW TYPE)"],["HPNLTA075QBRB","CONTROL PANEL"],
+  ["HPNLTA077QBRA","CONTROL PANEL"],["HPNLTA098QBRA","CONTROL PANEL (SILK)"],
+  ["HPNLTA100QBRA","CONTROL PANEL (SILK) ES-T99SJ-BL"],["HPNLTA100QBRB","CONTROL PANEL (SILK) ES-T99SJ-PK"],
+  ["RMOT-A251QBEZ","WASH MOTOR"],["RMOT-A252QBEZ","SPIN DRY MOTOR"],
+  ["RMOT-A255QBEZ","WASH MOTOR"],["RMOT-A256QBEZ","SPIN DRY MOTOR"],
+  ["LSOU-A110QBFA","TUB (SMALL WHITE)"],["LSOU-A111QBFA","TUB (BIG WHITE)"],
+  ["LSOU-A128QBFA","TUB SMALL (MW TYPE)"],["LSOU-A152QBFA","TUB (ES-T77/SMALL WHITE)"],
+  ["LSOU-A161QBFA","TUB (ES-T98/BIG WHITE)"],["QACC-A092QBZZ","AC CORD (WITH GROUND WIRE SPIN)"],
+  ["TINS-A090QBRZ","OPERATION MANUAL + WARRANTY"],["TINS-A217QBRZ","OPERATION MANUAL + WARRANTY"],
+  ["TINS-A232QBRZ","OPERATION MANUAL + WARRANTY"],["TINS-A236QBRZ","OPERATION MANUAL + WARRANTY"],
+  ["TINS-A243QBRZ","OPERATION MANUAL + WARRANTY"],["SPAKCA581QBRZ","PACKING CASE"],
+  ["SPAKCA665QBRZ","PACKING CASE"],["SPAKCA850QBRZ","PACKING CASE"],
+  ["XBTS750P06000","SCREW (BASE ALL MODEL)"],["XWSS750-13000","SPRING WASHER"],
+  ["PSEL-A187QBPZ","SEAL PACKING 1"],["PSEL-A194QBPZ","SEAL PACKING 40"],
+  ["PSEL-A196QBPZ","SEAL PACKING 80"],["PSEL-A197QBPZ","SEAL PACKING A 100"],
+  ["PGUMMA015QBFZ","ANTIVIBRATION RUBBER"],["PVLVCA007QBFZ","SPIN DRY VALVE"],
+  ["QSW-MA020QBZZ","LID SWITCH (OMRON)"],["CPAD-A087QBFZ","TOP PAD ASS'Y"],
+  ["CPAD-A089QBFZ","BOTTOM PAD SK (SMALL)"],["CPAD-A090QBFZ","BOTTOM PAD SK"],
+  ["CPAD-A093QBFZ","TOP PAD ASS'Y (SMALL)"],["SPAKXA001QBEZ","UPPER HOLD"],
+  ["SPAKXA006QBEZ","BOTTOM SHEET (SMALL)"],["SPAKXA012QBEZ","BOTTOM SHEET (BIG)"],
+  ["LX-BZA452QBEZ","GROUND SCREW ASSY"],["LX-BZA458QBEZ","FLANGE SCREW"],
+  ["LX-HZA103QBEZ","SPECIAL SCREW"],["LX-HZA104QBEZ","HOLDER FIXING SCREW"],
+  ["GBDY-A055QBFA","TOP COVER (BIG WHITE)"],["GBDY-A055QBFB","TOP COVER (BIG GREY)"],
+  ["GBDY-A056QBFA","TOP COVER (SMALL WHITE)"],["GBDY-A058QBFA","TOP COVER (ES-T77/SMALL WHITE)"],
+  ["FDAI-A001QBKZ","BASE ASSY BIG (DINOC GRAY)"],["FDAI-A016QBKZ","BASE ASSY BIG (ES-T77)"],
+  ["FDAI-A017QBKZ","BASE ASSY BIG (ES-T98)"],["GDAI-A017QBFA","PLASTIC BASE ASSY SMALL"],
+  ["GDAI-A054QBFA","PLASTIC BASE"],["CVLV-A064QBKZ","DRAIN VALVE ASS'Y (6&7Kg)"],
+  ["CVLV-A065QBKZ","DRAIN VALVE ASS'Y (8&9Kgr)"],["CVLV-A086QBKZ","DRAIN VALVE ASS'Y"],
+  ["CHLD-A267QBKZ","SHAFT HOLDER ASS'Y"],["CHLD-A268QBKZ","BEARING HOLDER ASS'Y"],
+  ["CSPR-A231QBKZ","COIL SPRING ASS'Y"],["PHOS-A269QBFA","OUTER DRAIN HOSE"],
+  ["PHOS-A292QBFA","OUTER DRAIN HOSE"],["PHOS-A294QBEZ","WATER SUPPLY HOSE"]
+];
 
-const MASTER_MODELS=[["A3EXT65NTB","ES-T65NT-BL","TWINTUB"],["A3EXT65NTH","ES-T65NT-GY","TWINTUB"],["A3EXT70MWB","ES-T70MW-BL","TWINTUB"],["A3EXT70MWP","ES-T70MW-PK","TWINTUB"],["A3EXT70MWL","ES-T70MW-LC","TWINTUB"],["A3EXT79SJB","ES-T79SJ-BL","TWINTUB"],["A3EXT79SJP","ES-T79SJ-PK","TWINTUB"],["A3EXT89SJG","ES-T89SJ-GR","TWINTUB"],["A3EXT90MWB","ES-T90MW-BK","TWINTUB"],["A3EXT90MWH","ES-T90MW-HK","TWINTUB"],["A3EXT90MWP","ES-T90MW-PK","TWINTUB"],["A3EXT75NTB","ES-T75NT-BL","TWINTUB"],["A3EXT75NTP","ES-T75NT-PK","TWINTUB"],["A3EXT75NTH","ES-T75NT-GY","TWINTUB"],["A3EXT80MWB","ES-T80MW-BK","TWINTUB"],["A3EXT80MWH","ES-T80MW-HK","TWINTUB"],["A3EXT80MWP","ES-T80MW-PK","TWINTUB"],["A3EXT68MWB","ES-T68MW-BK","TWINTUB"],["A3EXT68MWP","ES-T68MW-PK","TWINTUB"],["A3EXT85CRB","ES-T85CR-BK","TWINTUB"],["A3EXT85CRP","ES-T85CR-PK","TWINTUB"],["A3EXT85CRV","ES-T85CR-VK","TWINTUB"],["A3EXT871DB","ES-T871DM-BL","TWINTUB"],["A3EXT871DP","ES-T871DM-PK","TWINTUB"],["A3EXT971DB","ES-T971DM-BL","TWINTUB"],["A3EXT971DP","ES-T971DM-PK","TWINTUB"],["A3EXT85NTP","ES-T85NT-PK","TWINTUB"],["A3EXT85NTL","ES-T85NT-LC","TWINTUB"],["A3EXT95NTP","ES-T95NT-PK","TWINTUB"],["A3EXT95NTL","ES-T95NT-LC","TWINTUB"],["A3EXT86CLH","ES-T86CL-HK","TWINTUB"],["A3EXT96CLH","ES-T96CL-HK","TWINTUB"],["A3EXT1290B","ES-T1290WA-BL","TWINTUB"],["A3EXT1290P","ES-T1290WA-PK","TWINTUB"],["A3EXT1490B","ES-T1490WA-BL","TWINTUB"],["A3EXT1490R","ES-T1490WA-RD","TWINTUB"],["A3EXT97CMB","ES-T97CM-BL","TWINTUB"],["A3EXT1070G","ES-T1070SJ-GR","TWINTUB"],["A3EXT95CRB","ES-T95CR-BK","TWINTUB"],["A3EXT95CRP","ES-T95CR-PK","TWINTUB"],["A3EXT95CRV","ES-T95CR-VK","TWINTUB"],["A3EXT99SJB","ES-T99SJ-BL","TWINTUB"],["A3EXT99SJP","ES-T99SJ-PK","TWINTUB"],["A3EXT1090B","ES-T1090-BK","TWINTUB"],["A3EXT1090P","ES-T1090-PK","TWINTUB"],["A3EXT1090V","ES-T1090-VK","TWINTUB"],["A3EXT1270B","ES-T1270SJ-BL","TWINTUB"],["A3EXT1270P","ES-T1270SJ-PK","TWINTUB"],["A3EXT77DAB","ES-T77DA-BK","TWINTUB"],["A3EXT77DAR","ES-T77DA-RK","TWINTUB"],["A3EXT79SJL","ES-T79SJ-LCT","TWINTUB"],["A3EXT79SJT","ES-T79SJ-BLT","TWINTUB"],["A3EXZ115YS","ES-M1150XT-SM","FULL AUTO"],["A3EXX105YS","ES-M1050XT-SA","FULL AUTO"],["A3EXX95VYS","ES-M9500XT-SA","FULL AUTO"],["A3EXX85VYS","ES-M8500XT-SA","FULL AUTO"],["A3EXY10PYH","ES-M1000T-GG","FULL AUTO"],["A3EXY90PYH","ES-M9000T-GG","FULL AUTO"],["A3EXY80PYH","ES-M8000T-GG","FULL AUTO"],["A3EXA80PYH","ES-M8000P-GG","FULL AUTO"],["A3EXA70PYH","ES-M7000P-GG","FULL AUTO"],["A3EXW90PYH","ES-M909T-GG","FULL AUTO"],["A3EXW80PYH","ES-M809T-GG","FULL AUTO"],["A3EXW10PYH","ES-M1009T-GG","FULL AUTO"],["A3EXK11HYS","ES-M1108T-SAK","FULL AUTO"],["A3EXW11HYH","ES-M1109T-GG","FULL AUTO"],["A3EXW12HYS","ES-M1209T-SA","FULL AUTO"],["A3EXK10HYS","ES-M1008T-SAK","FULL AUTO"],["A3EXW11SPS","ES-S115HP-SL (SPC)","FULL AUTO"],["A3EXW11SMS","ES-W1109S (SEM)","FULL AUTO"],["A3EXW90HPH","ES-S95HP-GY (SPC)","FULL AUTO"],["A3EXX105VW","ES-W105TWXT-SA (SSC 2.0)","FULL AUTO"],["A3EXX85VWH","ES-W85TWXT-SA (SSC 2.0)","FULL AUTO"],["A3EXX95VWH","ES-W95TWXT-SA (SSC 2.0)","FULL AUTO"],["A3EXW80GBH","ES-W80EW-H (BLD)","FULL AUTO"],["A3EXW90GBH","ES-W90EW-H (BLD)","FULL AUTO"],["A3EXW11HBS","ES-W110DS-S (BLD)","FULL AUTO"],["A3EXW10HBH","ES-W100DS-H (BLD)","FULL AUTO"],["A3EXW80HMH","ES-W809H (SEM)","FULL AUTO"],["A3EXW10SMH","ES-W1009S (SEM)","FULL AUTO"],["A3EXW80PZP","ES-MW105Z-P (PNG)","FULL AUTO"],["A3EXW11PZP","ES-MW135Z-P (PNG)","FULL AUTO"],["A3EXP105VW","ES-W105TWXT-SAP","FULL AUTO"],["A3EXW80HPH","ES-S85HP-GY (SPC)","FULL AUTO"],["A3EXW10SPH","ES-S105HP-GY (SPC)","FULL AUTO"],["A3EXW10HWH","ES-W100DS-H (SSC)","FULL AUTO"],["A3EXW11HWS","ES-W110DS-S (SSC)","FULL AUTO"],["A3EXP85VWH","ES-W85TWXT-SAP","FULL AUTO"],["A3EXW90GWH","ES-W90EW-H (SSC)","FULL AUTO"],["A3EXW11PGH","ES-MW135Z-S (GSO)","FULL AUTO"],["A3EXW90PGH","ES-MW115Z-H (GSO)","FULL AUTO"],["A3EXW80PGH","ES-MW105Z-H (GSO)","FULL AUTO"],["A3EXW10PGH","ES-MW125Z-H (GSO)","FULL AUTO"],["A3EXW80GVH","ES-W80GV-H (SVN)","FULL AUTO"],["A3EXK95HVS","ES-W95HV-S (SVN)","FULL AUTO"],["A3EXK78GVA","ES-W78GV-G (SVN)","FULL AUTO"],["A3EXK78GVH","ES-W78GV-H (SVN)","FULL AUTO"],["A3EXW11HVS","ES-W110HV-S (SVN)","FULL AUTO"],["A3EXW82GVH","ES-W82GV-H (SVN)","FULL AUTO"],["A3EXW102VH","ES-W102PV-H (SVN)","FULL AUTO"],["A3EXW10HVH","ES-W100PV-H (SVN)","FULL AUTO"],["A3EXX95HVS","ES-X95HV-S (SVN 2.0)","FULL AUTO"],["A3EXX105HV","ES-X105HV-S (SVN 2.0)","FULL AUTO"],["A3EXW80HTH","ES-W80HT-GY (STCL)","FULL AUTO"],["A3EXK80GTH","ES-U80GT-GY (STCL)","FULL AUTO"],["A3EXW90HTH","ES-W90HT-GY (STCL)","FULL AUTO"],["A3EXW10HTH","ES-W10HT-GY (STCL)","FULL AUTO"],["A3EXW11HTS","ES-W11HT-SL (STCL)","FULL AUTO"]];
+const MASTER_MODELS = [
+  ["A3EXT65NTB","ES-T65NT-BL","TWINTUB"],["A3EXT65NTH","ES-T65NT-GY","TWINTUB"],
+  ["A3EXT70MWB","ES-T70MW-BL","TWINTUB"],["A3EXT70MWP","ES-T70MW-PK","TWINTUB"],
+  ["A3EXT70MWL","ES-T70MW-LC","TWINTUB"],["A3EXT79SJB","ES-T79SJ-BL","TWINTUB"],
+  ["A3EXT79SJP","ES-T79SJ-PK","TWINTUB"],["A3EXT89SJG","ES-T89SJ-GR","TWINTUB"],
+  ["A3EXT90MWB","ES-T90MW-BK","TWINTUB"],["A3EXT90MWH","ES-T90MW-HK","TWINTUB"],
+  ["A3EXT90MWP","ES-T90MW-PK","TWINTUB"],["A3EXT75NTB","ES-T75NT-BL","TWINTUB"],
+  ["A3EXT75NTP","ES-T75NT-PK","TWINTUB"],["A3EXT75NTH","ES-T75NT-GY","TWINTUB"],
+  ["A3EXT80MWB","ES-T80MW-BK","TWINTUB"],["A3EXT80MWH","ES-T80MW-HK","TWINTUB"],
+  ["A3EXT80MWP","ES-T80MW-PK","TWINTUB"],["A3EXT68MWB","ES-T68MW-BK","TWINTUB"],
+  ["A3EXT68MWP","ES-T68MW-PK","TWINTUB"],["A3EXT85CRB","ES-T85CR-BK","TWINTUB"],
+  ["A3EXT85CRP","ES-T85CR-PK","TWINTUB"],["A3EXT85CRV","ES-T85CR-VK","TWINTUB"],
+  ["A3EXT871DB","ES-T871DM-BL","TWINTUB"],["A3EXT871DP","ES-T871DM-PK","TWINTUB"],
+  ["A3EXT971DB","ES-T971DM-BL","TWINTUB"],["A3EXT971DP","ES-T971DM-PK","TWINTUB"],
+  ["A3EXT85NTP","ES-T85NT-PK","TWINTUB"],["A3EXT85NTL","ES-T85NT-LC","TWINTUB"],
+  ["A3EXT95NTP","ES-T95NT-PK","TWINTUB"],["A3EXT95NTL","ES-T95NT-LC","TWINTUB"],
+  ["A3EXT86CLH","ES-T86CL-HK","TWINTUB"],["A3EXT96CLH","ES-T96CL-HK","TWINTUB"],
+  ["A3EXT1290B","ES-T1290WA-BL","TWINTUB"],["A3EXT1290P","ES-T1290WA-PK","TWINTUB"],
+  ["A3EXT1490B","ES-T1490WA-BL","TWINTUB"],["A3EXT1490R","ES-T1490WA-RD","TWINTUB"],
+  ["A3EXT97CMB","ES-T97CM-BL","TWINTUB"],["A3EXT1070G","ES-T1070SJ-GR","TWINTUB"],
+  ["A3EXT95CRB","ES-T95CR-BK","TWINTUB"],["A3EXT95CRP","ES-T95CR-PK","TWINTUB"],
+  ["A3EXT95CRV","ES-T95CR-VK","TWINTUB"],["A3EXT99SJB","ES-T99SJ-BL","TWINTUB"],
+  ["A3EXT99SJP","ES-T99SJ-PK","TWINTUB"],["A3EXT1090B","ES-T1090-BK","TWINTUB"],
+  ["A3EXT1090P","ES-T1090-PK","TWINTUB"],["A3EXT1090V","ES-T1090-VK","TWINTUB"],
+  ["A3EXT1270B","ES-T1270SJ-BL","TWINTUB"],["A3EXT1270P","ES-T1270SJ-PK","TWINTUB"],
+  ["A3EXT77DAB","ES-T77DA-BK","TWINTUB"],["A3EXT77DAR","ES-T77DA-RK","TWINTUB"],
+  ["A3EXT79SJL","ES-T79SJ-LCT","TWINTUB"],["A3EXT79SJT","ES-T79SJ-BLT","TWINTUB"],
+  ["A3EXZ115YS","ES-M1150XT-SM","FULL AUTO"],["A3EXX105YS","ES-M1050XT-SA","FULL AUTO"],
+  ["A3EXX95VYS","ES-M9500XT-SA","FULL AUTO"],["A3EXX85VYS","ES-M8500XT-SA","FULL AUTO"],
+  ["A3EXY10PYH","ES-M1000T-GG","FULL AUTO"],["A3EXY90PYH","ES-M9000T-GG","FULL AUTO"],
+  ["A3EXY80PYH","ES-M8000T-GG","FULL AUTO"],["A3EXA80PYH","ES-M8000P-GG","FULL AUTO"],
+  ["A3EXA70PYH","ES-M7000P-GG","FULL AUTO"],["A3EXW90PYH","ES-M909T-GG","FULL AUTO"],
+  ["A3EXW80PYH","ES-M809T-GG","FULL AUTO"],["A3EXW10PYH","ES-M1009T-GG","FULL AUTO"],
+  ["A3EXK11HYS","ES-M1108T-SAK","FULL AUTO"],["A3EXW11HYH","ES-M1109T-GG","FULL AUTO"],
+  ["A3EXW12HYS","ES-M1209T-SA","FULL AUTO"],["A3EXK10HYS","ES-M1008T-SAK","FULL AUTO"],
+  ["A3EXW11SPS","ES-S115HP-SL (SPC)","FULL AUTO"],["A3EXW11SMS","ES-W1109S (SEM)","FULL AUTO"],
+  ["A3EXW90HPH","ES-S95HP-GY (SPC)","FULL AUTO"],["A3EXX105VW","ES-W105TWXT-SA (SSC 2.0)","FULL AUTO"],
+  ["A3EXX85VWH","ES-W85TWXT-SA (SSC 2.0)","FULL AUTO"],["A3EXX95VWH","ES-W95TWXT-SA (SSC 2.0)","FULL AUTO"],
+  ["A3EXW80GBH","ES-W80EW-H (BLD)","FULL AUTO"],["A3EXW90GBH","ES-W90EW-H (BLD)","FULL AUTO"],
+  ["A3EXW11HBS","ES-W110DS-S (BLD)","FULL AUTO"],["A3EXW10HBH","ES-W100DS-H (BLD)","FULL AUTO"],
+  ["A3EXW80HMH","ES-W809H (SEM)","FULL AUTO"],["A3EXW10SMH","ES-W1009S (SEM)","FULL AUTO"],
+  ["A3EXW80PZP","ES-MW105Z-P (PNG)","FULL AUTO"],["A3EXW11PZP","ES-MW135Z-P (PNG)","FULL AUTO"],
+  ["A3EXP105VW","ES-W105TWXT-SAP","FULL AUTO"],["A3EXW80HPH","ES-S85HP-GY (SPC)","FULL AUTO"],
+  ["A3EXW10SPH","ES-S105HP-GY (SPC)","FULL AUTO"],["A3EXW10HWH","ES-W100DS-H (SSC)","FULL AUTO"],
+  ["A3EXW11HWS","ES-W110DS-S (SSC)","FULL AUTO"],["A3EXP85VWH","ES-W85TWXT-SAP","FULL AUTO"],
+  ["A3EXW90GWH","ES-W90EW-H (SSC)","FULL AUTO"],["A3EXW11PGH","ES-MW135Z-S (GSO)","FULL AUTO"],
+  ["A3EXW90PGH","ES-MW115Z-H (GSO)","FULL AUTO"],["A3EXW80PGH","ES-MW105Z-H (GSO)","FULL AUTO"],
+  ["A3EXW10PGH","ES-MW125Z-H (GSO)","FULL AUTO"],["A3EXW80GVH","ES-W80GV-H (SVN)","FULL AUTO"],
+  ["A3EXK95HVS","ES-W95HV-S (SVN)","FULL AUTO"],["A3EXK78GVA","ES-W78GV-G (SVN)","FULL AUTO"],
+  ["A3EXK78GVH","ES-W78GV-H (SVN)","FULL AUTO"],["A3EXW11HVS","ES-W110HV-S (SVN)","FULL AUTO"],
+  ["A3EXW82GVH","ES-W82GV-H (SVN)","FULL AUTO"],["A3EXW102VH","ES-W102PV-H (SVN)","FULL AUTO"],
+  ["A3EXW10HVH","ES-W100PV-H (SVN)","FULL AUTO"],["A3EXX95HVS","ES-X95HV-S (SVN 2.0)","FULL AUTO"],
+  ["A3EXX105HV","ES-X105HV-S (SVN 2.0)","FULL AUTO"],["A3EXW80HTH","ES-W80HT-GY (STCL)","FULL AUTO"],
+  ["A3EXK80GTH","ES-U80GT-GY (STCL)","FULL AUTO"],["A3EXW90HTH","ES-W90HT-GY (STCL)","FULL AUTO"],
+  ["A3EXW10HTH","ES-W10HT-GY (STCL)","FULL AUTO"],["A3EXW11HTS","ES-W11HT-SL (STCL)","FULL AUTO"]
+];
 
 // ══════════════════════════════════════════════════════
-// STATE
+// STATE — semua diambil dari localStorage saat init
 // ══════════════════════════════════════════════════════
-let SCRIPT_URL = localStorage.getItem('fm_script_url') || '';
-let draftParts = [];
+let SCRIPT_URL   = '';
+let draftParts   = [];
 let selectedModel = null;
 let sidebarCollapsed = false;
-let allTickets = []; // cached riwayat data grouped by ticket
+let allTickets   = [];
+let toastTimer   = null;
+let savedBadgeTimer = null;
 
 // ══════════════════════════════════════════════════════
-// INIT
+// INIT — baca localStorage SEKALI saat halaman load
 // ══════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
+  // 1. Baca semua nilai dari localStorage
+  SCRIPT_URL = localStorage.getItem('fm_script_url') || '';
+  const savedOp = localStorage.getItem('fm_operator') || '';
+
+  // 2. Isi form setting dengan nilai tersimpan
+  document.getElementById('scriptUrl').value    = SCRIPT_URL;
+  document.getElementById('operatorName').value = savedOp;
+
+  // 3. Update UI operator
+  if (savedOp) {
+    document.getElementById('userLabel').textContent  = savedOp;
+    document.getElementById('userAvatar').textContent = savedOp.charAt(0).toUpperCase();
+  }
+
+  // 4. Update info URL di panel setting
+  updateUrlInfo();
+
+  // 5. Set tanggal default
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('inputTanggal').value = today;
   document.getElementById('prodTanggal').value  = today;
 
-  document.getElementById('scriptUrl').value = SCRIPT_URL;
-
-  const dateStr = new Date().toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
-  document.getElementById('dashDate').textContent = dateStr;
+  // 6. Update tanggal di topbar
+  const dateStr = new Date().toLocaleDateString('id-ID', {
+    weekday:'long', day:'numeric', month:'long', year:'numeric'
+  });
+  document.getElementById('dashDate').textContent    = dateStr;
   document.getElementById('dashSubDate').textContent = dateStr;
 
+  // 7. Generate nomor tiket
   generateTicket();
-  populateModelGrid();
 
-  // FIX 1&3: Load operator name dari localStorage
-  const savedOp = localStorage.getItem('fm_operator') || '';
-  if (savedOp) {
-    document.getElementById('operatorName').value = savedOp;
-    document.getElementById('userLabel').textContent = savedOp;
-    const av = document.getElementById('userAvatar');
-    if (av) av.textContent = savedOp.charAt(0).toUpperCase();
-  }
+  // 8. Populate model grid
+  filterModels();
 
+  // 9. Load data jika URL sudah ada
   if (SCRIPT_URL) {
     loadDashboard();
-    loadPartList(); // FIX 2: Load part list dari BOM_READY
+    loadPartListFromServer();
   } else {
     showConfigBanner();
   }
@@ -1135,7 +1228,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function toggleSidebar() {
   sidebarCollapsed = !sidebarCollapsed;
   const sidebar = document.getElementById('sidebar');
-  const btn = document.getElementById('sidebarToggle');
+  const btn     = document.getElementById('sidebarToggle');
   sidebar.classList.toggle('collapsed', sidebarCollapsed);
   btn.textContent = sidebarCollapsed ? '▶' : '◀';
 }
@@ -1161,8 +1254,8 @@ const screenTitles = {
 };
 
 function showScreen(name, el) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.querySelectorAll('.nav-item').forEach(function(b) { b.classList.remove('active'); });
   document.getElementById('screen-' + name).classList.add('active');
   if (el) el.classList.add('active');
   document.getElementById('topbarTitle').textContent = screenTitles[name] || '';
@@ -1171,32 +1264,117 @@ function showScreen(name, el) {
   if (name === 'dashboard') loadDashboard();
   if (name === 'stok')      loadStok();
   if (name === 'riwayat')   loadRiwayat();
+  if (name === 'setting')   syncSettingForm();
+}
+
+function syncSettingForm() {
+  // Pastikan form setting selalu sinkron dengan nilai yang tersimpan
+  document.getElementById('scriptUrl').value    = SCRIPT_URL;
+  document.getElementById('operatorName').value = localStorage.getItem('fm_operator') || '';
+  updateUrlInfo();
+}
+
+function updateUrlInfo() {
+  const el = document.getElementById('infoUrlStatus');
+  if (!el) return;
+  el.textContent = SCRIPT_URL ? SCRIPT_URL.substring(0,60) + '...' : 'Belum diatur';
+  el.style.color = SCRIPT_URL ? 'var(--green)' : '#999';
 }
 
 function showConfigBanner() {
   const main = document.querySelector('.main');
+  if (document.getElementById('configBanner')) return;
   const banner = document.createElement('div');
+  banner.id = 'configBanner';
   banner.className = 'config-banner';
   banner.innerHTML = '⚠️ <strong>Belum terhubung ke Google Sheets.</strong> Buka Setting dan masukkan URL Apps Script.';
   main.insertBefore(banner, main.firstChild);
+}
+
+function removeConfigBanner() {
+  const b = document.getElementById('configBanner');
+  if (b) b.remove();
+}
+
+// ══════════════════════════════════════════════════════
+// SETTING — PERBAIKAN UTAMA
+// ══════════════════════════════════════════════════════
+function saveSetting() {
+  // Ambil nilai langsung dari input
+  const newUrl = (document.getElementById('scriptUrl').value || '').trim();
+  const newOp  = (document.getElementById('operatorName').value || '').trim();
+
+  // Simpan ke localStorage SEBELUM update state apapun
+  try {
+    localStorage.setItem('fm_script_url', newUrl);
+    localStorage.setItem('fm_operator',   newOp || 'Operator');
+  } catch(e) {
+    toast('❌ Gagal menyimpan: ' + e.message, 'error');
+    return;
+  }
+
+  // Update state global
+  SCRIPT_URL = newUrl;
+
+  // Update UI
+  const displayOp = newOp || 'Operator';
+  document.getElementById('userLabel').textContent  = displayOp;
+  document.getElementById('userAvatar').textContent = displayOp.charAt(0).toUpperCase();
+
+  // Update info URL
+  updateUrlInfo();
+
+  // Tampilkan badge tersimpan
+  const badge = document.getElementById('savedBadge');
+  badge.classList.add('show');
+  clearTimeout(savedBadgeTimer);
+  savedBadgeTimer = setTimeout(function() { badge.classList.remove('show'); }, 3000);
+
+  // Toast
+  toast('✅ Setting berhasil disimpan!', 'success');
+
+  // Hapus banner config kalau URL sudah diisi
+  if (SCRIPT_URL) {
+    removeConfigBanner();
+    // Load ulang data dengan delay kecil
+    setTimeout(function() { loadPartListFromServer(); }, 200);
+  }
+}
+
+async function testConnection() {
+  const url = (document.getElementById('scriptUrl').value || '').trim();
+  if (!url) { toast('Masukkan URL Apps Script dulu!', 'error'); return; }
+  const status = document.getElementById('connStatus');
+  status.innerHTML = '<span class="loading" style="border-top-color:var(--red);border-color:#ddd;border-top-color:var(--red)"></span> Testing koneksi...';
+  try {
+    const res = await callScriptGET(url, { action: 'ping' });
+    if (res && (res.status === 'OK' || res.success !== false)) {
+      status.innerHTML = '✅ <span style="color:var(--green);">Koneksi berhasil! Server merespons.</span>';
+    } else {
+      status.innerHTML = '⚠️ <span style="color:var(--amber);">Terhubung, tapi response tidak dikenali: ' + JSON.stringify(res) + '</span>';
+    }
+  } catch(e) {
+    status.innerHTML = '❌ <span style="color:var(--red);">Gagal terhubung: ' + e.message + '</span>';
+  }
 }
 
 // ══════════════════════════════════════════════════════
 // TICKET GENERATOR
 // ══════════════════════════════════════════════════════
 function generateTicket() {
-  const now = new Date();
-  const yy = String(now.getFullYear()).slice(2);
-  const mm = String(now.getMonth()+1).padStart(2,'0');
-  const dd = String(now.getDate()).padStart(2,'0');
-  const dateKey = yy+mm+dd;
-  const storedDate = localStorage.getItem('fm_ticket_date');
-  if (storedDate !== dateKey) {
+  const now     = new Date();
+  const yy      = String(now.getFullYear()).slice(2);
+  const mm      = String(now.getMonth() + 1).padStart(2, '0');
+  const dd      = String(now.getDate()).padStart(2, '0');
+  const dateKey = yy + mm + dd;
+
+  if (localStorage.getItem('fm_ticket_date') !== dateKey) {
     localStorage.setItem('fm_ticket_date', dateKey);
-    localStorage.setItem('fm_ticket_seq', '0');
+    localStorage.setItem('fm_ticket_seq',  '0');
   }
-  let seq = parseInt(localStorage.getItem('fm_ticket_seq') || '0') + 1;
-  const txid = `WMPC-${dateKey}-${String(seq).padStart(3,'0')}`;
+
+  const seq  = parseInt(localStorage.getItem('fm_ticket_seq') || '0') + 1;
+  const txid = 'WMPC-' + dateKey + '-' + String(seq).padStart(3, '0');
   document.getElementById('ticketDisplay').textContent = txid;
   return { txid, seq, dateKey };
 }
@@ -1210,42 +1388,49 @@ function consumeTicket() {
 // ══════════════════════════════════════════════════════
 // PART SEARCH
 // ══════════════════════════════════════════════════════
-// FIX 2: loadPartList pakai JSONP (callScriptGET) bukan fetch()
-// fetch() kena CORS dari GitHub Pages ke Apps Script
-async function loadPartList() {
+async function loadPartListFromServer() {
   if (!SCRIPT_URL) return;
   const hint = document.getElementById('searchHint');
-  if (hint) hint.textContent = '⏳ Memuat daftar part dari BOM...';
+  if (hint) hint.textContent = '⏳ Memuat daftar part dari server...';
   try {
     const data = await callScriptGET(SCRIPT_URL, { action: 'getPartList' });
     if (data && Array.isArray(data) && data.length > 0) {
       MASTER_PARTS = data;
       if (hint) hint.textContent = MASTER_PARTS.length + ' part tersedia dari BOM';
-      document.getElementById('infoTotalParts').textContent = MASTER_PARTS.length + ' part';
-    } else if (data && data.error) {
-      if (hint) hint.textContent = '⚠️ ' + data.error;
+      const el = document.getElementById('infoTotalParts');
+      if (el) el.textContent = MASTER_PARTS.length + ' part';
     } else {
-      if (hint) hint.textContent = 'Ketik minimal 2 karakter untuk mencari';
+      if (hint) hint.textContent = 'Ketik minimal 2 karakter untuk mencari (' + MASTER_PARTS.length + ' part lokal)';
     }
   } catch(e) {
-    console.warn('loadPartList error:', e.message);
-    if (hint) hint.textContent = 'Ketik minimal 2 karakter untuk mencari';
+    if (hint) hint.textContent = 'Ketik minimal 2 karakter (' + MASTER_PARTS.length + ' part lokal tersedia)';
   }
 }
 
 function searchPart(val) {
   const dropdown = document.getElementById('partDropdown');
-  const hint = document.getElementById('searchHint');
-  if (val.length < 2) { dropdown.classList.remove('show'); hint.textContent = 'Ketik minimal 2 karakter untuk mencari'; return; }
-  const q = val.toLowerCase();
-  const results = MASTER_PARTS.filter(p => p[0].toLowerCase().includes(q) || p[1].toLowerCase().includes(q)).slice(0,40);
-  hint.textContent = `${results.length} hasil ditemukan`;
+  const hint     = document.getElementById('searchHint');
+  if (val.length < 2) {
+    dropdown.classList.remove('show');
+    hint.textContent = 'Ketik minimal 2 karakter untuk mencari';
+    return;
+  }
+  const q       = val.toLowerCase();
+  const results = MASTER_PARTS.filter(function(p) {
+    return p[0].toLowerCase().includes(q) || p[1].toLowerCase().includes(q);
+  }).slice(0, 40);
+
+  hint.textContent = results.length + ' hasil ditemukan';
   if (results.length === 0) { dropdown.classList.remove('show'); return; }
-  dropdown.innerHTML = results.map(p => `
-    <div class="search-item" onclick="selectPart('${p[0].replace(/'/g,"\\'")}','${p[1].replace(/'/g,"\\'")}')">
-      <div class="item-code">${p[0]}</div>
-      <div class="item-name">${p[1]}</div>
-    </div>`).join('');
+
+  dropdown.innerHTML = results.map(function(p) {
+    const safeCode = p[0].replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    const safeName = p[1].replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    return '<div class="search-item" onclick="selectPart(\'' + safeCode + '\',\'' + safeName + '\')">' +
+      '<div class="item-code">' + p[0] + '</div>' +
+      '<div class="item-name">' + p[1] + '</div>' +
+      '</div>';
+  }).join('');
   dropdown.classList.add('show');
 }
 
@@ -1257,8 +1442,10 @@ function selectPart(code, name) {
   document.getElementById('inputQty').focus();
 }
 
-document.addEventListener('click', e => {
-  if (!e.target.closest('.search-wrap')) document.getElementById('partDropdown').classList.remove('show');
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.search-wrap')) {
+    document.getElementById('partDropdown').classList.remove('show');
+  }
 });
 
 // ══════════════════════════════════════════════════════
@@ -1270,10 +1457,13 @@ function addToDraft() {
   const qty   = parseFloat(document.getElementById('inputQty').value);
   const jenis = document.getElementById('inputJenis').value;
   const ket   = document.getElementById('inputKet').value.trim();
-  if (!kode) { toast('Pilih part terlebih dahulu!', 'error'); return; }
+
+  if (!kode)          { toast('Pilih part terlebih dahulu!', 'error'); return; }
   if (!qty || qty <= 0) { toast('Qty harus lebih dari 0!', 'error'); return; }
+
   draftParts.push({ kode, nama, qty, jenis, ket });
   renderDraft();
+
   document.getElementById('partSearch').value = '';
   document.getElementById('inputKode').value  = '';
   document.getElementById('inputNama').value  = '';
@@ -1281,20 +1471,27 @@ function addToDraft() {
   document.getElementById('inputKet').value   = '';
 }
 
-function removeDraft(idx) { draftParts.splice(idx, 1); renderDraft(); }
+function removeDraft(idx) {
+  draftParts.splice(idx, 1);
+  renderDraft();
+}
 
 function renderDraft() {
   const el = document.getElementById('draftList');
-  document.getElementById('draftCount').textContent = `(${draftParts.length} item)`;
-  if (draftParts.length === 0) { el.innerHTML = '<div class="draft-empty">Belum ada part ditambahkan</div>'; return; }
-  el.innerHTML = draftParts.map((p,i) => `
-    <div class="draft-item">
-      <div class="draft-code">${p.kode}</div>
-      <div class="draft-name">${p.nama}</div>
-      <div class="draft-jenis"><span class="badge badge-${p.jenis==='Supply'?'supply':'kebutuhan'}">${p.jenis}</span></div>
-      <div class="draft-qty">${p.qty}</div>
-      <div class="draft-del" onclick="removeDraft(${i})">✕</div>
-    </div>`).join('');
+  document.getElementById('draftCount').textContent = '(' + draftParts.length + ' item)';
+  if (draftParts.length === 0) {
+    el.innerHTML = '<div class="draft-empty">Belum ada part ditambahkan</div>';
+    return;
+  }
+  el.innerHTML = draftParts.map(function(p, i) {
+    return '<div class="draft-item">' +
+      '<div class="draft-code">' + p.kode + '</div>' +
+      '<div class="draft-name">' + p.nama + '</div>' +
+      '<div class="draft-jenis"><span class="badge badge-' + (p.jenis === 'Supply' ? 'supply' : 'kebutuhan') + '">' + p.jenis + '</span></div>' +
+      '<div class="draft-qty">' + p.qty + '</div>' +
+      '<div class="draft-del" onclick="removeDraft(' + i + ')">✕</div>' +
+      '</div>';
+  }).join('');
 }
 
 // ══════════════════════════════════════════════════════
@@ -1311,43 +1508,37 @@ async function simpanTransaksi() {
 
   const btn = document.getElementById('btnSimpan');
   btn.innerHTML = '<span class="loading"></span> Menyimpan...';
-  btn.disabled = true;
+  btn.disabled  = true;
 
   const baseTxid = consumeTicket();
   const tanggal  = document.getElementById('inputTanggal').value;
-  const jam      = new Date().toTimeString().slice(0,8);
+  const jam      = new Date().toTimeString().slice(0, 8);
 
   let allOk = true;
-for (let i = 0; i < draftParts.length; i++) {
-  const p = draftParts[i];
-  const txid = baseTxid; // ✅ FIX: semua part pakai tiket yang sama
-
-  const res = await callScript('tambahTransaksi', {
-    txid,
-    tanggal,
-    jam,
-    kodePart: p.kode,
-    namaPart: p.nama,
-    jenis: p.jenis,
-    qty: p.qty,
-    keterangan: p.ket,
-    signCMC,
-    signProduksi: signProd,
-    signNX,
-    signPartControl: signPC
-  });
-
-  if (!res || !res.success) {
-    allOk = false;
-    break;
+  for (let i = 0; i < draftParts.length; i++) {
+    const p   = draftParts[i];
+    const res = await callScript('tambahTransaksi', {
+      txid:         baseTxid,
+      tanggal:      tanggal,
+      jam:          jam,
+      kodePart:     p.kode,
+      namaPart:     p.nama,
+      jenis:        p.jenis,
+      qty:          p.qty,
+      keterangan:   p.ket,
+      signCMC:      signCMC,
+      signProduksi: signProd,
+      signNX:       signNX,
+      signPartControl: signPC
+    });
+    if (!res || !res.success) { allOk = false; break; }
   }
-}
 
   btn.innerHTML = '💾 Simpan Transaksi';
-  btn.disabled = false;
+  btn.disabled  = false;
 
   if (allOk) {
-    toast(`✅ ${draftParts.length} transaksi berhasil disimpan!`, 'success');
+    toast('✅ ' + draftParts.length + ' transaksi berhasil disimpan!', 'success');
     resetInput();
   } else {
     toast('❌ Gagal menyimpan. Cek koneksi!', 'error');
@@ -1357,7 +1548,8 @@ for (let i = 0; i < draftParts.length; i++) {
 function resetInput() {
   draftParts = [];
   renderDraft();
-  ['partSearch','inputKode','inputNama','inputQty','inputKet','signCMC','signProduksi','signNX','signPartControl'].forEach(id => {
+  ['partSearch','inputKode','inputNama','inputQty','inputKet',
+   'signCMC','signProduksi','signNX','signPartControl'].forEach(function(id) {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
@@ -1368,35 +1560,41 @@ function resetInput() {
 // ══════════════════════════════════════════════════════
 // PRODUKSI
 // ══════════════════════════════════════════════════════
-function populateModelGrid() { filterModels(); }
-
 function filterModels() {
   const tipe   = document.getElementById('prodTipe').value;
   const search = document.getElementById('modelSearch').value.toLowerCase();
   const grid   = document.getElementById('modelGrid');
-  const filtered = MASTER_MODELS.filter(m => {
+
+  const filtered = MASTER_MODELS.filter(function(m) {
     return (!tipe || m[2] === tipe) &&
       (!search || m[0].toLowerCase().includes(search) || m[1].toLowerCase().includes(search));
   });
-  grid.innerHTML = filtered.length === 0
-    ? '<div style="padding:20px;color:#999;font-size:13px;text-align:center;">Tidak ada model ditemukan</div>'
-    : filtered.map(m => `
-      <div class="model-card" onclick="selectModel('${m[0]}','${m[1].replace(/'/g,"\\'")}','${m[2]}')" id="mc-${m[0]}">
-        <div class="model-int">${m[0]}</div>
-        <div class="model-ext">${m[1]}</div>
-        <div class="model-type">${m[2]}</div>
-      </div>`).join('');
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div style="padding:20px;color:#999;font-size:13px;text-align:center;">Tidak ada model ditemukan</div>';
+    return;
+  }
+  grid.innerHTML = filtered.map(function(m) {
+    const safeInt = m[0].replace(/'/g,"\\'");
+    const safeExt = m[1].replace(/'/g,"\\'");
+    return '<div class="model-card" onclick="selectModel(\'' + safeInt + '\',\'' + safeExt + '\',\'' + m[2] + '\')" id="mc-' + m[0] + '">' +
+      '<div class="model-int">' + m[0] + '</div>' +
+      '<div class="model-ext">' + m[1] + '</div>' +
+      '<div class="model-type">' + m[2] + '</div>' +
+      '</div>';
+  }).join('');
 }
 
 function selectModel(intModel, extModel, tipe) {
-  document.querySelectorAll('.model-card').forEach(c => c.classList.remove('selected'));
-  document.getElementById('mc-'+intModel)?.classList.add('selected');
+  document.querySelectorAll('.model-card').forEach(function(c) { c.classList.remove('selected'); });
+  const card = document.getElementById('mc-' + intModel);
+  if (card) card.classList.add('selected');
   selectedModel = { intModel, extModel, tipe };
   document.getElementById('selectedModelInt').textContent = intModel;
   document.getElementById('selectedModelExt').textContent = extModel + ' (' + tipe + ')';
   document.getElementById('prodInputCard').style.display = 'block';
   document.getElementById('prodQty').focus();
-  document.getElementById('prodInputCard').scrollIntoView({behavior:'smooth', block:'nearest'});
+  document.getElementById('prodInputCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 async function simpanProduksi() {
@@ -1404,21 +1602,27 @@ async function simpanProduksi() {
   const qty = parseInt(document.getElementById('prodQty').value);
   if (!qty || qty <= 0) { toast('Jumlah unit harus lebih dari 0!', 'error'); return; }
   if (!SCRIPT_URL) { toast('Belum ada koneksi!', 'error'); return; }
+
   const btn = event.target;
   btn.innerHTML = '<span class="loading"></span> Memproses...';
-  btn.disabled = true;
+  btn.disabled  = true;
+
   const res = await callScript('inputOutputProduksi', {
-    internalModel: selectedModel.intModel, externalModel: selectedModel.extModel,
-    qty, tanggal: document.getElementById('prodTanggal').value
+    internalModel: selectedModel.intModel,
+    externalModel: selectedModel.extModel,
+    qty:           qty,
+    tanggal:       document.getElementById('prodTanggal').value
   });
+
   btn.innerHTML = '🏭 Simpan Output Produksi';
-  btn.disabled = false;
+  btn.disabled  = false;
+
   if (res && res.success) {
-    toast(`✅ ${selectedModel.extModel}: ${qty} unit | ${res.partsAffected||0} part dikurangi, ${res.partsSkipped||0} dilewati`, 'success');
-    document.getElementById('prodQty').value = '';
+    toast('✅ ' + selectedModel.extModel + ': ' + qty + ' unit | ' + (res.partsAffected || 0) + ' part dikurangi', 'success');
+    document.getElementById('prodQty').value   = '';
     document.getElementById('prodInputCard').style.display = 'none';
     selectedModel = null;
-    document.querySelectorAll('.model-card').forEach(c => c.classList.remove('selected'));
+    document.querySelectorAll('.model-card').forEach(function(c) { c.classList.remove('selected'); });
   } else {
     toast('❌ Gagal: ' + (res ? res.error : 'Koneksi error'), 'error');
   }
@@ -1431,32 +1635,41 @@ async function loadDashboard() {
   if (!SCRIPT_URL) return;
   const res = await callScript('getDashboard', {});
   if (!res) return;
-  document.getElementById('d-masuk').textContent  = fmtNum(res.stok?.totalMasuk);
-  document.getElementById('d-keluar').textContent = fmtNum(res.stok?.totalKeluar);
-  document.getElementById('d-txhari').textContent = res.transaksi?.txHariIni || 0;
-  document.getElementById('d-parts').textContent  = res.stok?.totalParts || 0;
+
+  document.getElementById('d-masuk').textContent  = fmtNum(res.stok && res.stok.totalMasuk);
+  document.getElementById('d-keluar').textContent = fmtNum(res.stok && res.stok.totalKeluar);
+  document.getElementById('d-txhari').textContent = (res.transaksi && res.transaksi.txHariIni) || 0;
+  document.getElementById('d-parts').textContent  = (res.stok && res.stok.totalParts) || 0;
   document.getElementById('d-warn').textContent   =
-    (res.stok?.partsNegative > 0) ? `⚠️ ${res.stok.partsNegative} part negatif` : '✅ Semua stok normal';
+    (res.stok && res.stok.partsNegative > 0)
+      ? '⚠️ ' + res.stok.partsNegative + ' part negatif'
+      : '✅ Semua stok normal';
 
   const tbody = document.getElementById('recentBody');
-  if (res.recentTx?.length > 0) {
-    tbody.innerHTML = res.recentTx.map(t => `<tr>
-      <td class="td-code">${t.txid}</td>
-      <td>${fmtDate(t.tanggal)}</td>
-      <td class="td-code">${t.kodePart}</td>
-      <td>${t.namaPart}</td>
-      <td><span class="badge badge-${t.jenis==='Supply'?'supply':'kebutuhan'}">${t.jenis}</span></td>
-      <td class="td-number">${t.qty}</td>
-    </tr>`).join('');
+  if (res.recentTx && res.recentTx.length > 0) {
+    tbody.innerHTML = res.recentTx.map(function(t) {
+      return '<tr>' +
+        '<td class="td-code">' + (t.txid || '') + '</td>' +
+        '<td>' + fmtDate(t.tanggal) + '</td>' +
+        '<td class="td-code">' + (t.kodePart || '') + '</td>' +
+        '<td>' + (t.namaPart || '') + '</td>' +
+        '<td><span class="badge badge-' + (t.jenis === 'Supply' ? 'supply' : 'kebutuhan') + '">' + (t.jenis || '') + '</span></td>' +
+        '<td class="td-number">' + (t.qty || '') + '</td>' +
+        '</tr>';
+    }).join('');
   } else {
     tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:#999;">Belum ada transaksi</td></tr>';
   }
+
   const mBody = document.getElementById('modelOutputBody');
-  if (res.modelOutput?.length > 0) {
-    mBody.innerHTML = res.modelOutput.map(m => `<tr>
-      <td class="td-code">${m.internal}</td><td>${m.external}</td>
-      <td class="td-number td-pos">${fmtNum(m.output)}</td>
-    </tr>`).join('');
+  if (res.modelOutput && res.modelOutput.length > 0) {
+    mBody.innerHTML = res.modelOutput.map(function(m) {
+      return '<tr>' +
+        '<td class="td-code">' + m.internal + '</td>' +
+        '<td>' + m.external + '</td>' +
+        '<td class="td-number td-pos">' + fmtNum(m.output) + '</td>' +
+        '</tr>';
+    }).join('');
   }
 }
 
@@ -1467,34 +1680,41 @@ async function loadStok() {
   if (!SCRIPT_URL) return;
   const search = document.getElementById('stokSearch').value;
   const filter = document.getElementById('stokFilter').value;
-  const data = await callScript('getStok', {}, search);
-  if (!data) return;
+  const data   = await callScript('getStok', {}, search);
+  if (!data || !Array.isArray(data)) return;
+
   let rows = data;
-  if (filter === 'neg')  rows = rows.filter(r => parseFloat(r.saldo) < 0);
-  if (filter === 'zero') rows = rows.filter(r => parseFloat(r.saldo) === 0);
-  document.getElementById('stokCount').textContent = `${rows.length} part ditampilkan`;
+  if (filter === 'neg')  rows = rows.filter(function(r) { return parseFloat(r.saldo) < 0; });
+  if (filter === 'zero') rows = rows.filter(function(r) { return parseFloat(r.saldo) === 0; });
+
+  document.getElementById('stokCount').textContent = rows.length + ' part ditampilkan';
+
   const tbody = document.getElementById('stokBody');
-  if (rows.length === 0) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:#999;">Tidak ada data</td></tr>'; return; }
-  tbody.innerHTML = rows.slice(0,300).map(r => {
+  if (rows.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:#999;">Tidak ada data</td></tr>';
+    return;
+  }
+  tbody.innerHTML = rows.slice(0, 300).map(function(r) {
     const saldo = parseFloat(r.saldo) || 0;
-    const cls = saldo < 0 ? 'td-neg' : saldo > 0 ? 'td-pos' : '';
-    return `<tr>
-      <td class="td-code">${r.kodePart}</td><td>${r.namaPart}</td>
-      <td class="td-number">${fmtNum(r.masuk)}</td>
-      <td class="td-number">${fmtNum(r.keluar)}</td>
-      <td class="td-number">${fmtNum(r.konsumsi)}</td>
-      <td class="td-number ${cls}">${fmtNum(saldo)}</td>
-    </tr>`;
+    const cls   = saldo < 0 ? 'td-neg' : saldo > 0 ? 'td-pos' : '';
+    return '<tr>' +
+      '<td class="td-code">' + r.kodePart + '</td>' +
+      '<td>' + r.namaPart + '</td>' +
+      '<td class="td-number">' + fmtNum(r.masuk) + '</td>' +
+      '<td class="td-number">' + fmtNum(r.keluar) + '</td>' +
+      '<td class="td-number">' + fmtNum(r.konsumsi) + '</td>' +
+      '<td class="td-number ' + cls + '">' + fmtNum(saldo) + '</td>' +
+      '</tr>';
   }).join('');
 }
 
 // ══════════════════════════════════════════════════════
-// RIWAYAT — Ticket-grouped view
+// RIWAYAT
 // ══════════════════════════════════════════════════════
 async function loadRiwayat() {
   const container = document.getElementById('ticketListBody');
   if (!SCRIPT_URL) {
-    container.innerHTML = '<div style="padding:24px;text-align:center;color:#999;">⚠️ Setting URL Apps Script dulu di tab Setting</div>';
+    container.innerHTML = '<div style="padding:24px;text-align:center;color:#999;">⚠️ Atur URL Apps Script di Setting terlebih dahulu</div>';
     return;
   }
   container.innerHTML = '<div style="padding:24px;text-align:center;color:#999;">⏳ Memuat data...</div>';
@@ -1507,31 +1727,31 @@ async function loadRiwayat() {
 
   const data = await callScript('getTransaksi', {}, null, filters);
   if (!data || !Array.isArray(data)) {
-    container.innerHTML = '<div style="padding:24px;text-align:center;color:var(--red);">❌ Gagal memuat data.</div>';
+    container.innerHTML = '<div style="padding:24px;text-align:center;color:var(--red);">❌ Gagal memuat data. Cek koneksi.</div>';
     return;
   }
 
-  // Group by base ticket (strip trailing -NN)
+  // Group by ticket ID (buang suffix -NN jika ada)
   const ticketMap = {};
-  data.forEach(t => {
-    const baseKey = t.txid ? t.txid.replace(/-\d{2}$/, '') : t.txid;
+  data.forEach(function(t) {
+    const baseKey = t.txid ? t.txid.replace(/-\d{2}$/, '') : (t.txid || '–');
     if (!ticketMap[baseKey]) {
       ticketMap[baseKey] = {
-        txid: baseKey,
-        tanggal: t.tanggal,
-        jenis: t.jenis,
-        signCMC: t.signCMC || '',
-        signProduksi: t.signProduksi || '',
-        signNX: t.signNX || '',
-        signPartControl: t.signPartControl || '',
-        parts: []
+        txid:           baseKey,
+        tanggal:        t.tanggal,
+        jenis:          t.jenis,
+        signCMC:        t.signCMC        || '',
+        signProduksi:   t.signProduksi   || '',
+        signNX:         t.signNX         || '',
+        signPartControl:t.signPartControl|| '',
+        parts:          []
       };
     }
     ticketMap[baseKey].parts.push(t);
   });
 
   allTickets = Object.values(ticketMap);
-  document.getElementById('riwayatCount').textContent = `${allTickets.length} tiket ditemukan`;
+  document.getElementById('riwayatCount').textContent = allTickets.length + ' tiket ditemukan';
 
   if (allTickets.length === 0) {
     container.innerHTML = '<div style="padding:24px;text-align:center;color:#999;">Tidak ada transaksi ditemukan</div>';
@@ -1543,60 +1763,57 @@ async function loadRiwayat() {
 
 function renderTicketList() {
   const container = document.getElementById('ticketListBody');
-  container.innerHTML = allTickets.map((tk, idx) => {
-    const partCount = tk.parts.length;
-    const jenis = tk.parts.map(p => p.jenis).filter((v,i,a)=>a.indexOf(v)===i).join(', ');
-    return `
-      <div>
-        <div class="ticket-list-item" id="tli-${idx}" onclick="toggleTicket(${idx})">
-          <div class="tli-left">
-            <div class="tli-no">${tk.txid || '–'}</div>
-            <div class="tli-meta">${fmtDate(tk.tanggal)} &nbsp;·&nbsp; ${jenis}</div>
-          </div>
-          <div class="tli-right">
-            <span class="tli-count">${partCount} part</span>
-            <button class="ticket-export-btn" onclick="event.stopPropagation();exportTicketExcel(${idx})">📥 Excel</button>
-            <span class="tli-chevron" id="chv-${idx}">▶</span>
-          </div>
-        </div>
-        <div class="ticket-detail" id="td-${idx}">
-          <div class="table-wrap">
-            <table>
-              <thead><tr>
-                <th>Kode Part</th><th>Nama Part</th>
-                <th>Jenis</th><th style="text-align:right;">Qty</th><th>Keterangan</th>
-              </tr></thead>
-              <tbody>
-                ${tk.parts.map(p => `<tr>
-                  <td class="td-code">${p.kodePart||''}</td>
-                  <td>${p.namaPart||''}</td>
-                  <td><span class="badge badge-${p.jenis==='Supply'?'supply':'kebutuhan'}">${p.jenis||''}</span></td>
-                  <td class="td-number">${p.qty||''}</td>
-                  <td style="font-size:11px;color:#777;">${p.keterangan||''}</td>
-                </tr>`).join('')}
-              </tbody>
-            </table>
-          </div>
-          <div class="ticket-signs">
-            <div class="sign-box"><div class="sign-box-label">CMC</div><div class="sign-box-value">${tk.signCMC||'–'}</div></div>
-            <div class="sign-box"><div class="sign-box-label">Produksi</div><div class="sign-box-value">${tk.signProduksi||'–'}</div></div>
-            <div class="sign-box"><div class="sign-box-label">NX</div><div class="sign-box-value">${tk.signNX||'–'}</div></div>
-            <div class="sign-box"><div class="sign-box-label">Part Control</div><div class="sign-box-value">${tk.signPartControl||'–'}</div></div>
-          </div>
-        </div>
-      </div>`;
+  container.innerHTML = allTickets.map(function(tk, idx) {
+    const jenis = tk.parts.map(function(p) { return p.jenis; })
+      .filter(function(v, i, a) { return a.indexOf(v) === i; }).join(', ');
+    return '<div>' +
+      '<div class="ticket-list-item" id="tli-' + idx + '" onclick="toggleTicket(' + idx + ')">' +
+        '<div class="tli-left">' +
+          '<div class="tli-no">' + (tk.txid || '–') + '</div>' +
+          '<div class="tli-meta">' + fmtDate(tk.tanggal) + ' &nbsp;·&nbsp; ' + jenis + '</div>' +
+        '</div>' +
+        '<div class="tli-right">' +
+          '<span class="tli-count">' + tk.parts.length + ' part</span>' +
+          '<button class="ticket-export-btn" onclick="event.stopPropagation();exportTicketCSV(' + idx + ')">📥 Excel</button>' +
+          '<span class="tli-chevron" id="chv-' + idx + '">▶</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="ticket-detail" id="td-' + idx + '">' +
+        '<div class="table-wrap"><table>' +
+          '<thead><tr><th>Kode Part</th><th>Nama Part</th><th>Jenis</th><th style="text-align:right;">Qty</th><th>Keterangan</th></tr></thead>' +
+          '<tbody>' +
+            tk.parts.map(function(p) {
+              return '<tr>' +
+                '<td class="td-code">' + (p.kodePart || '') + '</td>' +
+                '<td>' + (p.namaPart || '') + '</td>' +
+                '<td><span class="badge badge-' + (p.jenis === 'Supply' ? 'supply' : 'kebutuhan') + '">' + (p.jenis || '') + '</span></td>' +
+                '<td class="td-number">' + (p.qty || '') + '</td>' +
+                '<td style="font-size:11px;color:#777;">' + (p.keterangan || '') + '</td>' +
+                '</tr>';
+            }).join('') +
+          '</tbody>' +
+        '</table></div>' +
+        '<div class="ticket-signs">' +
+          '<div class="sign-box"><div class="sign-box-label">CMC</div><div class="sign-box-value">' + (tk.signCMC || '–') + '</div></div>' +
+          '<div class="sign-box"><div class="sign-box-label">Produksi</div><div class="sign-box-value">' + (tk.signProduksi || '–') + '</div></div>' +
+          '<div class="sign-box"><div class="sign-box-label">NX</div><div class="sign-box-value">' + (tk.signNX || '–') + '</div></div>' +
+          '<div class="sign-box"><div class="sign-box-label">Part Control</div><div class="sign-box-value">' + (tk.signPartControl || '–') + '</div></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
   }).join('');
 }
 
 function toggleTicket(idx) {
-  const detail = document.getElementById('td-'+idx);
-  const chv    = document.getElementById('chv-'+idx);
-  const item   = document.getElementById('tli-'+idx);
+  const detail = document.getElementById('td-' + idx);
+  const chv    = document.getElementById('chv-' + idx);
+  const item   = document.getElementById('tli-' + idx);
   const isOpen = detail.classList.contains('show');
-  // close all
-  document.querySelectorAll('.ticket-detail.show').forEach(el => el.classList.remove('show'));
-  document.querySelectorAll('.tli-chevron.open').forEach(el => el.classList.remove('open'));
-  document.querySelectorAll('.ticket-list-item.expanded').forEach(el => el.classList.remove('expanded'));
+
+  document.querySelectorAll('.ticket-detail.show').forEach(function(el) { el.classList.remove('show'); });
+  document.querySelectorAll('.tli-chevron.open').forEach(function(el) { el.classList.remove('open'); });
+  document.querySelectorAll('.ticket-list-item.expanded').forEach(function(el) { el.classList.remove('expanded'); });
+
   if (!isOpen) {
     detail.classList.add('show');
     chv.classList.add('open');
@@ -1604,32 +1821,35 @@ function toggleTicket(idx) {
   }
 }
 
-function exportTicketExcel(idx) {
+function exportTicketCSV(idx) {
   const tk = allTickets[idx];
   if (!tk) return;
 
-  // Build CSV content (Excel-compatible)
-  let csv = '\uFEFF'; // BOM for UTF-8
-  csv += `No. Tiket:,${tk.txid}\n`;
-  csv += `Tanggal:,${fmtDate(tk.tanggal)}\n`;
-  csv += `CMC:,${tk.signCMC||''}\n`;
-  csv += `Produksi:,${tk.signProduksi||''}\n`;
-  csv += `NX:,${tk.signNX||''}\n`;
-  csv += `Part Control:,${tk.signPartControl||''}\n`;
-  csv += '\n';
+  let csv = '\uFEFF'; // UTF-8 BOM
+  csv += 'No. Tiket:,' + tk.txid + '\n';
+  csv += 'Tanggal:,' + fmtDate(tk.tanggal) + '\n';
+  csv += 'CMC:,' + (tk.signCMC || '') + '\n';
+  csv += 'Produksi:,' + (tk.signProduksi || '') + '\n';
+  csv += 'NX:,' + (tk.signNX || '') + '\n';
+  csv += 'Part Control:,' + (tk.signPartControl || '') + '\n\n';
   csv += 'No,Kode Part,Nama Part,Jenis,Qty,Keterangan\n';
-  tk.parts.forEach((p,i) => {
-    csv += `${i+1},"${p.kodePart||''}","${p.namaPart||''}","${p.jenis||''}","${p.qty||''}","${p.keterangan||''}"\n`;
+
+  tk.parts.forEach(function(p, i) {
+    csv += (i + 1) + ',"' + (p.kodePart || '') + '","' +
+      (p.namaPart || '') + '","' + (p.jenis || '') + '",' +
+      (p.qty || '') + ',"' + (p.keterangan || '') + '"\n';
   });
 
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   a.href     = url;
-  a.download = `${tk.txid}_${fmtDate(tk.tanggal).replace(/\//g,'-')}.csv`;
+  a.download = (tk.txid || 'tiket') + '_' + fmtDate(tk.tanggal).replace(/\//g, '-') + '.csv';
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  toast('✅ Export Excel berhasil!', 'success');
+  toast('✅ Export berhasil!', 'success');
 }
 
 function resetFilter() {
@@ -1640,48 +1860,40 @@ function resetFilter() {
 }
 
 // ══════════════════════════════════════════════════════
-// SETTING
-// ══════════════════════════════════════════════════════
-function saveSetting() {
-  SCRIPT_URL = document.getElementById('scriptUrl').value.trim();
-  const op = (document.getElementById('operatorName')?.value || '').trim() || 'Operator';
-  localStorage.setItem('fm_script_url', SCRIPT_URL);
-  localStorage.setItem('fm_operator', op);
-  document.getElementById('userLabel').textContent = op;
-  const av = document.getElementById('userAvatar');
-  if (av) av.textContent = op.charAt(0).toUpperCase();
-  if (SCRIPT_URL) loadPartList();
-  toast('✅ Setting tersimpan!', 'success');
-}
-
-async function testConnection() {
-  const url = document.getElementById('scriptUrl').value.trim();
-  if (!url) { toast('Masukkan URL Apps Script dulu!', 'error'); return; }
-  const status = document.getElementById('connStatus');
-  status.innerHTML = '<span class="loading" style="border-top-color:var(--red);border-color:#ddd"></span> Testing...';
-  try {
-    const res = await callScriptGET(url, { action:'ping' });
-    status.innerHTML = (res && (res.status === 'OK' || res.success !== false))
-      ? '✅ <span style="color:var(--green);">Koneksi berhasil!</span>'
-      : '⚠️ <span style="color:var(--amber);">Terhubung, response tidak dikenali.</span>';
-  } catch(e) {
-    status.innerHTML = `❌ <span style="color:var(--red);">Gagal: ${e.message}</span>`;
-  }
-}
-
-// ══════════════════════════════════════════════════════
-// API CALLS (JSONP)
+// API — JSONP (menghindari CORS)
 // ══════════════════════════════════════════════════════
 function callScriptGET(url, params) {
-  return new Promise((resolve, reject) => {
-    const cbName = 'fm_cb_' + Date.now();
-    const fullUrl = url + '?' + new URLSearchParams(params).toString() + '&callback=' + cbName;
-    window[cbName] = data => { delete window[cbName]; document.getElementById(cbName)?.remove(); resolve(data); };
-    const script = document.createElement('script');
-    script.id = cbName;
+  return new Promise(function(resolve, reject) {
+    const cbName  = 'fm_cb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+    const qs      = new URLSearchParams(params).toString();
+    const fullUrl = url + '?' + qs + '&callback=' + cbName;
+
+    var timeoutId = setTimeout(function() {
+      if (window[cbName]) {
+        delete window[cbName];
+        var s = document.getElementById(cbName);
+        if (s) s.remove();
+        reject(new Error('Request timeout (10s)'));
+      }
+    }, 10000);
+
+    window[cbName] = function(data) {
+      clearTimeout(timeoutId);
+      delete window[cbName];
+      var s = document.getElementById(cbName);
+      if (s) s.remove();
+      resolve(data);
+    };
+
+    var script = document.createElement('script');
+    script.id  = cbName;
     script.src = fullUrl;
-    script.onerror = () => { delete window[cbName]; script.remove(); reject(new Error('Script load failed')); };
-    setTimeout(() => { if (window[cbName]) { delete window[cbName]; script.remove(); reject(new Error('Timeout')); } }, 10000);
+    script.onerror = function() {
+      clearTimeout(timeoutId);
+      delete window[cbName];
+      script.remove();
+      reject(new Error('Gagal memuat script (network error atau URL salah)'));
+    };
     document.head.appendChild(script);
   });
 }
@@ -1689,12 +1901,15 @@ function callScriptGET(url, params) {
 async function callScript(action, data, search, filters) {
   if (!SCRIPT_URL) return null;
   try {
-    const params = { action };
-    if (data)    params.data    = JSON.stringify(data);
-    if (search !== undefined && search !== null) params.search = search;
-    if (filters) params.filters = JSON.stringify(filters);
+    const params = { action: action };
+    if (data   && Object.keys(data).length > 0) params.data    = JSON.stringify(data);
+    if (search !== undefined && search !== null) params.search  = search;
+    if (filters)                                 params.filters = JSON.stringify(filters);
     return await callScriptGET(SCRIPT_URL, params);
-  } catch(e) { console.error('API error:', e); return null; }
+  } catch(e) {
+    console.error('API error [' + action + ']:', e.message);
+    return null;
+  }
 }
 
 // ══════════════════════════════════════════════════════
@@ -1703,17 +1918,19 @@ async function callScript(action, data, search, filters) {
 function toast(msg, type) {
   const el = document.getElementById('toast');
   el.textContent = msg;
-  el.className = 'toast show ' + (type || '');
-  clearTimeout(el._t);
-  el._t = setTimeout(() => el.classList.remove('show'), 3500);
+  el.className   = 'toast show ' + (type || '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { el.classList.remove('show'); }, 3500);
 }
+
 function fmtNum(n) {
-  return (parseFloat(n)||0).toLocaleString('id-ID', {maximumFractionDigits:2});
+  return (parseFloat(n) || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 });
 }
+
 function fmtDate(d) {
   if (!d) return '';
   const p = String(d).split('T')[0].split('-');
-  return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : d;
+  return p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : String(d);
 }
 </script>
 </body>

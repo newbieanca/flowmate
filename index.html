@@ -37,7 +37,7 @@ body {
   display: flex;
   overflow-x: hidden;
 }
-
+ 
 /* ═══════════════════════ SIDEBAR ═══════════════════════ */
 .sidebar {
   width: var(--sidebar-w);
@@ -53,7 +53,7 @@ body {
   box-shadow: 4px 0 16px rgba(0,0,0,0.18);
 }
 .sidebar.collapsed { width: var(--sidebar-collapsed); }
-
+ 
 /* Brand */
 .sidebar-brand {
   display: flex;
@@ -89,7 +89,7 @@ body {
   white-space: nowrap;
   margin-top: 1px;
 }
-
+ 
 /* Nav items */
 .sidebar-nav {
   flex: 1;
@@ -132,7 +132,7 @@ body {
   font-weight: 500;
   letter-spacing: .2px;
 }
-
+ 
 /* Sidebar footer */
 .sidebar-footer {
   padding: 14px 16px;
@@ -156,7 +156,7 @@ body {
 .user-info { overflow: hidden; }
 .user-name { font-size: 12px; font-weight: 600; color: #fff; white-space: nowrap; }
 .user-role { font-size: 10px; color: rgba(255,255,255,0.4); white-space: nowrap; }
-
+ 
 /* Toggle btn */
 .sidebar-toggle {
   position: absolute;
@@ -175,7 +175,7 @@ body {
   box-shadow: var(--shadow);
 }
 .sidebar-toggle:hover { background: var(--red); color: #fff; border-color: var(--red); }
-
+ 
 /* ═══════════════════════ TOPBAR ═══════════════════════ */
 .topbar {
   position: fixed;
@@ -214,7 +214,7 @@ body {
   display: inline-block;
 }
 .topbar-date { font-size: 12px; color: var(--gray); }
-
+ 
 /* ═══════════════════════ LAYOUT ═══════════════════════ */
 .layout {
   margin-left: var(--sidebar-w);
@@ -233,7 +233,7 @@ body {
 }
 .screen { display: none; }
 .screen.active { display: block; }
-
+ 
 /* ═══════════════════════ CARDS ═══════════════════════ */
 .card {
   background: #fff;
@@ -261,7 +261,7 @@ body {
   background: var(--red);
   border-radius: 2px;
 }
-
+ 
 /* ═══════════════════════ STAT CARDS ═══════════════════════ */
 .stat-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(150px,1fr)); gap: 14px; margin-bottom: 20px; }
 .stat-card {
@@ -281,12 +281,12 @@ body {
 .stat-card.amber .stat-value { color: var(--amber); }
 .stat-card.blue  .stat-value { color: var(--blue); }
 .stat-sub { font-size: 11px; color: var(--gray); }
-
+ 
 /* ═══════════════════════ SECTION HEADER ═══════════════════════ */
 .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
 .section-title { font-size: 18px; font-weight: 800; color: var(--black); }
 .section-sub { font-size: 12px; color: var(--gray); margin-top: 3px; }
-
+ 
 /* ═══════════════════════ FORM ═══════════════════════ */
 .form-group { margin-bottom: 14px; }
 .form-label {
@@ -314,7 +314,7 @@ body {
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
 .form-row-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; }
-
+ 
 /* Sign section */
 .sign-section {
   background: var(--gray-lt);
@@ -361,7 +361,7 @@ body {
 }
 .sign-input:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 3px rgba(227,30,36,0.08); }
 .sign-input::placeholder { color: #BDBDBD; font-weight: 400; }
-
+ 
 /* ═══════════════════════ BUTTONS ═══════════════════════ */
 .btn {
   padding: 9px 18px;
@@ -387,7 +387,7 @@ body {
 .btn-sm { padding: 6px 12px; font-size: 11px; }
 .btn-lg { padding: 12px 24px; font-size: 14px; width: 100%; justify-content: center; }
 .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
-
+ 
 /* ═══════════════════════ SEARCH DROPDOWN ═══════════════════════ */
 .search-wrap { position: relative; }
 .search-dropdown {
@@ -409,7 +409,7 @@ body {
 .search-item .item-code { font-weight: 700; color: var(--red); font-size: 11px; font-family: 'IBM Plex Mono', monospace; }
 .search-item .item-name { color: var(--gray-dk); }
 .search-hint { font-size: 11px; color: var(--gray); margin-top: 4px; }
-
+ 
 /* ═══════════════════════ TABLE ═══════════════════════ */
 .table-wrap { overflow-x: auto; border-radius: var(--radius); }
 table { width: 100%; border-collapse: collapse; font-size: 12px; }
@@ -432,7 +432,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
 .td-number { text-align: right; font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
 .td-neg { color: var(--red); }
 .td-pos { color: var(--green); }
-
+ 
 /* ═══════════════════════ BADGES ═══════════════════════ */
 .badge {
   display: inline-block;
@@ -446,7 +446,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
 .badge-kebutuhan { background: var(--amber-lt); color: var(--amber); }
 .badge-ok { background: var(--green-lt); color: var(--green); }
 .badge-warn { background: var(--red-lt); color: var(--red); }
-
+ 
 /* ═══════════════════════ TICKET BOX ═══════════════════════ */
 .ticket-box {
   background: #1A1A2E;
@@ -462,7 +462,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
   border: 2px solid var(--red);
 }
 .ticket-label { font-size: 10px; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; font-weight: 600; }
-
+ 
 /* ═══════════════════════ DRAFT LIST ═══════════════════════ */
 .draft-list { border: 1.5px solid #EEE; border-radius: var(--radius); overflow: hidden; }
 .draft-item { display: flex; align-items: center; padding: 10px 13px; border-bottom: 1px solid #F0F0F0; gap: 10px; font-size: 12px; }
@@ -475,7 +475,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
 .draft-del { color: var(--red); cursor: pointer; padding: 4px 7px; border-radius: 4px; font-size: 11px; }
 .draft-del:hover { background: var(--red-lt); }
 .draft-empty { padding: 24px; text-align: center; color: var(--gray); font-size: 13px; }
-
+ 
 /* ═══════════════════════ FILTER BAR ═══════════════════════ */
 .filter-bar {
   display: flex;
@@ -489,7 +489,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
   align-items: flex-end;
 }
 .filter-bar .form-control { flex: 1; min-width: 130px; }
-
+ 
 /* ═══════════════════════ MODEL GRID ═══════════════════════ */
 .model-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(180px,1fr)); gap: 10px; }
 .model-card {
@@ -505,7 +505,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
 .model-int { font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 10px; color: var(--red); }
 .model-ext { font-size: 12px; font-weight: 600; color: var(--black); margin: 2px 0; }
 .model-type { font-size: 10px; color: var(--gray); }
-
+ 
 /* ═══════════════════════ RIWAYAT TICKET LIST ═══════════════════════ */
 .ticket-list-item {
   display: flex;
@@ -527,7 +527,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
 .tli-count { font-size: 11px; color: var(--gray-dk); background: var(--gray-lt); padding: 2px 8px; border-radius: 10px; font-weight: 600; }
 .tli-chevron { font-size: 11px; color: var(--gray); transition: transform .2s; }
 .tli-chevron.open { transform: rotate(90deg); }
-
+ 
 /* Ticket detail expand */
 .ticket-detail {
   display: none;
@@ -566,7 +566,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
   font-family: inherit;
 }
 .ticket-export-btn:hover { background: #1B5E20; }
-
+ 
 /* ═══════════════════════ TOAST ═══════════════════════ */
 .toast {
   position: fixed;
@@ -588,7 +588,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
 .toast.show { opacity: 1; transform: translateY(0); }
 .toast.success { border-left-color: var(--green); }
 .toast.error { border-left-color: var(--red); }
-
+ 
 /* ═══════════════════════ LOADING ═══════════════════════ */
 .loading {
   display: inline-block;
@@ -601,7 +601,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
   margin-right: 6px;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-
+ 
 /* ═══════════════════════ CONFIG BANNER ═══════════════════════ */
 .config-banner {
   background: var(--amber-lt);
@@ -615,7 +615,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
   align-items: center;
   gap: 10px;
 }
-
+ 
 /* ═══════════════════════ TOOLTIP ═══════════════════════ */
 .sidebar.collapsed .nav-item {
   position: relative;
@@ -625,7 +625,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
 }
 .sidebar.collapsed .brand-text { display: none; }
 .sidebar.collapsed .sidebar-user .user-info { display: none; }
-
+ 
 /* ═══════════════════════ MOBILE OVERLAY ═══════════════════════ */
 .sidebar-overlay {
   display: none;
@@ -635,7 +635,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
   z-index: 199;
 }
 .sidebar-overlay.show { display: block; }
-
+ 
 /* ═══════════════════════ MOBILE TOGGLE ═══════════════════════ */
 .mobile-menu-btn {
   display: none;
@@ -647,7 +647,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
   padding: 4px;
   margin-right: 8px;
 }
-
+ 
 /* ═══════════════════════ RESPONSIVE ═══════════════════════ */
 @media (max-width: 768px) {
   .sidebar {
@@ -675,20 +675,20 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
   justify-content: center;
   padding: 12px 0;
 }
-
+ 
 .sidebar.collapsed .brand-icon {
   margin: 0 auto;
   font-size: 11px;
   padding: 4px 6px;
 }
-
+ 
 .sidebar.collapsed .brand-text {
   display: none;
 }
 </style>
 </head>
 <body>
-
+ 
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-brand">
@@ -698,7 +698,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
       <div class="brand-sub">Part Control System</div>
     </div>
   </div>
-
+ 
   <nav class="sidebar-nav">
     <div class="nav-item active" onclick="showScreen('dashboard', this)">
       <span class="nav-icon">📊</span>
@@ -725,7 +725,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
       <span class="nav-label">Setting</span>
     </div>
   </nav>
-
+ 
   <div class="sidebar-footer">
     <div class="sidebar-user">
       <div class="user-avatar" id="userAvatar">OP</div>
@@ -735,13 +735,13 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
       </div>
     </div>
   </div>
-
+ 
   <div class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="Toggle sidebar">◀</div>
 </aside>
-
+ 
 <!-- MOBILE OVERLAY -->
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
-
+ 
 <!-- LAYOUT WRAPPER -->
 <div class="layout">
   <!-- TOPBAR -->
@@ -757,7 +757,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
       <div class="badge-online">Online</div>
     </div>
   </div>
-
+ 
   <!-- MAIN CONTENT -->
   <div class="main">
     <!-- ═══════ SCREEN: DASHBOARD ═══════ -->
@@ -810,7 +810,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
         </div>
       </div>
     </div>
-
+ 
     <!-- ═══════ SCREEN: INPUT TRANSAKSI ═══════ -->
     <div id="screen-input" class="screen">
       <div class="section-header">
@@ -822,7 +822,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
       <div class="card">
         <div class="ticket-label">No. Tiket Transaksi</div>
         <div class="ticket-box" id="ticketDisplay">WMPC-...</div>
-
+ 
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Tanggal</label>
@@ -836,7 +836,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
             </select>
           </div>
         </div>
-
+ 
         <div class="form-group">
           <label class="form-label">Cari Part (Kode atau Nama)</label>
           <div class="search-wrap">
@@ -847,7 +847,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
           </div>
           <div class="search-hint" id="searchHint">Ketik minimal 2 karakter untuk mencari</div>
         </div>
-
+ 
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Kode Part</label>
@@ -858,7 +858,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
             <input type="text" class="form-control" id="inputNama" readonly placeholder="Terisi otomatis">
           </div>
         </div>
-
+ 
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Qty</label>
@@ -869,13 +869,13 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
             <input type="text" class="form-control" id="inputKet" placeholder="Opsional">
           </div>
         </div>
-
-
+ 
+ 
         <div style="margin-top:14px;">
           <button class="btn btn-secondary" onclick="addToDraft()">＋ Tambah ke Daftar</button>
         </div>
       </div>
-
+ 
       <div class="card">
         <div class="card-title">Daftar Part <span id="draftCount" style="font-weight:400;color:#999;font-size:11px;">(0 item)</span></div>
         <div id="draftList" class="draft-list">
@@ -913,7 +913,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
         </div>
       </div>
     </div>
-
+ 
     <!-- ═══════ SCREEN: OUTPUT PRODUKSI ═══════ -->
     <div id="screen-produksi" class="screen">
       <div class="section-header">
@@ -963,7 +963,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
         <button class="btn btn-primary btn-lg" onclick="simpanProduksi()">🏭 Simpan Output Produksi</button>
       </div>
     </div>
-
+ 
     <!-- ═══════ SCREEN: STOK PART ═══════ -->
     <div id="screen-stok" class="screen">
       <div class="section-header">
@@ -997,7 +997,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
         </div>
       </div>
     </div>
-
+ 
     <!-- ═══════ SCREEN: RIWAYAT ═══════ -->
     <div id="screen-riwayat" class="screen">
       <div class="section-header">
@@ -1006,7 +1006,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
           <div class="section-sub" id="riwayatCount">Klik tiket untuk melihat detail</div>
         </div>
       </div>
-
+ 
       <!-- Filter bar -->
       <div class="filter-bar">
         <div style="display:flex;flex-direction:column;gap:3px;flex:1;min-width:130px;">
@@ -1030,7 +1030,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
           <button class="btn btn-secondary btn-sm" onclick="resetFilter()">✕ Reset</button>
         </div>
       </div>
-
+ 
       <!-- Ticket list -->
       <div class="card" style="padding:0;" id="ticketListCard">
         <div id="ticketListBody">
@@ -1038,7 +1038,7 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
         </div>
       </div>
     </div>
-
+ 
     <!-- ═══════ SCREEN: SETTING ═══════ -->
     <div id="screen-setting" class="screen">
       <div class="section-title" style="margin-bottom:20px;">⚙️ Pengaturan</div>
@@ -1070,18 +1070,18 @@ tbody tr:nth-child(even):hover { background: var(--red-lt); }
     </div>
   </div><!-- end .main -->
 </div><!-- end .layout -->
-
+ 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
-
+ 
 <script>
 // ══════════════════════════════════════════════════════
 // MASTER DATA
 // ══════════════════════════════════════════════════════
 let MASTER_PARTS = []; // Load dari BOM_READY via Apps Script
-
+ 
 const MASTER_MODELS=[["A3EXT65NTB","ES-T65NT-BL","TWINTUB"],["A3EXT65NTH","ES-T65NT-GY","TWINTUB"],["A3EXT70MWB","ES-T70MW-BL","TWINTUB"],["A3EXT70MWP","ES-T70MW-PK","TWINTUB"],["A3EXT70MWL","ES-T70MW-LC","TWINTUB"],["A3EXT79SJB","ES-T79SJ-BL","TWINTUB"],["A3EXT79SJP","ES-T79SJ-PK","TWINTUB"],["A3EXT89SJG","ES-T89SJ-GR","TWINTUB"],["A3EXT90MWB","ES-T90MW-BK","TWINTUB"],["A3EXT90MWH","ES-T90MW-HK","TWINTUB"],["A3EXT90MWP","ES-T90MW-PK","TWINTUB"],["A3EXT75NTB","ES-T75NT-BL","TWINTUB"],["A3EXT75NTP","ES-T75NT-PK","TWINTUB"],["A3EXT75NTH","ES-T75NT-GY","TWINTUB"],["A3EXT80MWB","ES-T80MW-BK","TWINTUB"],["A3EXT80MWH","ES-T80MW-HK","TWINTUB"],["A3EXT80MWP","ES-T80MW-PK","TWINTUB"],["A3EXT68MWB","ES-T68MW-BK","TWINTUB"],["A3EXT68MWP","ES-T68MW-PK","TWINTUB"],["A3EXT85CRB","ES-T85CR-BK","TWINTUB"],["A3EXT85CRP","ES-T85CR-PK","TWINTUB"],["A3EXT85CRV","ES-T85CR-VK","TWINTUB"],["A3EXT871DB","ES-T871DM-BL","TWINTUB"],["A3EXT871DP","ES-T871DM-PK","TWINTUB"],["A3EXT971DB","ES-T971DM-BL","TWINTUB"],["A3EXT971DP","ES-T971DM-PK","TWINTUB"],["A3EXT85NTP","ES-T85NT-PK","TWINTUB"],["A3EXT85NTL","ES-T85NT-LC","TWINTUB"],["A3EXT95NTP","ES-T95NT-PK","TWINTUB"],["A3EXT95NTL","ES-T95NT-LC","TWINTUB"],["A3EXT86CLH","ES-T86CL-HK","TWINTUB"],["A3EXT96CLH","ES-T96CL-HK","TWINTUB"],["A3EXT1290B","ES-T1290WA-BL","TWINTUB"],["A3EXT1290P","ES-T1290WA-PK","TWINTUB"],["A3EXT1490B","ES-T1490WA-BL","TWINTUB"],["A3EXT1490R","ES-T1490WA-RD","TWINTUB"],["A3EXT97CMB","ES-T97CM-BL","TWINTUB"],["A3EXT1070G","ES-T1070SJ-GR","TWINTUB"],["A3EXT95CRB","ES-T95CR-BK","TWINTUB"],["A3EXT95CRP","ES-T95CR-PK","TWINTUB"],["A3EXT95CRV","ES-T95CR-VK","TWINTUB"],["A3EXT99SJB","ES-T99SJ-BL","TWINTUB"],["A3EXT99SJP","ES-T99SJ-PK","TWINTUB"],["A3EXT1090B","ES-T1090-BK","TWINTUB"],["A3EXT1090P","ES-T1090-PK","TWINTUB"],["A3EXT1090V","ES-T1090-VK","TWINTUB"],["A3EXT1270B","ES-T1270SJ-BL","TWINTUB"],["A3EXT1270P","ES-T1270SJ-PK","TWINTUB"],["A3EXT77DAB","ES-T77DA-BK","TWINTUB"],["A3EXT77DAR","ES-T77DA-RK","TWINTUB"],["A3EXT79SJL","ES-T79SJ-LCT","TWINTUB"],["A3EXT79SJT","ES-T79SJ-BLT","TWINTUB"],["A3EXZ115YS","ES-M1150XT-SM","FULL AUTO"],["A3EXX105YS","ES-M1050XT-SA","FULL AUTO"],["A3EXX95VYS","ES-M9500XT-SA","FULL AUTO"],["A3EXX85VYS","ES-M8500XT-SA","FULL AUTO"],["A3EXY10PYH","ES-M1000T-GG","FULL AUTO"],["A3EXY90PYH","ES-M9000T-GG","FULL AUTO"],["A3EXY80PYH","ES-M8000T-GG","FULL AUTO"],["A3EXA80PYH","ES-M8000P-GG","FULL AUTO"],["A3EXA70PYH","ES-M7000P-GG","FULL AUTO"],["A3EXW90PYH","ES-M909T-GG","FULL AUTO"],["A3EXW80PYH","ES-M809T-GG","FULL AUTO"],["A3EXW10PYH","ES-M1009T-GG","FULL AUTO"],["A3EXK11HYS","ES-M1108T-SAK","FULL AUTO"],["A3EXW11HYH","ES-M1109T-GG","FULL AUTO"],["A3EXW12HYS","ES-M1209T-SA","FULL AUTO"],["A3EXK10HYS","ES-M1008T-SAK","FULL AUTO"],["A3EXW11SPS","ES-S115HP-SL (SPC)","FULL AUTO"],["A3EXW11SMS","ES-W1109S (SEM)","FULL AUTO"],["A3EXW90HPH","ES-S95HP-GY (SPC)","FULL AUTO"],["A3EXX105VW","ES-W105TWXT-SA (SSC 2.0)","FULL AUTO"],["A3EXX85VWH","ES-W85TWXT-SA (SSC 2.0)","FULL AUTO"],["A3EXX95VWH","ES-W95TWXT-SA (SSC 2.0)","FULL AUTO"],["A3EXW80GBH","ES-W80EW-H (BLD)","FULL AUTO"],["A3EXW90GBH","ES-W90EW-H (BLD)","FULL AUTO"],["A3EXW11HBS","ES-W110DS-S (BLD)","FULL AUTO"],["A3EXW10HBH","ES-W100DS-H (BLD)","FULL AUTO"],["A3EXW80HMH","ES-W809H (SEM)","FULL AUTO"],["A3EXW10SMH","ES-W1009S (SEM)","FULL AUTO"],["A3EXW80PZP","ES-MW105Z-P (PNG)","FULL AUTO"],["A3EXW11PZP","ES-MW135Z-P (PNG)","FULL AUTO"],["A3EXP105VW","ES-W105TWXT-SAP","FULL AUTO"],["A3EXW80HPH","ES-S85HP-GY (SPC)","FULL AUTO"],["A3EXW10SPH","ES-S105HP-GY (SPC)","FULL AUTO"],["A3EXW10HWH","ES-W100DS-H (SSC)","FULL AUTO"],["A3EXW11HWS","ES-W110DS-S (SSC)","FULL AUTO"],["A3EXP85VWH","ES-W85TWXT-SAP","FULL AUTO"],["A3EXW90GWH","ES-W90EW-H (SSC)","FULL AUTO"],["A3EXW11PGH","ES-MW135Z-S (GSO)","FULL AUTO"],["A3EXW90PGH","ES-MW115Z-H (GSO)","FULL AUTO"],["A3EXW80PGH","ES-MW105Z-H (GSO)","FULL AUTO"],["A3EXW10PGH","ES-MW125Z-H (GSO)","FULL AUTO"],["A3EXW80GVH","ES-W80GV-H (SVN)","FULL AUTO"],["A3EXK95HVS","ES-W95HV-S (SVN)","FULL AUTO"],["A3EXK78GVA","ES-W78GV-G (SVN)","FULL AUTO"],["A3EXK78GVH","ES-W78GV-H (SVN)","FULL AUTO"],["A3EXW11HVS","ES-W110HV-S (SVN)","FULL AUTO"],["A3EXW82GVH","ES-W82GV-H (SVN)","FULL AUTO"],["A3EXW102VH","ES-W102PV-H (SVN)","FULL AUTO"],["A3EXW10HVH","ES-W100PV-H (SVN)","FULL AUTO"],["A3EXX95HVS","ES-X95HV-S (SVN 2.0)","FULL AUTO"],["A3EXX105HV","ES-X105HV-S (SVN 2.0)","FULL AUTO"],["A3EXW80HTH","ES-W80HT-GY (STCL)","FULL AUTO"],["A3EXK80GTH","ES-U80GT-GY (STCL)","FULL AUTO"],["A3EXW90HTH","ES-W90HT-GY (STCL)","FULL AUTO"],["A3EXW10HTH","ES-W10HT-GY (STCL)","FULL AUTO"],["A3EXW11HTS","ES-W11HT-SL (STCL)","FULL AUTO"]];
-
+ 
 // ══════════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════════
@@ -1090,7 +1090,7 @@ let draftParts = [];
 let selectedModel = null;
 let sidebarCollapsed = false;
 let allTickets = []; // cached riwayat data grouped by ticket
-
+ 
 // ══════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════
@@ -1098,16 +1098,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('inputTanggal').value = today;
   document.getElementById('prodTanggal').value  = today;
-
+ 
   document.getElementById('scriptUrl').value = SCRIPT_URL;
-
+ 
   const dateStr = new Date().toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
   document.getElementById('dashDate').textContent = dateStr;
   document.getElementById('dashSubDate').textContent = dateStr;
-
+ 
   generateTicket();
   populateModelGrid();
-
+ 
   if (SCRIPT_URL) {
     loadDashboard();
     loadPartList(); // Load part list dari BOM_READY
@@ -1115,7 +1115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     showConfigBanner();
   }
 });
-
+ 
 // ══════════════════════════════════════════════════════
 // SIDEBAR
 // ══════════════════════════════════════════════════════
@@ -1134,7 +1134,7 @@ function closeMobileSidebar() {
   document.getElementById('sidebar').classList.remove('mobile-open');
   document.getElementById('sidebarOverlay').classList.remove('show');
 }
-
+ 
 // ══════════════════════════════════════════════════════
 // NAVIGATION
 // ══════════════════════════════════════════════════════
@@ -1146,7 +1146,7 @@ const screenTitles = {
   riwayat:   'Riwayat Transaksi',
   setting:   'Pengaturan'
 };
-
+ 
 function showScreen(name, el) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
@@ -1154,12 +1154,12 @@ function showScreen(name, el) {
   if (el) el.classList.add('active');
   document.getElementById('topbarTitle').textContent = screenTitles[name] || '';
   closeMobileSidebar();
-
+ 
   if (name === 'dashboard') loadDashboard();
   if (name === 'stok')      loadStok();
   if (name === 'riwayat')   loadRiwayat();
 }
-
+ 
 function showConfigBanner() {
   const main = document.querySelector('.main');
   const banner = document.createElement('div');
@@ -1167,7 +1167,7 @@ function showConfigBanner() {
   banner.innerHTML = '⚠️ <strong>Belum terhubung ke Google Sheets.</strong> Buka Setting dan masukkan URL Apps Script.';
   main.insertBefore(banner, main.firstChild);
 }
-
+ 
 // ══════════════════════════════════════════════════════
 // TICKET GENERATOR
 // ══════════════════════════════════════════════════════
@@ -1187,13 +1187,13 @@ function generateTicket() {
   document.getElementById('ticketDisplay').textContent = txid;
   return { txid, seq, dateKey };
 }
-
+ 
 function consumeTicket() {
   const { txid, seq } = generateTicket();
   localStorage.setItem('fm_ticket_seq', String(seq));
   return txid;
 }
-
+ 
 // ══════════════════════════════════════════════════════
 // PART SEARCH
 // ══════════════════════════════════════════════════════
@@ -1208,7 +1208,7 @@ async function loadPartList() {
     }
   } catch(e) { console.warn('loadPartList error:', e); }
 }
-
+ 
 function searchPart(val) {
   const dropdown = document.getElementById('partDropdown');
   const hint = document.getElementById('searchHint');
@@ -1224,7 +1224,7 @@ function searchPart(val) {
     </div>`).join('');
   dropdown.classList.add('show');
 }
-
+ 
 function selectPart(code, name) {
   document.getElementById('partSearch').value = code + ' – ' + name;
   document.getElementById('inputKode').value  = code;
@@ -1232,11 +1232,11 @@ function selectPart(code, name) {
   document.getElementById('partDropdown').classList.remove('show');
   document.getElementById('inputQty').focus();
 }
-
+ 
 document.addEventListener('click', e => {
   if (!e.target.closest('.search-wrap')) document.getElementById('partDropdown').classList.remove('show');
 });
-
+ 
 // ══════════════════════════════════════════════════════
 // DRAFT MANAGEMENT
 // ══════════════════════════════════════════════════════
@@ -1256,9 +1256,9 @@ function addToDraft() {
   document.getElementById('inputQty').value   = '';
   document.getElementById('inputKet').value   = '';
 }
-
+ 
 function removeDraft(idx) { draftParts.splice(idx, 1); renderDraft(); }
-
+ 
 function renderDraft() {
   const el = document.getElementById('draftList');
   document.getElementById('draftCount').textContent = `(${draftParts.length} item)`;
@@ -1272,32 +1272,32 @@ function renderDraft() {
       <div class="draft-del" onclick="removeDraft(${i})">✕</div>
     </div>`).join('');
 }
-
+ 
 // ══════════════════════════════════════════════════════
 // SIMPAN TRANSAKSI
 // ══════════════════════════════════════════════════════
 async function simpanTransaksi() {
   if (draftParts.length === 0) { toast('Tambahkan minimal 1 part!', 'error'); return; }
   if (!SCRIPT_URL) { toast('Belum ada koneksi. Atur URL Apps Script di Setting!', 'error'); return; }
-
+ 
   const signCMC  = document.getElementById('signCMC').value.trim();
   const signProd = document.getElementById('signProduksi').value.trim();
   const signNX   = document.getElementById('signNX').value.trim();
   const signPC   = document.getElementById('signPartControl').value.trim();
-
+ 
   const btn = document.getElementById('btnSimpan');
   btn.innerHTML = '<span class="loading"></span> Menyimpan...';
   btn.disabled = true;
-
+ 
   const baseTxid = consumeTicket();
   const tanggal  = document.getElementById('inputTanggal').value;
   const jam      = new Date().toTimeString().slice(0,8);
-
+ 
   let allOk = true;
 for (let i = 0; i < draftParts.length; i++) {
   const p = draftParts[i];
   const txid = baseTxid; // ✅ FIX: semua part pakai tiket yang sama
-
+ 
   const res = await callScript('tambahTransaksi', {
     txid,
     tanggal,
@@ -1312,16 +1312,16 @@ for (let i = 0; i < draftParts.length; i++) {
     signNX,
     signPartControl: signPC
   });
-
+ 
   if (!res || !res.success) {
     allOk = false;
     break;
   }
 }
-
+ 
   btn.innerHTML = '💾 Simpan Transaksi';
   btn.disabled = false;
-
+ 
   if (allOk) {
     toast(`✅ ${draftParts.length} transaksi berhasil disimpan!`, 'success');
     resetInput();
@@ -1329,7 +1329,7 @@ for (let i = 0; i < draftParts.length; i++) {
     toast('❌ Gagal menyimpan. Cek koneksi!', 'error');
   }
 }
-
+ 
 function resetInput() {
   draftParts = [];
   renderDraft();
@@ -1340,12 +1340,12 @@ function resetInput() {
   document.getElementById('inputJenis').selectedIndex = 0;
   generateTicket();
 }
-
+ 
 // ══════════════════════════════════════════════════════
 // PRODUKSI
 // ══════════════════════════════════════════════════════
 function populateModelGrid() { filterModels(); }
-
+ 
 function filterModels() {
   const tipe   = document.getElementById('prodTipe').value;
   const search = document.getElementById('modelSearch').value.toLowerCase();
@@ -1363,7 +1363,7 @@ function filterModels() {
         <div class="model-type">${m[2]}</div>
       </div>`).join('');
 }
-
+ 
 function selectModel(intModel, extModel, tipe) {
   document.querySelectorAll('.model-card').forEach(c => c.classList.remove('selected'));
   document.getElementById('mc-'+intModel)?.classList.add('selected');
@@ -1374,7 +1374,7 @@ function selectModel(intModel, extModel, tipe) {
   document.getElementById('prodQty').focus();
   document.getElementById('prodInputCard').scrollIntoView({behavior:'smooth', block:'nearest'});
 }
-
+ 
 async function simpanProduksi() {
   if (!selectedModel) { toast('Pilih model terlebih dahulu!', 'error'); return; }
   const qty = parseInt(document.getElementById('prodQty').value);
@@ -1400,7 +1400,7 @@ async function simpanProduksi() {
     toast('❌ Gagal: ' + (res ? res.error : 'Koneksi error'), 'error');
   }
 }
-
+ 
 // ══════════════════════════════════════════════════════
 // DASHBOARD
 // ══════════════════════════════════════════════════════
@@ -1414,7 +1414,7 @@ async function loadDashboard() {
   document.getElementById('d-parts').textContent  = res.stok?.totalParts || 0;
   document.getElementById('d-warn').textContent   =
     (res.stok?.partsNegative > 0) ? `⚠️ ${res.stok.partsNegative} part negatif` : '✅ Semua stok normal';
-
+ 
   const tbody = document.getElementById('recentBody');
   if (res.recentTx?.length > 0) {
     tbody.innerHTML = res.recentTx.map(t => `<tr>
@@ -1436,7 +1436,7 @@ async function loadDashboard() {
     </tr>`).join('');
   }
 }
-
+ 
 // ══════════════════════════════════════════════════════
 // STOK
 // ══════════════════════════════════════════════════════
@@ -1464,7 +1464,7 @@ async function loadStok() {
     </tr>`;
   }).join('');
 }
-
+ 
 // ══════════════════════════════════════════════════════
 // RIWAYAT — Ticket-grouped view
 // ══════════════════════════════════════════════════════
@@ -1475,19 +1475,19 @@ async function loadRiwayat() {
     return;
   }
   container.innerHTML = '<div style="padding:24px;text-align:center;color:#999;">⏳ Memuat data...</div>';
-
+ 
   const filters = {
     tanggal: document.getElementById('filterTgl').value,
     search:  document.getElementById('filterSearch').value,
     jenis:   document.getElementById('filterJenis').value
   };
-
+ 
   const data = await callScript('getTransaksi', {}, null, filters);
   if (!data || !Array.isArray(data)) {
     container.innerHTML = '<div style="padding:24px;text-align:center;color:var(--red);">❌ Gagal memuat data.</div>';
     return;
   }
-
+ 
   // Group by base ticket (strip trailing -NN)
   const ticketMap = {};
   data.forEach(t => {
@@ -1506,18 +1506,18 @@ async function loadRiwayat() {
     }
     ticketMap[baseKey].parts.push(t);
   });
-
+ 
   allTickets = Object.values(ticketMap);
   document.getElementById('riwayatCount').textContent = `${allTickets.length} tiket ditemukan`;
-
+ 
   if (allTickets.length === 0) {
     container.innerHTML = '<div style="padding:24px;text-align:center;color:#999;">Tidak ada transaksi ditemukan</div>';
     return;
   }
-
+ 
   renderTicketList();
 }
-
+ 
 function renderTicketList() {
   const container = document.getElementById('ticketListBody');
   container.innerHTML = allTickets.map((tk, idx) => {
@@ -1564,7 +1564,7 @@ function renderTicketList() {
       </div>`;
   }).join('');
 }
-
+ 
 function toggleTicket(idx) {
   const detail = document.getElementById('td-'+idx);
   const chv    = document.getElementById('chv-'+idx);
@@ -1580,11 +1580,11 @@ function toggleTicket(idx) {
     item.classList.add('expanded');
   }
 }
-
+ 
 function exportTicketExcel(idx) {
   const tk = allTickets[idx];
   if (!tk) return;
-
+ 
   // Build CSV content (Excel-compatible)
   let csv = '\uFEFF'; // BOM for UTF-8
   csv += `No. Tiket:,${tk.txid}\n`;
@@ -1598,7 +1598,7 @@ function exportTicketExcel(idx) {
   tk.parts.forEach((p,i) => {
     csv += `${i+1},"${p.kodePart||''}","${p.namaPart||''}","${p.jenis||''}","${p.qty||''}","${p.keterangan||''}"\n`;
   });
-
+ 
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
@@ -1608,14 +1608,14 @@ function exportTicketExcel(idx) {
   URL.revokeObjectURL(url);
   toast('✅ Export Excel berhasil!', 'success');
 }
-
+ 
 function resetFilter() {
   document.getElementById('filterTgl').value = '';
   document.getElementById('filterSearch').value = '';
   document.getElementById('filterJenis').selectedIndex = 0;
   loadRiwayat();
 }
-
+ 
 // ══════════════════════════════════════════════════════
 // SETTING
 // ══════════════════════════════════════════════════════
@@ -1628,7 +1628,7 @@ function saveSetting() {
   if (SCRIPT_URL) loadPartList();
   toast('✅ Setting tersimpan!', 'success');
 }
-
+ 
 async function testConnection() {
   const url = document.getElementById('scriptUrl').value.trim();
   if (!url) { toast('Masukkan URL Apps Script dulu!', 'error'); return; }
@@ -1643,7 +1643,7 @@ async function testConnection() {
     status.innerHTML = `❌ <span style="color:var(--red);">Gagal: ${e.message}</span>`;
   }
 }
-
+ 
 // ══════════════════════════════════════════════════════
 // API CALLS (JSONP)
 // ══════════════════════════════════════════════════════
@@ -1660,7 +1660,7 @@ function callScriptGET(url, params) {
     document.head.appendChild(script);
   });
 }
-
+ 
 async function callScript(action, data, search, filters) {
   if (!SCRIPT_URL) return null;
   try {
@@ -1671,7 +1671,7 @@ async function callScript(action, data, search, filters) {
     return await callScriptGET(SCRIPT_URL, params);
   } catch(e) { console.error('API error:', e); return null; }
 }
-
+ 
 // ══════════════════════════════════════════════════════
 // UTILS
 // ══════════════════════════════════════════════════════

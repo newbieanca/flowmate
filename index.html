@@ -1206,7 +1206,8 @@ async function loadPartList() {
   const hint = document.getElementById('searchHint');
   if (hint) hint.textContent = '⏳ Memuat part list dari BOM...';
   try {
-    const data = await callScript('getPartList', null);
+    const res = await fetch(SCRIPT_URL + "?action=getPartList");
+    const data = await res.json();
     if (data && Array.isArray(data) && data.length > 0) {
       MASTER_PARTS = data;
       if (hint) hint.textContent = MASTER_PARTS.length + ' part tersedia dari BOM April 2026';

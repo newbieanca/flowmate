@@ -1251,6 +1251,12 @@ async function simpanTransaksi() {
     var updates = {};
     draftParts.forEach(function(p, i) {
       var key = db.ref('flowmate/transactions').push().key;
+
+        // ✅ TAMBAHKAN DI SINI — sebelum object dibuild
+      var actualQty = (p.qtyPerPacking > 1)
+        ? p.qty * p.qtyPerPacking
+        : p.qty;
+      
       updates['flowmate/transactions/' + key] = {
         txid:            txid,
         tanggal:         tanggal,
@@ -1258,7 +1264,7 @@ async function simpanTransaksi() {
         kodePart:        p.kode,
         namaPart:        p.nama,
         jenis:           p.jenis,
-        qty:             p.qty,
+        qty:             actualQty,
         keterangan:      p.ket || '',
         signCMC:         signCMC,
         signProduksi:    signProd,

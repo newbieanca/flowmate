@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>FLOWMATE – Part Control System</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Firebase SDK (Realtime Database) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<style>
+:root {
+  --red:       #E31E24;
+  --red-dark:  #B71C1C;
+  --red-lt:    #FFEBEE;
+  --black:     #1A1A1A;
+  --gray-dk:   #424242;
+  --gray:      #757575;
+  --gray-lt:   #F5F5F5;
+  --white:     #FFFFFF;
+  --green:     #2E7D32;
+  --green-lt:  #E8F5E9;
+  --amber:     #E65100;
+  --amber-lt:  #FFF3E0;
+  --blue:      #1565C0;
+  --blue-lt:   #E3F2FD;
+  --sidebar-w: 240px;
+  --sidebar-collapsed: 64px;
+  --shadow:    0 2px 8px rgba(0,0,0,0.10);
+  --shadow-lg: 0 4px 20px rgba(0,0,0,0.15);
+  --radius:    8px;
+  --topbar-h:  56px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'IBM Plex Sans', 'Segoe UI', Arial, sans-serif;
+  background: #F0F2F5;
+  color: var(--black);
+  min-height: 100vh;
+  display: flex;
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════ SIDEBAR ═══════════════════════ */
+.sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  background: #1A1A2E;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0; top: 0;
+  z-index: 200;
+  transition: width .25s ease;
+  overflow: hidden;
+  box-shadow: 4px 0 16px rgba(0,0,0,0.18);
+}
+.sidebar.collapsed { width: var(--sidebar-collapsed); }
+.sidebar-brand {
+  display: flex; align-items: center; gap: 12px;
+  padding: 18px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  min-height: var(--topbar-h);
+  overflow: hidden;
+}
+.brand-icon {
+  background: var(--red); color: #fff;
+  font-weight: 900; font-size: 13px;
+  padding: 5px 8px; border-radius: 5px;
+  letter-spacing: .5px; white-space: nowrap; flex-shrink: 0;
+}
+.brand-text { overflow: hidden; }
+.brand-title { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: .5px; white-space: nowrap; }
+.brand-sub { font-size: 10px; color: rgba(255,255,255,0.45); white-space: nowrap; margin-top: 1px; }
+.sidebar-nav {
+  flex: 1; padding: 10px 0;
+  overflow-y: auto; overflow-x: hidden;
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 16px; cursor: pointer;
+  transition: all .18s;
+  border-left: 3px solid transparent;
+  color: rgba(255,255,255,0.6);
+  white-space: nowrap; overflow: hidden;
+}
+.nav-item:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.9); }
+.nav-item.active { background: rgba(227,30,36,0.15); border-left-color: var(--red); color: #fff; }
+.nav-icon { font-size: 17px; flex-shrink: 0; width: 22px; text-align: center; }
+.nav-label { font-size: 13px; font-weight: 500; letter-spacing: .2px; }
+.sidebar-footer { padding: 14px 16px; border-top: 1px solid rgba(255,255,255,0.08); overflow: hidden; }
+.sidebar-user { display: flex; align-items: center; gap: 10px; overflow: hidden; }
+.user-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--red); display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.user-info { overflow: hidden; }
+.user-name { font-size: 12px; font-weight: 600; color: #fff; white-space: nowrap; }
+.user-role { font-size: 10px; color: rgba(255,255,255,0.4); white-space: nowrap; }
+.sidebar-toggle {
+  position: absolute; bottom: 64px; right: -14px;
+  width: 28px; height: 28px; background: #fff;
+  border: 2px solid #E0E0E0; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 12px; color: var(--gray-dk);
+  z-index: 201; transition: all .2s; box-shadow: var(--shadow);
+}
+.sidebar-toggle:hover { background: var(--red); color: #fff; border-color: var(--red); }
+.sidebar.collapsed .sidebar-brand { justify-content: center; padding: 12px 0; }
+.sidebar.collapsed .brand-icon { margin: 0 auto; font-size: 11px; padding: 4px 6px; }
+.sidebar.collapsed .brand-text { display: none; }
+.sidebar.collapsed .nav-label { display: none; }
+.sidebar.collapsed .sidebar-user .user-info { display: none; }
+
+/* ═══════════════════════ TOPBAR ═══════════════════════ */
+.topbar {
+  position: fixed; top: 0;
+  left: var(--sidebar-w); right: 0;
+  height: var(--topbar-h); background: #fff;
+  border-bottom: 1px solid #E8E8E8;
+  display: flex; align-items: center;
+  justify-content: space-between; padding: 0 24px;
+  z-index: 100; transition: left .25s ease;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+.sidebar.collapsed ~ .layout .topbar { left: var(--sidebar-collapsed); }
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.topbar-title { font-size: 15px; font-weight: 700; color: var(--black); }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+
+/* ─── REALTIME BADGE ─── */
+.conn-badge {
+  display: flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+  transition: all .3s;
+}
+.conn-online  { background: var(--green-lt); color: var(--green); }
+.conn-offline { background: #F5F5F5; color: #999; }
+.conn-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  flex-shrink: 0; transition: background .3s;
+}
+.conn-online  .conn-dot { background: var(--green); animation: connPulse 2s ease-in-out infinite; }
+.conn-offline .conn-dot { background: #BDBDBD; }
+@keyframes connPulse {
+  0%,100% { opacity:1; transform:scale(1); }
+  50%      { opacity:.4; transform:scale(.7); }
+}
+.conn-dot.flash { background: var(--amber) !important; animation: none !important; }
+
+.device-badge {
+  background: var(--blue-lt); color: var(--blue);
+  padding: 4px 8px; border-radius: 20px;
+  font-size: 10px; font-weight: 700;
+  display: none; /* shown only when connected */
+}
+.device-badge.visible { display: flex; align-items: center; gap: 4px; }
+
+.topbar-date { font-size: 12px; color: var(--gray); }
+
+/* ═══════════════════════ LAYOUT ═══════════════════════ */
+.layout { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; transition: margin-left .25s ease; display: flex; flex-direction: column; }
+.sidebar.collapsed ~ .layout { margin-left: var(--sidebar-collapsed); }
+.main { padding: 20px 24px; margin-top: var(--topbar-h); max-width: 1200px; width: 100%; }
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ═══════════════════════ CARDS ═══════════════════════ */
+.card { background: #fff; border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); margin-bottom: 16px; }
+.card-title {
+  font-size: 13px; font-weight: 700; color: var(--gray-dk);
+  margin-bottom: 16px; padding-bottom: 10px;
+  border-bottom: 2px solid var(--red);
+  display: flex; align-items: center; gap: 8px;
+  text-transform: uppercase; letter-spacing: .4px;
+}
+.card-title::before { content: ''; width: 4px; height: 16px; background: var(--red); border-radius: 2px; }
+
+/* ═══════════════════════ STAT CARDS ═══════════════════════ */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(150px,1fr)); gap: 14px; margin-bottom: 20px; }
+.stat-card { background: #fff; border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); border-top: 3px solid var(--red); transition: all .3s; }
+.stat-card.green { border-top-color: var(--green); }
+.stat-card.amber { border-top-color: var(--amber); }
+.stat-card.blue  { border-top-color: var(--blue); }
+.stat-card.updated { animation: cardFlash .6s ease; }
+@keyframes cardFlash { 0%{background:var(--green-lt)} 100%{background:#fff} }
+.stat-label { font-size: 10px; color: var(--gray); font-weight: 700; text-transform: uppercase; letter-spacing: .6px; }
+.stat-value { font-size: 30px; font-weight: 800; color: var(--black); line-height: 1.1; margin: 6px 0 4px; font-family: 'IBM Plex Mono', monospace; }
+.stat-card.green .stat-value { color: var(--green); }
+.stat-card.amber .stat-value { color: var(--amber); }
+.stat-card.blue  .stat-value { color: var(--blue); }
+.stat-sub { font-size: 11px; color: var(--gray); }
+
+/* ═══════════════════════ SECTION HEADER ═══════════════════════ */
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.section-title { font-size: 18px; font-weight: 800; color: var(--black); }
+.section-sub { font-size: 12px; color: var(--gray); margin-top: 3px; }
+
+/* ═══════════════════════ FORM ═══════════════════════ */
+.form-group { margin-bottom: 14px; }
+.form-label { display: block; font-size: 11px; font-weight: 700; color: var(--gray-dk); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .4px; }
+.form-control {
+  width: 100%; padding: 9px 13px;
+  border: 1.5px solid #DDD; border-radius: var(--radius);
+  font-size: 13px; color: var(--black); transition: border-color .2s;
+  background: #fff; font-family: inherit;
+}
+.form-control:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 3px rgba(227,30,36,0.08); }
+.form-control[readonly] { background: var(--gray-lt); color: var(--gray); }
+textarea.form-control { resize: vertical; min-height: 90px; line-height: 1.5; }
+.form-row   { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+/* Sign section */
+.sign-section { background: var(--gray-lt); border-radius: var(--radius); padding: 16px; margin-top: 16px; border: 1.5px solid #E0E0E0; }
+.sign-title { font-size: 11px; font-weight: 700; color: var(--gray); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.sign-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (min-width: 700px) { .sign-grid { grid-template-columns: repeat(4, 1fr); } }
+.sign-label { font-size: 10px; font-weight: 700; color: var(--red); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 5px; display: block; }
+.sign-input {
+  width: 100%; padding: 8px 10px; border: 1.5px solid #DDD; border-radius: 6px;
+  font-size: 13px; font-family: inherit; background: #fff;
+  text-align: center; font-weight: 600; color: var(--black); transition: border-color .2s;
+}
+.sign-input:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 3px rgba(227,30,36,0.08); }
+.sign-input::placeholder { color: #BDBDBD; font-weight: 400; }
+
+/* ═══════════════════════ BUTTONS ═══════════════════════ */
+.btn {
+  padding: 9px 18px; border: none; border-radius: var(--radius);
+  font-size: 12px; font-weight: 700; cursor: pointer;
+  transition: all .2s; letter-spacing: .3px;
+  display: inline-flex; align-items: center; gap: 6px; font-family: inherit;
+}
+.btn-primary { background: var(--red); color: #fff; }
+.btn-primary:hover { background: var(--red-dark); transform: translateY(-1px); box-shadow: var(--shadow); }
+.btn-secondary { background: var(--gray-lt); color: var(--gray-dk); border: 1px solid #E0E0E0; }
+.btn-secondary:hover { background: #E0E0E0; }
+.btn-success { background: var(--green); color: #fff; }
+.btn-success:hover { background: #1B5E20; }
+.btn-warning { background: var(--amber); color: #fff; }
+.btn-sm { padding: 6px 12px; font-size: 11px; }
+.btn-lg { padding: 12px 24px; font-size: 14px; width: 100%; justify-content: center; }
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+.btn:disabled { opacity: .6; cursor: not-allowed; transform: none !important; }
+
+/* ═══════════════════════ SEARCH DROPDOWN ═══════════════════════ */
+.search-wrap { position: relative; }
+.search-dropdown {
+  position: absolute; top: 100%; left: 0; right: 0;
+  background: #fff; border: 1.5px solid var(--red);
+  border-top: none; border-radius: 0 0 var(--radius) var(--radius);
+  max-height: 200px; overflow-y: auto; z-index: 50; display: none; box-shadow: var(--shadow-lg);
+}
+.search-dropdown.show { display: block; }
+.search-item { padding: 9px 13px; cursor: pointer; font-size: 12px; border-bottom: 1px solid #F5F5F5; transition: background .15s; }
+.search-item:hover { background: var(--red-lt); }
+.search-item .item-code { font-weight: 700; color: var(--red); font-size: 11px; font-family: 'IBM Plex Mono', monospace; }
+.search-item .item-name { color: var(--gray-dk); }
+.search-hint { font-size: 11px; color: var(--gray); margin-top: 4px; }
+
+/* ═══════════════════════ TABLE ═══════════════════════ */
+.table-wrap { overflow-x: auto; border-radius: var(--radius); }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+thead th { background: #2D2D3D; color: rgba(255,255,255,0.9); padding: 10px 13px; text-align: left; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: .4px; white-space: nowrap; }
+tbody td { padding: 10px 13px; border-bottom: 1px solid #F0F0F0; }
+tbody tr:hover { background: var(--red-lt); }
+tbody tr:nth-child(even) { background: #FAFAFA; }
+tbody tr:nth-child(even):hover { background: var(--red-lt); }
+.td-code { font-family: 'IBM Plex Mono', monospace; font-weight: 700; color: var(--red); font-size: 11px; }
+.td-number { text-align: right; font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
+.td-neg { color: var(--red); }
+.td-pos { color: var(--green); }
+
+/* ═══════════════════════ BADGES ═══════════════════════ */
+.badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 10px; font-weight: 700; letter-spacing: .3px; }
+.badge-supply    { background: var(--blue-lt);  color: var(--blue); }
+.badge-kebutuhan { background: var(--amber-lt); color: var(--amber); }
+.badge-produksi  { background: #F3E5F5;         color: #6A1B9A; }
+.badge-ok        { background: var(--green-lt); color: var(--green); }
+.badge-warn      { background: var(--red-lt);   color: var(--red); }
+
+/* ═══════════════════════ TICKET BOX ═══════════════════════ */
+.ticket-box {
+  background: #1A1A2E; color: var(--red); border-radius: var(--radius);
+  padding: 12px 20px; font-family: 'IBM Plex Mono', monospace;
+  font-size: 20px; font-weight: 900; letter-spacing: 2px; text-align: center;
+  margin-bottom: 16px; border: 2px solid var(--red);
+}
+.ticket-label { font-size: 10px; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; font-weight: 600; }
+
+/* ═══════════════════════ DRAFT LIST ═══════════════════════ */
+.draft-list { border: 1.5px solid #EEE; border-radius: var(--radius); overflow: hidden; }
+.draft-item { display: flex; align-items: center; padding: 10px 13px; border-bottom: 1px solid #F0F0F0; gap: 10px; font-size: 12px; }
+.draft-item:last-child { border-bottom: none; }
+.draft-item:hover { background: var(--red-lt); }
+.draft-code { font-family: 'IBM Plex Mono', monospace; font-weight: 700; color: var(--red); min-width: 130px; font-size: 11px; }
+.draft-name { flex: 1; color: var(--gray-dk); }
+.draft-qty  { font-weight: 800; color: var(--black); min-width: 55px; text-align: right; font-family: 'IBM Plex Mono', monospace; }
+.draft-jenis { min-width: 80px; }
+.draft-del { color: var(--red); cursor: pointer; padding: 4px 7px; border-radius: 4px; font-size: 11px; }
+.draft-del:hover { background: var(--red-lt); }
+.draft-empty { padding: 24px; text-align: center; color: var(--gray); font-size: 13px; }
+
+/* ═══════════════════════ FILTER BAR ═══════════════════════ */
+.filter-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; padding: 14px; background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); align-items: flex-end; }
+.filter-bar .form-control { flex: 1; min-width: 130px; }
+
+/* ═══════════════════════ MODEL GRID ═══════════════════════ */
+.model-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(180px,1fr)); gap: 10px; }
+.model-card { background: #fff; border: 1.5px solid #EEE; border-radius: var(--radius); padding: 13px; cursor: pointer; transition: all .2s; }
+.model-card:hover { border-color: var(--red); box-shadow: var(--shadow); transform: translateY(-2px); }
+.model-card.selected { border-color: var(--red); background: var(--red-lt); }
+.model-int  { font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 10px; color: var(--red); }
+.model-ext  { font-size: 12px; font-weight: 600; color: var(--black); margin: 2px 0; }
+.model-type { font-size: 10px; color: var(--gray); }
+
+/* ═══════════════════════ RIWAYAT ═══════════════════════ */
+.ticket-list-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid #F0F0F0; cursor: pointer; transition: background .15s; gap: 12px; }
+.ticket-list-item:last-child { border-bottom: none; }
+.ticket-list-item:hover { background: var(--red-lt); }
+.ticket-list-item.expanded { background: #FFF8F8; border-left: 3px solid var(--red); }
+.tli-left { flex: 1; min-width: 0; }
+.tli-no   { font-family: 'IBM Plex Mono', monospace; font-weight: 700; color: var(--red); font-size: 12px; }
+.tli-meta { font-size: 11px; color: var(--gray); margin-top: 2px; }
+.tli-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.tli-count { font-size: 11px; color: var(--gray-dk); background: var(--gray-lt); padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+.tli-chevron { font-size: 11px; color: var(--gray); transition: transform .2s; }
+.tli-chevron.open { transform: rotate(90deg); }
+.ticket-detail { display: none; background: #FAFAFA; border-top: 1px solid #EEE; }
+.ticket-detail.show { display: block; }
+.ticket-detail table thead th { background: #E8E8E8; color: var(--gray-dk); }
+.ticket-signs { padding: 10px 16px; background: #F5F5F5; border-top: 1px solid #EEE; display: flex; gap: 24px; flex-wrap: wrap; }
+.sign-box { text-align: center; min-width: 80px; }
+.sign-box-label { font-size: 9px; font-weight: 700; text-transform: uppercase; color: var(--gray); letter-spacing: .5px; }
+.sign-box-value { font-size: 12px; font-weight: 600; color: var(--black); min-height: 18px; margin-top: 3px; }
+.ticket-export-btn { padding: 5px 12px; font-size: 11px; background: var(--green); color: #fff; border: none; border-radius: 5px; cursor: pointer; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; font-family: inherit; }
+.ticket-export-btn:hover { background: #1B5E20; }
+
+/* ═══════════════════════ TOAST ═══════════════════════ */
+.toast { position: fixed; bottom: 24px; right: 24px; background: #1A1A2E; color: #fff; padding: 12px 18px; border-radius: var(--radius); font-size: 13px; z-index: 9999; opacity: 0; transform: translateY(20px); transition: all .3s; max-width: 320px; box-shadow: var(--shadow-lg); border-left: 4px solid var(--red); pointer-events: none; }
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.success { border-left-color: var(--green); }
+.toast.error   { border-left-color: var(--red); }
+
+/* ═══════════════════════ LOADING ═══════════════════════ */
+.loading { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: 6px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ═══════════════════════ CONFIG BANNER ═══════════════════════ */
+.config-banner { background: var(--amber-lt); border: 1.5px solid var(--amber); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 20px; font-size: 13px; color: var(--amber); display: flex; align-items: center; gap: 10px; }
+
+/* ═══════════════════════ SETTING ═══════════════════════ */
+.setting-saved-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--green-lt); color: var(--green); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; opacity: 0; transition: opacity .3s; }
+.setting-saved-badge.show { opacity: 1; }
+
+/* Firebase setup steps */
+.setup-steps { counter-reset: step; margin: 16px 0; }
+.setup-step { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #F0F0F0; }
+.setup-step:last-child { border-bottom: none; }
+.step-num { width: 24px; height: 24px; border-radius: 50%; background: var(--red); color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.step-text { font-size: 12px; color: var(--gray-dk); line-height: 1.6; }
+.step-text strong { color: var(--black); }
+.step-text code { background: var(--gray-lt); padding: 1px 5px; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--red); }
+
+/* Realtime indicator in card titles */
+.live-chip { display: inline-flex; align-items: center; gap: 4px; background: var(--green-lt); color: var(--green); padding: 2px 7px; border-radius: 10px; font-size: 9px; font-weight: 700; margin-left: auto; text-transform: uppercase; letter-spacing: .4px; }
+.live-chip-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: connPulse 2s ease-in-out infinite; }
+
+/* ═══════════════════════ MOBILE ═══════════════════════ */
+.sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 199; }
+.sidebar-overlay.show { display: block; }
+.mobile-menu-btn { display: none; background: none; border: none; cursor: pointer; font-size: 20px; color: var(--gray-dk); padding: 4px; margin-right: 8px; }
+
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); width: var(--sidebar-w) !important; }
+  .sidebar.mobile-open { transform: translateX(0); }
+  .layout { margin-left: 0 !important; }
+  .topbar { left: 0 !important; }
+  .mobile-menu-btn { display: flex; }
+  .sidebar-toggle { display: none; }
+  .main { padding: 14px 16px; }
+  .form-row, .form-row-3 { grid-template-columns: 1fr 1fr; }
+  .stat-grid { grid-template-columns: repeat(2,1fr); }
+  .model-grid { grid-template-columns: 1fr 1fr; }
+  .sign-grid { grid-template-columns: 1fr 1fr; }
+  .device-badge { display: none !important; }
+}
+@media (max-width: 480px) {
+  .form-row, .form-row-3, .sign-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">SHARP</div>
+    <div class="brand-text">
+      <div class="brand-title">FLOWMATE</div>
+      <div class="brand-sub">Part Control System</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-item active" onclick="showScreen('dashboard',this)"><span class="nav-icon">📊</span><span class="nav-label">Dashboard</span></div>
+    <div class="nav-item" onclick="showScreen('input',this)"><span class="nav-icon">➕</span><span class="nav-label">Input Transaksi</span></div>
+    <div class="nav-item" onclick="showScreen('produksi',this)"><span class="nav-icon">🏭</span><span class="nav-label">Output Produksi</span></div>
+    <div class="nav-item" onclick="showScreen('stok',this)"><span class="nav-icon">📦</span><span class="nav-label">Stok Part</span></div>
+    <div class="nav-item" onclick="showScreen('riwayat',this)"><span class="nav-icon">📋</span><span class="nav-label">Riwayat</span></div>
+    <div class="nav-item" onclick="showScreen('setting',this)"><span class="nav-icon">⚙️</span><span class="nav-label">Setting</span></div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="user-avatar" id="userAvatar">OP</div>
+      <div class="user-info">
+        <div class="user-name" id="userLabel">Part Control</div>
+        <div class="user-role">Production Dept.</div>
+      </div>
+    </div>
+  </div>
+  <div class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="Toggle sidebar">◀</div>
+</aside>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
+
+<!-- LAYOUT -->
+<div class="layout">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="mobile-menu-btn" onclick="openMobileSidebar()">☰</button>
+      <div>
+        <div class="topbar-title" id="topbarTitle">Dashboard Monitoring</div>
+        <div style="font-size:11px;color:#999;" id="dashDate"></div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="device-badge" id="deviceBadge">👥 <span id="deviceCount">1</span> perangkat</div>
+      <div class="conn-badge conn-offline" id="connBadge">
+        <span class="conn-dot" id="connDot"></span>
+        <span id="connText">Offline</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- ═══════ DASHBOARD ═══════ -->
+    <div id="screen-dashboard" class="screen active">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Dashboard Monitoring</div>
+          <div class="section-sub" id="dashSubDate">–</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="live-chip" id="dashLiveChip" style="display:none;"><span class="live-chip-dot"></span>LIVE</span>
+        </div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card" id="sc-masuk">
+          <div class="stat-label">Total Masuk</div>
+          <div class="stat-value" id="d-masuk">–</div>
+          <div class="stat-sub">Unit part diterima</div>
+        </div>
+        <div class="stat-card amber" id="sc-keluar">
+          <div class="stat-label">Total Keluar</div>
+          <div class="stat-value" id="d-keluar">–</div>
+          <div class="stat-sub">Kebutuhan + Produksi</div>
+        </div>
+        <div class="stat-card green" id="sc-txhari">
+          <div class="stat-label">Transaksi Hari Ini</div>
+          <div class="stat-value" id="d-txhari">–</div>
+          <div class="stat-sub">Baris input hari ini</div>
+        </div>
+        <div class="stat-card blue" id="sc-parts">
+          <div class="stat-label">Parts Aktif</div>
+          <div class="stat-value" id="d-parts">–</div>
+          <div class="stat-sub" id="d-warn">–</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Transaksi Terbaru <span class="live-chip" id="txLiveChip" style="display:none;"><span class="live-chip-dot"></span>LIVE</span></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>No. Tiket</th><th>Tanggal</th><th>Kode Part</th><th>Nama Part</th><th>Jenis</th><th>Qty</th><th>Operator</th></tr></thead>
+            <tbody id="recentBody"><tr><td colspan="7" style="text-align:center;padding:24px;color:#999;">Hubungkan ke Firebase untuk melihat data…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Output Produksi</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Internal Model</th><th>External Model</th><th>Total Output (unit)</th></tr></thead>
+            <tbody id="modelOutputBody"><tr><td colspan="3" style="text-align:center;padding:20px;color:#999;">Belum ada data produksi</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ INPUT TRANSAKSI ═══════ -->
+    <div id="screen-input" class="screen">
+      <div class="section-header">
+        <div><div class="section-title">Input Transaksi</div><div class="section-sub">Serah terima part produksi</div></div>
+      </div>
+      <div class="card">
+        <div class="ticket-label">No. Tiket Transaksi</div>
+        <div class="ticket-box" id="ticketDisplay">WMPC-...</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Tanggal</label>
+            <input type="date" class="form-control" id="inputTanggal">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Jenis Transaksi</label>
+            <select class="form-control" id="inputJenis">
+              <option>Supply</option>
+              <option>Kebutuhan</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cari Part (Kode atau Nama)</label>
+          <div class="search-wrap">
+            <input type="text" class="form-control" id="partSearch"
+              placeholder="Ketik kode atau nama part..."
+              oninput="searchPart(this.value)" autocomplete="off">
+            <div class="search-dropdown" id="partDropdown"></div>
+          </div>
+          <div class="search-hint" id="searchHint">Ketik minimal 2 karakter untuk mencari</div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Kode Part</label>
+            <input type="text" class="form-control" id="inputKode" readonly placeholder="Terisi otomatis">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nama Part</label>
+            <input type="text" class="form-control" id="inputNama" readonly placeholder="Terisi otomatis">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Qty</label>
+            <input type="number" class="form-control" id="inputQty" placeholder="0" min="0" step="any">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Keterangan</label>
+            <input type="text" class="form-control" id="inputKet" placeholder="Opsional">
+          </div>
+        </div>
+        <div style="margin-top:14px;">
+          <button class="btn btn-secondary" onclick="addToDraft()">＋ Tambah ke Daftar</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Daftar Part <span id="draftCount" style="font-weight:400;color:#999;font-size:11px;">(0 item)</span></div>
+        <div id="draftList" class="draft-list">
+          <div class="draft-empty">Belum ada part ditambahkan</div>
+        </div>
+        <div class="sign-section">
+          <div class="sign-title">✍️ Tanda Tangan Transaksi</div>
+          <div class="sign-grid">
+            <div><span class="sign-label">CMC</span><input type="text" class="sign-input" id="signCMC" placeholder="Nama..."></div>
+            <div><span class="sign-label">Produksi</span><input type="text" class="sign-input" id="signProduksi" placeholder="Nama..."></div>
+            <div><span class="sign-label">NX</span><input type="text" class="sign-input" id="signNX" placeholder="Nama..."></div>
+            <div><span class="sign-label">Part Control</span><input type="text" class="sign-input" id="signPartControl" placeholder="Nama..."></div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="btnSimpan" onclick="simpanTransaksi()" style="flex:1;">💾 Simpan Transaksi</button>
+          <button class="btn btn-secondary" onclick="resetInput()">🔄 Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ OUTPUT PRODUKSI ═══════ -->
+    <div id="screen-produksi" class="screen">
+      <div class="section-header">
+        <div><div class="section-title">Input Output Produksi</div><div class="section-sub">Catat jumlah unit yang diproduksi</div></div>
+      </div>
+      <div class="card">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Tanggal Produksi</label>
+            <input type="date" class="form-control" id="prodTanggal">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tipe Mesin</label>
+            <select class="form-control" id="prodTipe" onchange="filterModels()">
+              <option value="">Semua</option>
+              <option value="TWINTUB">Twintub</option>
+              <option value="FULL AUTO">Full Auto</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cari Model</label>
+          <input type="text" class="form-control" id="modelSearch"
+            placeholder="Ketik kode atau nama model..." oninput="filterModels()">
+        </div>
+        <div class="model-grid" id="modelGrid"></div>
+      </div>
+      <div class="card" id="prodInputCard" style="display:none;">
+        <div class="card-title">Input Output</div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:13px;font-weight:700;color:var(--red);" id="selectedModelInt">–</div>
+          <div style="font-size:12px;color:#555;margin-top:2px;" id="selectedModelExt">–</div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Jumlah Unit Output</label>
+            <input type="number" class="form-control" id="prodQty" placeholder="0" min="1" step="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Keterangan</label>
+            <input type="text" class="form-control" id="prodKet" placeholder="Opsional">
+          </div>
+        </div>
+        <button class="btn btn-primary btn-lg" id="btnProduksi" onclick="simpanProduksi()">🏭 Simpan Output Produksi</button>
+      </div>
+    </div>
+
+    <!-- ═══════ STOK PART ═══════ -->
+    <div id="screen-stok" class="screen">
+      <div class="section-header">
+        <div><div class="section-title">Stok Part</div><div class="section-sub" id="stokCount">–</div></div>
+        <span class="live-chip" id="stokLiveChip" style="display:none;"><span class="live-chip-dot"></span>LIVE</span>
+      </div>
+      <div class="filter-bar">
+        <input type="text" class="form-control" id="stokSearch" placeholder="🔍 Cari kode atau nama part..." oninput="renderStok()">
+        <select class="form-control" style="max-width:160px;" id="stokFilter" onchange="renderStok()">
+          <option value="">Semua</option>
+          <option value="neg">Saldo Negatif</option>
+          <option value="zero">Saldo Nol</option>
+        </select>
+      </div>
+      <div class="card" style="padding:0;">
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Kode Part</th><th>Nama Part</th>
+              <th style="text-align:right;">Masuk</th>
+              <th style="text-align:right;">Keluar</th>
+              <th style="text-align:right;">Sisa Part</th>
+            </tr></thead>
+            <tbody id="stokBody"><tr><td colspan="5" style="text-align:center;padding:24px;color:#999;">Hubungkan ke Firebase untuk melihat data…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ RIWAYAT ═══════ -->
+    <div id="screen-riwayat" class="screen">
+      <div class="section-header">
+        <div><div class="section-title">Riwayat Transaksi</div><div class="section-sub" id="riwayatCount">Klik tiket untuk melihat detail</div></div>
+        <span class="live-chip" id="riwayatLiveChip" style="display:none;"><span class="live-chip-dot"></span>LIVE</span>
+      </div>
+      <div class="filter-bar">
+        <div style="display:flex;flex-direction:column;gap:3px;flex:1;min-width:130px;">
+          <label style="font-size:10px;font-weight:700;color:var(--gray-dk);text-transform:uppercase;letter-spacing:.4px;">Tanggal</label>
+          <input type="date" class="form-control" id="filterTgl" onchange="renderRiwayat()">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:3px;flex:2;min-width:160px;">
+          <label style="font-size:10px;font-weight:700;color:var(--gray-dk);text-transform:uppercase;letter-spacing:.4px;">Cari No. Tiket / Kode / Nama</label>
+          <input type="text" class="form-control" id="filterSearch" placeholder="🔍 Ketik untuk mencari..." oninput="renderRiwayat()">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:3px;min-width:130px;">
+          <label style="font-size:10px;font-weight:700;color:var(--gray-dk);text-transform:uppercase;letter-spacing:.4px;">Jenis</label>
+          <select class="form-control" id="filterJenis" onchange="renderRiwayat()">
+            <option value="">Semua Jenis</option>
+            <option value="Supply">Supply</option>
+            <option value="Kebutuhan">Kebutuhan</option>
+            <option value="Produksi">Produksi (BOM)</option>
+          </select>
+        </div>
+        <div style="display:flex;align-items:flex-end;">
+          <button class="btn btn-secondary btn-sm" onclick="resetFilter()">✕ Reset</button>
+        </div>
+      </div>
+      <div class="card" style="padding:0;">
+        <div id="ticketListBody">
+          <div style="padding:24px;text-align:center;color:#999;font-size:13px;">Hubungkan ke Firebase untuk melihat data…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ SETTING ═══════ -->
+    <div id="screen-setting" class="screen">
+      <div class="section-title" style="margin-bottom:20px;">⚙️ Pengaturan</div>
+
+      <!-- Firebase Config -->
+      <div class="card">
+        <div class="card-title">🔥 Koneksi Firebase (Realtime Database)</div>
+        <div class="form-group">
+          <label class="form-label">Firebase Config JSON</label>
+          <textarea class="form-control" id="firebaseConfig"
+            placeholder='Paste Firebase config di sini, contoh:
+{
+  "apiKey": "AIza...",
+  "authDomain": "project-id.firebaseapp.com",
+  "databaseURL": "https://project-id-default-rtdb.asia-southeast1.firebasedatabase.app",
+  "projectId": "project-id",
+  "storageBucket": "project-id.appspot.com",
+  "messagingSenderId": "123456789",
+  "appId": "1:123456789:web:abc123"
+}' style="font-size:11px;font-family:'IBM Plex Mono',monospace;min-height:120px;"></textarea>
+          <div class="search-hint" style="margin-top:6px;">
+            ⬆️ Paste seluruh objek config dari Firebase Console. Semua perangkat yang menggunakan config yang sama akan tersinkron secara realtime.
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nama Operator</label>
+          <input type="text" class="form-control" id="operatorName" placeholder="Nama kamu" autocomplete="off">
+        </div>
+        <div class="btn-row" style="align-items:center;">
+          <button class="btn btn-primary" onclick="saveSetting()">💾 Simpan & Hubungkan</button>
+          <button class="btn btn-secondary" onclick="testFirebaseConn()">🔗 Test Koneksi</button>
+          <span class="setting-saved-badge" id="savedBadge">✅ Tersimpan!</span>
+        </div>
+        <div id="connStatus" style="margin-top:12px;font-size:13px;"></div>
+      </div>
+
+      <!-- Cara Setup -->
+      <div class="card">
+        <div class="card-title">📋 Cara Setup Firebase (5 menit)</div>
+        <div class="setup-steps">
+          <div class="setup-step">
+            <div class="step-num">1</div>
+            <div class="step-text">Buka <strong>console.firebase.google.com</strong> → <strong>Create a project</strong> (gratis, pilih nama bebas)</div>
+          </div>
+          <div class="setup-step">
+            <div class="step-num">2</div>
+            <div class="step-text">Di project baru, klik <strong>Realtime Database</strong> → <strong>Create database</strong> → pilih region <code>asia-southeast1</code> → pilih mode <strong>Test mode</strong> dulu (bisa diubah nanti)</div>
+          </div>
+          <div class="setup-step">
+            <div class="step-num">3</div>
+            <div class="step-text">Klik ⚙️ <strong>Project Settings</strong> → scroll ke <strong>Your apps</strong> → klik <strong>&lt;/&gt; Web</strong> → register app → copy bagian <code>firebaseConfig = { ... }</code></div>
+          </div>
+          <div class="setup-step">
+            <div class="step-num">4</div>
+            <div class="step-text">Paste config JSON tersebut ke kolom di atas, isi nama operator, klik <strong>Simpan & Hubungkan</strong></div>
+          </div>
+          <div class="setup-step">
+            <div class="step-num">5</div>
+            <div class="step-text">Bagikan file HTML ini + config yang sama ke semua device. Semua akan terhubung dan update <strong>realtime</strong> secara otomatis ✅</div>
+          </div>
+        </div>
+        <div style="background:var(--blue-lt);border-radius:var(--radius);padding:12px 14px;margin-top:8px;font-size:12px;color:var(--blue);">
+          💡 <strong>Free tier Firebase</strong> cukup untuk penggunaan factory floor: 1 GB storage, 10 GB/bulan transfer, 100 koneksi simultan.
+        </div>
+      </div>
+
+      <!-- GAS URL (optional) -->
+      <div class="card">
+        <div class="card-title">Google Apps Script (Opsional – untuk BOM Produksi)</div>
+        <div class="form-group">
+          <label class="form-label">URL Apps Script Web App</label>
+          <input type="url" class="form-control" id="scriptUrl"
+            placeholder="https://script.google.com/macros/s/.../exec"
+            autocomplete="off" spellcheck="false">
+          <div class="search-hint">Diperlukan hanya jika ingin deduct stok otomatis berdasarkan BOM saat input produksi. Kosongkan jika tidak digunakan.</div>
+        </div>
+      </div>
+
+      <!-- Info Sistem -->
+      <div class="card">
+        <div class="card-title">Informasi Sistem</div>
+        <table style="font-size:13px;width:100%;">
+          <tr><td style="padding:6px 0;color:#777;width:160px;">Versi</td><td><strong>FLOWMATE v4.0 Realtime</strong></td></tr>
+          <tr><td style="padding:6px 0;color:#777;">Backend</td><td>Firebase Realtime Database</td></tr>
+          <tr><td style="padding:6px 0;color:#777;">Divisi</td><td>Washing Machine Division</td></tr>
+          <tr><td style="padding:6px 0;color:#777;">Department</td><td>Production Department</td></tr>
+          <tr><td style="padding:6px 0;color:#777;">Perusahaan</td><td>PT Sharp Electronics Indonesia</td></tr>
+          <tr><td style="padding:6px 0;color:#777;">Total Parts</td><td id="infoTotalParts">–</td></tr>
+          <tr><td style="padding:6px 0;color:#777;">Total Model</td><td id="infoTotalModels">–</td></tr>
+          <tr><td style="padding:6px 0;color:#777;">Status Firebase</td><td id="infoFbStatus" style="font-size:12px;">–</td></tr>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- .main -->
+</div><!-- .layout -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// MASTER DATA
+// ══════════════════════════════════════════════════════
+let MASTER_PARTS = [
+  ["CFTA-A639QBKZ","WASH LID ASS'Y (ES-T1090)"],["CFTA-A640QBKZ","SPIN DRY LID ASS'Y ( ES-T1090-VK )"],["CFTA-A642QBKZ","WASH LID ASS'YY (ES-T1090PK)"],["CFTA-A643QBKZ","SPIN DRY LID ASS'Y"],["CFTA-A677QBKZ","WASH LID ASS'Y"],["CFTA-A678QBKZ","SPIN DRY LID ASS'Y"],["CFTA-A679QBKZ","WASH LID ASS'Y (ES-T871/971MD-BL)"],["CFTA-A680QBKZ","SPIN DRY LID ASS'Y (ES-T871/971DM-BL)"],["CFTA-A681QBKZ","WASH LID ASS'Y (ES-T871/971DM-PK)"],["CFTA-A682QBKZ","SPIN DRY LID ASS'Y (ES-T871/971DM-PK)"],["CFTA-A732QBKZ","WASHER LID ASS'Y (ES-T1270SJ-BL)"],["CFTA-A733QBKZ","SPIN DRY LID ASS'Y (ES-T1270SJ-BL)"],["CFTA-A734QBKZ","WASHER LID ASS'Y"],["CFTA-A735QBKZ","SPIN DRY LID ASS'Y"],["CKAG-A026QBKZ","SPIN BASKET ASS'Y SMALL"],["CKAG-A033QBKZ","SPIN BASKET ASS'Y (ES-T77/SMALL)"],["CKAG-A034QBKZ","SPIN BASKET ASS'Y (ES-T98/BIG)"],["CKAG-A035QBKZ","SPIN BASKET ASS'Y BIG"],["CKAG-A039QBKZ","SPIN BASKET ASS'Y SMALL"],["HPNLTA104QBRA","CONTROL PANEL (SILK) ES-T90MW-PK"],["NPLYMA064QBFZ","PULLEY SMALL (EH,SW,MW TYPE) (ES-T60S-W)"],["NPUL-A083QBFA","MINI PULSATOR"],["NPUL-A095QBFA","PULSATOR (ES-T77DA-B)"],["NSFTPA010QBFZ","WASH ACTION SHAFT"],["PCAPHA009QBFA","PULSATOR CAP"],["PCOV-A686QBFZ","WATER SUPPLY COVER"],["PCOVPA021QBFZ","WATER PROOF COVER SMALL (ES-T70CL-V)"],["PCOVPA022QBFZ","WATER PROOF COVER  BIG"],["PFTA-A103QBFZ","INNER LID (SMALL)"],["PFTA-A105QBFZ","INNER LID (BIG)"],["ZTAPEF20-000I","FILAMENT TAPE"],["SSAKBA094QBEZ","POLY SHEET 1"],["SSAKBA096QBEZ","WATERPROOF POLY BAG"],["SSAKBA101QBEZ","POLY SHEET 5"],["CSW--A201QBKZ","LID SWITCH ASS'Y"],["LPLT-A115QBPZ","PULSATOR PLATE (ES-T60LL-G)"],["LX-WZA129QBEZ","PULSATOR WASHER (ES-T75BTK-P)"],["PCOVQA010QBPZ","LID SWITCH COVER SMALL (MW TYPE)"],["GCOVHA029QBRA","COVER HIDING SCREW"],["GCOVHA029QBRB","COVER HIDING SCREW WO 12L"],["GCOVHA029QBRC","COVER HIDING SCREW"],["GCOVHA029QBRE","COVER HIDING SCREW"],["GCOVHA029QBRF","COVER HIDING SCREW"],["GCOVHA029QBRG","COVER HIDING SCREW"],["GCOVHA029QBRK","COVER HIDING SCREW"],["MJNT-A032QBEZ","BRAKE JOINT (ES-T98)"],["MJNT-A034QBEZ","BRAKE JOINT (ES-T1270SJ-BL)"],["MJNT-A035QBEZ","VALVE JOINT"],["MJNT-A036QBEZ","BRAKE JOINT"],["PSPO-A227QBPZ","CUSHION"],["CGUM-A022QBKZ","BELLOWS ASS'Y (ES-T1090-P/VK)"],["CSPR-A233QBKZ","COIL SPRING ASS'Y"],["QSWTBA006QBZZ","SPIN DRY TIMER SW"],["QSWTBA007QBZZ","SPIN DRY TIMER SW (ES-T77DA-R)"],["RC-QZA245QBZZ","CAPACITOR (ES-T75MW)"],["RC-QZA255QBZZ","CAPACITOR"],["RMOT-A180QBEZ","WASH MOTOR (ES-T60S-W)"],["RMOT-A205QBEZ","WASH MOTOR"],["RMOT-A226QBEZ","SPIN DRY MOTOR"],["RMOT-A235QBEZ","SPIN DRY MOTOR (ES-T80CL-B)"],["RMOT-A253QBEZ","WASH MOTOR"],["RMOT-A254QBEZ","SPIN-DRY MOTOR"],["NBLT-A064QBEZ","V-BELT M-28"],["NBLT-A067QBEZ","V-BELT A33.5"],["CFTA-A403QBKZ","SPIN DRY LID ASS'Y SMALL (MW TYPE)"],["CFTA-A719QBKZ","SPIN DRY LID ASS'Y"],["CFTA-A744QBKZ","SPIN LID ASS'Y ( ES-T89SJ-GR )"],["CFTA-A771QBKZ","SPIN DRY LID ASS'Y"],["CKNB-A007QBKZ","TIMER KNOB ASSY ( VIOLET )"],["CKNB-A008QBKZ","TIMER KNOB ASSY ( RED )"],["CKNB-A009QBKZ","TIMER KNOB ASSY"],["GFTARA094QBFZ","BACK COVER"],["GFTATA230QBFA","WASH LID"],["GFTATA230QBFE","WASHER  LID ( ES-T89SJ-GR )"],["GFTATA288QBFA","WASH LID ASS'Y SMALL (MW TYPE)"],["HPNLTA075QBRB","CONTROL PANEL (ES-T68MW-P)"],["HPNLTA077QBRA","CONTROL PANEL (ES-T77DA-R)"],["HPNLTA098QBRA","CONTROL PANEL (SILK)"],["HPNLTA098QBRB","CONTROL PANEL (SILK)"],["HPNLTA100QBRA","CONTROL PANEL (SILK) ES-T99SJ-BL"],["HPNLTA100QBRB","CONTROL PANEL (SILK) ES-T99SJ-PK"],["HPNLTA109QBRA","CONTROL PANEL (SILK) ES-T90MW-BK"],["HPNLTA110QBRA","CONTROL PANEL (SILK) ES-T90MW-HK"],["HPNLTA111QBRA","CONTROL PANEL (SILK) ES-T89SJ-GR"],["HPNLTA123QBRA","CONTROL PANEL(SILK)"],["HPNLTA123QBRB","CONTROL PANEL(SILK)"],["HPNLTA124QBRA","CONTROL PANEL(SILK)"],["HPNLTA124QBRB","CONTROL PANEL(SILK)"],["JKNBKA022QBFA","TIMER KNOB (ES-T60CL-V) WHITE"],["JKNBKA022QBFB","TIMER KNOB (GREY)"],["JKNBKA022QBFE","TIMER KNOB"],["JKNBKA022QBFF","TIMER KNOB"],["JKNBPA005QBFA","WATER SUPPLY KNOB (ES-T80CL-B)"],["JKNBPA005QBFB","KNOB (ES-T86FL-H)"],["JKNBPA010QBFA","WATER SUPPLY KNOB"],["LDAI-A013QBFZ","MOTOR FIXING SPACER"],["LHLD-A620QBFZ","HOSE HOOK (MW TYPE)"],["LSTPPA053QBFZ","CORD STOPPER (ES-T871/971)"],["MARMPA007QBFZ","CHANGEABLE LINK"],["MJNTPA011QBFE","WATER SUPPLY JOINT"],["MJNTPA011QBFG","WATER SUPPLY JOINT"],["NSFTPA014QBFZ","WASH ACTION SHAFT (ES-T98DA-R)"],["PCAS-A226QBFA","FILTER CASE (BLUE) (ES-T60FL-W)"],["PCAS-A226QBFB","FILTER CASE (VIOLET)"],["PCAS-A226QBFC","FILTER CASE (PINK)"],["PCAS-A226QBFE","FILTER CASE (SMOKE GRAY)"],["PCAS-A226QBFG","FILTER CASE (CLEAR RED)"],["PCAS-A226QBFH","FILTER CASE (HOT STAMP)"],["PCAS-A226QBFJ","FILTER CASE ( BLUE )"],["PCAS-A226QBFM","FILTER CASE"],["PCAS-A389QBJA","FILTER CASE HS"],["PCAS-A389QBJB","FILTER CASE HS (ES-T1490WA-RD)"],["PCAS-A389QBJC","FILTER CASE HS ( ES-T1290WA-PK )"],["PCAS-A391QBFA","FILTER CASE"],["PCOK-A005QBFZ","WATER SELECTOR COCK"],["PFILDA018QBFB","OVERFLOW FILTER  (ES-T65FL-H)"],["PFILDA019QBFA","OVERFLOW FILTER WHITE (SW"],["PFILIA006QBFZ","FILTER HOLDER (ES-T60FL-W)"],["PFTA-A150QBFZ","INNER LID ( ES-T1290WA-PK )"],["PGIDMA034QBFG","WATER SUPPLY GUIDE"],["PGIDMA036QBFC","WATER SUPPLY GUIDE"],["PGIDMA036QBFE","WATER SUPPLY GUIDE"],["PGIDMA036QBFG","WATER SUPPLY GUIDE"],["PGIDMA051QBFA","WATER SUPPLY GUIDE (ES-T98/SMALL WHITE)"],["PGIDMA056QBFA","WATER SUPPLY GUIDE"],["PGIDMA056QBFB","WATER SUPPLY GUIDE"],["PGIDMA056QBFC","WATER SUPPLY GUIDE"],["PGIDMA061QBFA","WATER SUPPLY GUIDE"],["UFTAPA003QBFZ","DISC COVER (ES-T60CL-B)"],["UFTAPA011QBFZ","DISK COVER"],["MJNT-A021QBEZ","VALVE JOINT SMALL"],["MJNT-A022QBEZ","BRAKE JOINT SMALL"],["MJNT-A023QBEZ","VALVE JOINT BIG"],["MJNT-A024QBEZ","BRAKE JOINT BIG"],["MJNT-A026QBEZ","VALVE JOINT SMALL (MW TYPE)"],["MJNT-A029QBEZ","VALVE JOINT (ES-T77)"],["MJNT-A030QBEZ","BRAKE JOINT (ES-T77)"],["MJNT-A031QBEZ","VALVE JOINT (ES-T98)"],["MJNT-A039QBEZ","VALVE JOINT"],["MJNT-A040QBEZ","BRAKE JOINT"],["MJNT-A042QBEZ","JOINT WIRE (VALVE)"],["MJNT-A043QBEZ","JOINT WIRE (BRAKE)"],["CJNT-A046QBKZ","BRAKE WHEEL ASS'Y"],["TLABMA498QBZZ","QR CoDE MATERiAL"],["QW-VZC195QBZZ","LID SW WIRE (ES-T1490WA-RD)"],["QW-VZC282QBZZ","LID SW WIRE"],["QW-VZC191QBZZ","LID SW WIRE HARNESS"],["QW-VZC229QBZZ","LID SW WIRE HARNESS (MW/DAE-A)"],["QW-VZC230QBZZ","LID SW WIRE (DAE-A)"],["CFTA-A364QBKZ","WASH LID BIG SMOKE GRAY (CL TYPE)"],["CFTA-A365QBKZ","SPIN DRY LID BIG SMOKE GRAY (CL TYPE)"],["CFTA-A370QBKZ","WASH LID ASS'Y (BIG BLUE/AERO DRY)"],["CFTA-A421QBKZ","WASH LID ASS'Y (BIG PINK/AERO DRY)"],["CFTA-A423QBKZ","WASH LID ASS'Y (BIG VIOLET/AERO DRY)"],["CFTA-A493QBKZ","WASH LID ASS'Y RED SMALL (DA-R)"],["CFTA-A494QBKZ","SPIN DRY LID ASS'Y (SMALL RED/LOCAL)"],["CFTA-A495QBKZ","WASH LID ASS'Y BLUE SMALL (DA-B)"],["CFTA-A496QBKZ","SPIN DRY LID ASS'Y (SMALL BLUE/LOCAL)"],["CFTA-A612QBKZ","SPIN DRY LID ASS'Y (BIG BLUE/LOCAL)"],["CFTA-A619QBKZ","SPIN DRY LID ASS'Y (BIG PINK)"],["CFTA-A621QBKZ","SPIN DRY LID ASS'Y (BIG VIOLET)"],["CFTA-A705QBKZ","WASHER LID ASS'Y"],["CFTA-A706QBKZ","SPIN DRY LID (ES-T1490WA-BL)"],["CFTA-A707QBKZ","WASHER LID (ES-T1490WA-RD)"],["CFTA-A708QBKZ","SPIN DRY LID (ES-T1490WA-RD)"],["CFTA-A709QBKZ","WASHER LID ASS'Y ( ES-T1290WA-PK )"],["CFTA-A710QBKZ","SPIN DRY LID ASS'Y ( ES-T1290WA-PK )"],["CFTA-A711QBKZ","WASHER LID ASS'Y"],["CFTA-A712QBKZ","SPIN DRY LID ASS'Y"],["CFTA-A718QBKZ","SPIN DRY LID ASS'Y"],["CFTA-A747QBKZ","WASHER LID ASS'Y"],["CFTA-A748QBKZ","SPIN DRY LID ASS'Y"],["CFTA-A772QBKZ","SPIN DRY LID ASS'Y"],["CFTA-A773QBKZ","WASH LID ASS'Y"],["GFTATA237QBFA","WASH LID"],["PFTA-A113QBFZ","INNER LID (BIG AERO DRY)"],["PFTA-A126QBFZ","INNER LID (ES-T77)"],["PGIDMA044QBFA","WATER SUPPLY GUIDE (ES-T77/SMALL WHITE)"],["UFTAPA004QBFZ","DISC COVER BIG"],["SSAKA0038CEZZ","OPERATION MANUAL BAG (205 x 190 mm)"],["CPAD-A108QBFZ","BOTTOM PAD SK (ES-T98/ SMALL)"],["CPAD-A112QBFZ","TOP PAD ASS'Y"],["CPAD-A114QBFZ","BOTTOM PAD SK"],["CPAD-A117QBFZ","TOP PAD ASS'Y"],["CPAD-A118QBKZ","TOP PAD ASS'Y"],["CPAD-A135QBFZ","TOP PAD ASS'Y"],["CPAD-A137QBFZ","BOTTOM PAD SK"],["SPAKXA027QBFZ","BASKET SUPPORTERE (ES-T77)"],["SPAKXA047QBFZ","BASKET SUPPORTER"],["SPAKXA049QBFZ","BASKET SUPPORTER"],["SPAKXA058QBFZ","BASKET SUPPORTER"],["SPAKXA068QBFZ","BASKET SUPPORTER"],["QACC-A092QBZZ","AC CORD (WITH GROUND WIRE SPIN)"],["QFS-GA097QBZZ","FUSE LEAD"],["QW-VZC196QBZZ","LID SW WIRE HARNESS"],["QW-VZC281QBZZ","LID SW WIRE"],["GCOVHA206QBRA","COVER HIDING SCREW"],["GCOVHA206QBRB","COVER HIDING SCREW"],["GCOVHA206QBRC","COVER HIDING SCREW"],["GCOVHA206QBRE","COVER HIDING SCREW"],["GCOVHA206QBRF","COVER HIDING SCREW"],["GCOVHA206QBRG","COVER HIDING SCREW"],["GCOVHA206QBRK","COVER HIDING SCREW"],["GCOVHA206QBRL","COVER HIDING SCREW"],["GCOVHA206QBRM","COVER HIDING SCREW"],["UFTAPA006QBFZ","DISC COVER"],["PSEL-A187QBPZ","SEAL PACKING 1"],["PSEL-A194QBPZ","SEAL PACKING 40"],["PSEL-A196QBPZ","SEAL PACKING 80"],["PSEL-A197QBPZ","SEAL PACKING A 100"],["PSEL-A198QBPZ","SEAL PACKING 230"],["PSEL-A199QBPZ","SEAL PACKING 20"],["PSEL-A200QBPZ","SEAL PACKiNG 5*80"],["PSEL-A201QBPZ","SEAL PACKING 150"],["PSEL-A325QBPZ","SEAL PACKING A 100"],["PSEL-A354QBPZ","SEAL PACKING 5*140"],["XTTS740P12000","TAPPING SCREW (ES-T96CA-B)"],["XTTWJ40P16000","TAPPING SCREW (ES-T96CA-B)"],["CSW--A196QBKZ","LID SWITCH ASS'Y"],["QW-VZB606QBZZ","LID SW WIRE HARNESS (ES-T77)"],["QW-VZB672QBZZ","LID SW WIRE HARNESS (ES-T98)"],["QW-VZB686QBZZ","LID SW WIRE (ES-T65M-W)"],["QW-VZB777QBZZ","LID SW WIRE (ES-T1490WA-RD)"],["QW-VZB840QBZZ","LID SW WIRE HARNESS (MW/LOCAL)"],["QW-VZB841QBZZ","LID SW WIRE (ES-T99SJ-BL/PK)"],["QW-VZB969QBZZ","LID SW WIRE HARNESS"],["ZTAPEP48T000I","PP tape"],["ZTAPES12T65ME","TRANSPARENT TAPE"],["ZTAPEZ165000I","PP tape (1000 METER)"],["CPUL-A154QBKZ","PULSATOR ASS'Y"],["GFTARA074QBFZ","BACK COVER (ES-T80CL-B)"],["NPUL-A084QBFA","PULSATOR (EH-SW-MW TYPE)"],["NPUL-A113QBFA","PULSATOR"],["NPUL-A114QBFA","PULSATOR 50A W/BOSS"],["PCOV-A687QBFA","PULSATOR COVER (ES-T1490WA-RD)"],["CKNB-A021QBKZ","TIMER KNOB ASSY"],["CKNB-A022QBKZ","TIMER KNOB ASSY"],["CKNB-A023QBKZ","TIMER KNOB ASSY"],["CKNB-A025QBKZ","TIMER KNOB ASSY"],["CKNB-A026QBKZ","TIMER KNOB ASSY"],["PCOVPA069QBFZ","WATERPROOF COVER"],["RMOT-A251QBEZ","WASH MOTOR"],["RMOT-A252QBEZ","SPIN DRY MOTOR (ES-T75MW)"],["RMOT-A255QBEZ","WASH MOTOR"],["RMOT-A256QBEZ","SPIN DRY MOTOR"],["CKNB-A010QBKZ","TIMER KNOB ASSY"],["CKNB-A011QBKZ","TIMER KNOB ASSY"],["JKNBKA026QBFA","TIMER KNOB (RED)"],["JKNBKA026QBFB","TIMER KNOB (LIGHT GREY)"],["PGIDMA036QBFA","WATER SUPPLY GUIDE BIG WHITE"],["PGIDMA036QBFB","WATER SUPPLY GUIDE BIG GRAY (FL"],["PGIDMA036QBFH","WATER SUPPLY GUIDE"],["PGIDMA036QBFJ","WATER SUPPLY GUIDE"],["YRSNPPZGY51QB","DINOC GRAY PLAMASTER 9594-30"],["YRSNPPZGY60QB","PP ELPRO 9842J"],["ZNORIB152100I","RUBBER ADHESIVE"],["CHOS-A177QBKZ","OUTER DRAIN HOSE ASSY (ES-T60CL-B)"],["PHOS-A269QBFA","OUTER DRAIN HOSE"],["PHOS-A292QBFA","OUTER DRAIN HOSE (ES-T65MW-P)"],["PPIPPA059QBEZ","OVER FLOW PIPE (SMALL)"],["PVLVCA025QBFZ","SPIN DRY VALVE"],["QSWTBA015QBZZ","SPIN DRY TIMER"],["QSWTBA016QBZZ","SPIN DRY TIMER"],["RC-QZA252QBZZ","CAPACITOR"],["RC-QZA253QBZZ","CAPACITOR"],["RC-QZA254QBZZ","CAPACITOR"],["RC-QZA259QBEZ","CAPACITOR"],["ZSIL-A003VRE0","SILICONE GREASE(SHINETSU SILICONE KS-64)"],["ZTAPEP256000I","POLYESTER TAPE"],["ZTAPEU19-18ME","UL TAPE"],["ZTPEMA011VRZ0","MASKING TAPE (SP-P200C)"],["CFTA-A644QBKZ","SPIN DRY LID ASS'Y ( ES-T80MW-BK )"],["CFTA-A645QBKZ","SPIN DRY LID ASS'Y"],["CFTA-A669QBKZ","SPIN DRY LID ASS'Y"],["CFTA-A670QBKZ","SPIN DRY LID ASS'Y"],["CFTA-A697QBKZ","SPIN DRY LID ASS'Y"],["CFTA-A698QBKZ","SPIN DRY LID ASS'Y"],["CFTA-A770QBKZ","SPIN DRY LID ASS'Y"],["CKNB-A013QBKZ","TIMER KNOB ASSY"],["CKNB-A014QBKZ","TIMER KNOB ASSY"],["CKNB-A015QBKZ","TIMER KNOB ASSY ( ES-T1290WA-PK )"],["CKNB-A016QBKZ","TIMER KNOB ASSY (ES-T1270SJ-BL)"],["CKNB-A017QBKZ","TIMER KNOB ASSY (ES-T1270SJ-PK)"],["GFTARA134QBFZ","BACK COVER (SMALL)"],["GFTATA288QBFB","WASH LID"],["GFTATA288QBFC","WASH LID (ES-T80MW-HK)"],["GFTATA288QBFE","WASHER  LID"],["GFTATA337QBFA","WASH LID"],["GFTATA337QBFB","WASH LID"],["GFTATA337QBFC","WASHER  LID ( ES-T90MW-PK )"],["JKNBPA004QBFA","WATER SUPPLY KNOB (ES-T60CL-P)"],["JKNBPA008QBFB","WATER SUPPLY KNOB"],["JKNBPA008QBFC","WATER SUPPLY KNOB"],["JKNBPA008QBFE","WATER SUPPLY KNOB"],["JKNBPA008QBFG","WATER SUPPLY KNOB"],["JKNBPA008QBFH","WATER SUPPLY KNOB"],["JKNBPA011QBFA","WATER SUPPLY KNOB 14KG"],["JKNBPA011QBFB","KNOB (ES-T1490WA-RD)"],["JKNBPA011QBFC","KNOB (ES-T1290WA-PK)"],["PCOVPA034QBFZ","WATER PROOF COVER (ES-T77)"],["PCOVPA039QBFZ","WATER PROOF COVER"],["PFILDA018QBFA","OVERFLOW FILTER WHITE"],["CPLY-A086QBKZ","FAN PULLEY"],["QSW-MA020QBZZ","LID SWITCH (OMRON)"],["SPAKCA581QBRZ","PACKING CASE (AQUAMAGIC BIG)"],["SPAKCA665QBRZ","PACKING CASE (ES-T65MW-P)"],["SPAKCA745QBRZ","PACKING CASE (ES-T77DA)"],["SPAKCA850QBRZ","PACKING CASE (ES-T1090)"],["SPAKCA858QBRZ","PACKING CASE (ES-T75MW)"],["SPAKCA887QBRZ","PACKING CASE (ES-T871/971)"],["SPAKCA955QBRZ","PACKING CASE"],["SPAKCA960QBRZ","PACKING CASE ( ES-T1290WA-PK )"],["SPAKCA999QBRZ","PACKING CASE"],["SPAKCB003QBRZ","PACKING CASE"],["SPAKCB031QBRZ","PACKING CASE"],["SPAKCB061QBRZ","PACKING CASE"],["SPAKCB062QBRZ","PACKING CASE"],["SPAKCB063QBRZ","PACKING CASE"],["SPAKCB067QBRZ","PACKING CASE"],["SPAKCB192QBRZ","PACKING CASE"],["SPAKCB368QBRZ","PACKING CASE"],["SPAKXA001QBEZ","UPPER HOLD"],["SPAKXA006QBEZ","BOTTOM SHEET (SMALL)"],["SPAKXA012QBEZ","BOTTOM SHEET (BIG)"],["SPAKXA013QBEZ","UPPER HOLD"],["SPAKXA025QBEZ","BOTTOM SHEET (ES-T77/ SMALL)"],["SPAKXA033QBEZ","BOTTOM SHEET (ES-T98/ SMALL)"],["SPAKXA034QBEZ","UPPER HOLD"],["SPAKXA039QBEZ","BOTTOM SHEET (ES-T1090)"],["SPAKXA042QBEZ","UPPER HOLD"],["SPAKXA057QBEZ","BOTTOM SHEET"],["SPAKXA059QBEZ","UPPER HOLD"],["TLABNA174QBZZ","RATING LABEL MATERIAL (YUPO#80)"],["LX-BZA452QBEZ","GROUND SCREW ASSY"],["LX-BZA458QBEZ","FLANGE SCREW"],["LX-BZA460QBEZ","FLANGE SCREW"],["LX-BZA464QBEZ","PULSATOR SCREW"],["LX-HZA103QBEZ","SPECIAL SCREW"],["LX-HZA104QBEZ","HOLDER FIXING SCREW"],["LX-HZA105QBEZ","COIL SP FIXING SCREW"],["XBTS750P06000","SCREW (BASE ALL MODEL)"],["XCPS740P12000","TAPPING SCREW (WATERPROOF COVER)"],["XCTS740P12000","TAPPING SCREW 12MM (CAPACITOR)"],["XNFS750-40000","NUT (ES-T75E-H)"],["XTPS730P18000","SPECIAL TAPPING (ES-T65MW)"],["XUTWJ40P10000","TAPPING SCREW"],["XWHS750-10000","WASHER (ES-T75E-H)"],["XWSS750-13000","SPRING WASHER"],["CFTA-A749QBKZ","SPIN DRY LID ASS'Y ( ES-T65/75NT-BL )"],["CFTA-A750QBKZ","WASHER LID ASS'Y ( ES-T65/75NT-BL )"],["CFTA-A751QBKZ","SPIN DRY LID ASS'Y ( ES-T65NT-GY )"],["CFTA-A752QBKZ","WASHER LID ASS'Y ( ES-T65NT-GY )"],["CFTA-A753QBKZ","SPIN DRY LID ASS'Y ( ES-T75NT-PK )"],["CFTA-A754QBKZ","WASHER LID ASS'Y ( ES-T75NT-PK )"],["CFTA-A802QBKZ","WASHER LID ASS'Y (ES-T79SJ-LCT)"],["CFTA-A803QBKZ","SPIN DRY LID ASS'Y (ES-T79SJ-LCT)"],["CFTA-A804QBKZ","WASHER LID ASS'Y (ES-T79SJ-BLT)"],["CFTA-A805QBKZ","SPIN DRY LID ASS'Y (ES-T79SJ-BLT)"],["CKAG-A036QBKZ","SPIN BASKET ASS'Y 14kg"],["FPNL-A160QBKZ","PANEL ASSY"],["FPNL-A161QBKZ","PANEL ASSY (ES-T79)"],["FPNL-A164QBKZ","PANEL ASS'Y"],["FPNL-A165QBYZ","PANEL ASS'Y"],["FPNL-A166QBYZ","PANEL ASS'Y"],["FPNL-A167QBYZ","PANEL ASS'Y"],["FPNL-A168QBYZ","PANEL ASS'Y (ES-T871DM-PK)"],["FPNL-A180QBKZ","PANEL ASS'Y"],["FPNL-A181QBKZ","PANEL ASS'Y"],["GBDY-A062QBFA","TOP COVER"],["HPNLTA075QBRA","CONTROL PANEL (ES-T68MW-B)"],["HPNLTA103QBRA","CONTROL PANEL (SILK) ES-T80MW-PK"],["HPNLTA107QBRA","CONTROL PANEL (SILK) ES-T80MW-BK"],["HPNLTA108QBRA","CONTROL PANEL (SILK) ES-T80MW-HK"],["HPNLTA113QBRA","CONTROL PANEL (SILK) ES-T65NT-BL"],["HPNLTA115QBRA","CONTROL PANEL (SILK) ES-T65NT-GY"],["HPNLTA116QBRA","CONTROL PANEL (ES-T75)"],["HPNLTA117QBRA","CONTROL PANEL (SILK) ES-T75NT-PK"],["HPNLTA128QBRA","CONTROL PANEL (SILK) ES-T75NT-GY"],["HPNLTA131QBRA","CONTROL PANEL (T79SJ-LCT)"],["HPNLTA133QBRA","CONTROL PANEL (T79SJ-BLT)"],["PGUMMA015QBFZ","ANTIVIBRATION RUBBER"],["PPACGA057QBEZ","FILTER CASE PACKING"],["PVLVCA007QBFZ","SPIN DRY VALVE"],["CGUM-A024QBKZ","BELLOWS ASS'Y (ES-T77F)"],["CPAD-A085QBFZ","TOP PAD ASS'Y (SMALL)"],["CPAD-A087QBFZ","TOP PAD ASS'Y (ES-T80CL-B)"],["CPAD-A089QBFZ","BOTTOM PAD SK (SMALL)"],["CPAD-A090QBFZ","BOTTOM PAD SK (ES-T80CL-B)"],["CPAD-A093QBFZ","TOP PAD ASS'Y (SMALL)"],["CPAD-A100QBFZ","TOP PAD ASS'Y (ES-T77F-PB)"],["CPAD-A102QBFZ","BOTTOM PAD SK (ES-T77/ SMALL)"],["CPAD-A153QBFZ","BOTTOM PAD SK"],["CPAD-A154QBKZ","TOP PAD ASS'Y"],["SPAKXA018QBFZ","BASKET SUPPORTERE (ES-T65M-W)"],["SPAKXA019QBFZ","BASKET SUPPORTERE"],["SPAKXA048QBFZ","BASKET SUPPORTER"],["ZNORIBSEALERI","SUPER SEALER"],["TINS-A075QBRZ","OPERATION MANUAL + WARRANTY"],["TINS-A090QBRZ","OPERATION MANUAL + WARRANTY"],["TINS-A128QBRZ","OPERATION MANUAL + WARRANTY"],["TINS-A199QBRZ","OPERATION MANUAL + WARRANTY"],["TINS-A217QBRZ","OPERATION MANUAL + WARRANTY"],["TINS-A232QBRZ","OPERATION MANUAL + WARRANTY"],["TINS-A236QBRZ","OPERATION MANUAL + WARRANTY"],["TINS-A250QBRZ","OPERATION MANUAL + WARRANTY"],["TINS-A252QBRZ","OPERATION MANUAL + WARRANTY"],["TINS-A257QBRZ","OPERATION MANUAL + WARRANTY"],["TINS-A258QBRZ","OPERATION MANUAL + WARRANTY"],["TINS-A260QBRZ","OPERATION MANUAL + WARRANTY"],["TINS-A261QBRZ","OPERATION MANUAL + WARRANTY"],["TINS-A297QBRZ","OPERATION MANUAL + WARRANTY"],["TINS-A306QBRZ","OPERATION MANUAL + WARRANTY"],["TLABMA268QBZZ","WHITE LABEL MATERIAL 270*55"],["TLABMA495QBZZ","S/NO. LABEL MATERIAL"],["TLABZF001WJZZ","FIFO LABEL"],["CHLD-A267QBKZ","SHAFT HOLDER ASS'Y"],["CHLD-A268QBKZ","BEARING HOLDER ASS'Y (ES-T79SJ)"],["CHOS-A174QBKZ","OUTER DRAIN HOSE ASSY"],["LHLD-A768QBFZ","HOSE HOOK"],["PHOS-A294QBEZ","WATER SUPPLY HOSE"],["PHOS-A401QBFA","DRAIN HOSE (ES-T65/75NT)"],["QTAN-A001VRE0","TERMINAL CE-2"],["LHLDW1033PEZZ","UNITY BAND"],["ZBANDP15-001I","STRAPPING BAND ( 1 ROLL 1300M)"],["CSPR-A231QBKZ","COIL SPRING ASS'Y"],["MSPRPA013QBPZ","PLATE SPRING"],["YRSNPPZGY33QB","PPM 7JA277 BLU (PANTONE 290C)"],["YRSNPPZGY46QB","PPM 8JA126 VIOLET (PANTONE 2635C)"],["GLEGGA012QBFZ","RUBBER FOOT (ES-T60CL-B)"],["PFILHA008QBEZ","FILTER (ES-T60CL-B)"],["PFILHA012QBEZ","FILTER"],["PGUMMA033QBFZ","ANTIVIBRATION RUBBER"],["PPACGA084QBEZ","FILTER CASE PACKING"],["PSHEMA087QBPZ","TERMiNAL SHEET (AL SHEET)"],["PVLVCA020QBFZ","SPIN DRY VALVE"],["MSPR-A330QBPZ","SNAP SPRING"],["MSPR-A331QBPZ","SNAP SPRING"],["MSPRTA015QBPZ","ARM SPRING (ES-T60LL-G)"],["MSPRTA030QBPZ","ARM SPRING (ES-T98DA-R)"],["RMOT-A284QBEZ","WASH MOTOR"],["RMOT-A285QBEZ","SPIN-DRY MOTOR"],["RMOT-A288QBEZ","WASH MOTOR"],["RMOT-A289QBEZ","SPIN DRY MOTOR"],["RMOT-A294QBEZ","WASH MOTOR"],["RMOT-A295QBEZ","SPIN DRY MOTOR"],["CCOV-A130QBKZ","WATER PROOF COV ASS'Y (ES-T65MW)"],["CCOV-A186QBKZ","WATERPROOF COV ASS'Y (ES-T85MW)"],["CGUM-A023QBKZ","BELLOWS ASS'Y"],["CHLD-A273QBKZ","BEARING HOLDER ASS'Y"],["CHLD-A306QBKZ","BEARING HOLDER ASS'Y"],["CJNT-A039QBKZ","BRAKE WHEEL ASS'Y (ES-T60CL-B)"],["CJNT-A043QBKZ","BRAKE WHEEL ASS'Y"],["CPLT-A114QBKZ","BRAKE PLATE ASS'Y"],["CPLT-A129QBKZ","BRAKE PLATE ASS'Y"],["CPLT-A156QBKZ","BRAKE PLATE ASS'Y"],["CPLT-A157QBKZ","BRAKE PLATE ASS'Y"],["CPLT-A163QBKZ","BRAKE PLATE ASS'Y"],["CPLY-A080QBKZ","FAN PULLEY ASSY (ES-T85MW)"],["CPLY-A081QBKZ","FAN PULLEY ASSY (ES-TA99C-P)"],["CPLY-A085QBKZ","FAN PULLEY ASS'Y"],["CSPR-A230QBKZ","COIL SPRING ASS'Y"],["CSPR-A259QBKZ","COIL SPRING ASS'Y"],["CWIR-A013QBKZ","BRAKE WIRE ASS'Y"],["CWIR-A016QBKZ","BRAKE WIRE ASS'Y"],["CWIR-A020QBKZ","BRAKE WIRE ASS'Y"],["LX-BZA369QBEZ","FLANGE SCREW"],["LX-BZA370QBEZ","PULLEY FIXING SCREW"],["LX-HZA111QBEZ","SPECIAL SCREW"],["NPLYMA066QBCZ","FAN PULLEY (ES-T65MW-B)"],["NPLYMA071QBCZ","FAN PULLEY (ES-TA99C-P) N.L.A"],["PFILDA016QBFA","LINT FILTER (ES-T86CL-H)"],["PFILDA016QBFB","LINT FILTER (ES-T86CL-H)"],["QSWTBA005QBZZ","SPIN DRY TIMER SWITCH DXT-5"],["QSWTBA019QBZZ","SPIN-DRY TIMER SW 5M"],["QSWTBA024QBZZ","WASH TIMER SWITCH 45M"],["QSWTBA025QBZZ","SPIN-DRY TIMER SW"],["QSWTBA027QBZZ","WASH TIMER SWITCH 45M"],["QSWTSA057QBEZ","WASH TIMER SWITCH DXT15 (ES-T65MW-P)"],["QSWTSA059QBEZ","WASH TIMER SWITCH 45M"],["UAMI-A002QBEZ","HIJAB POUCH"],["XWHS753-08000","WASHER (ES-T75E-H)"],["CVLV-A064QBKZ","DRAIN VALVE ASS'Y (6&7Kg) (ES-T60CL-B)"],["CVLV-A065QBKZ","DRAIN VALVE ASS'Y (8&9Kgr) (ES-T80CL-B)"],["CVLV-A086QBKZ","DRAIN VALVE ASS'Y"],["CVLV-A109QBKZ","DRAIN VALVE ASS'Y (8&9Kgr)"],["FDAI-A001QBKZ","BASE ASSY BIG (DINOC GRAY)"],["FDAI-A002QBKZ","BASE ASSY BIG (GRAY 5 FL/CL TYPE)"],["FDAI-A016QBKZ","BASE ASSY BIG (ES-T77)"],["FDAI-A017QBKZ","BASE ASSY BIG (ES-T98)"],["FDAI-A022QBKZ","BASE ASSY BIG (DINOC GRAY)"],["FDAI-A023QBKZ","BASE ASSY ( ES-T99SJ-BL )"],["FDAI-A024QBKZ","BASE ASSY ( ES-T99SJ-PK )"],["FDAI-A025QBKZ","BASE ASSY"],["FDAI-A026QBKZ","BASE ASSY"],["FDAI-A028QBKZ","BASE ASSY"],["GDAI-A017QBFE","PLASTIC BASE ( ES-T79SJ-BL )"],["GDAI-A017QBFF","PLASTIC BASE ( ES-T79SJ-PK )"],["GDAI-A017QBFH","PLAPCIC BASE"],["FPNL-A127QBYZ","PANEL ASSY (SILK/T86CL-H)"],["FPNL-A128QBYZ","PANEL ASSY (SILK/T96CL-H)"],["FPNL-A150QBYZ","PANEL ASSY (SILK/T85CR-BK)"],["FPNL-A151QBYZ","PANEL ASSY (SILK/T85CR-PK)"],["FPNL-A152QBYZ","PANEL ASSY (SILK/T85CR-VK)"],["FPNL-A153QBYZ","PANEL ASSY (SILK/T95CR-BK)"],["FPNL-A154QBYZ","PANEL ASSY (SILK/T95CR-PK)"],["FPNL-A155QBYZ","PANEL ASSY (SILK/T95CR-VK)"],["FPNL-A174QBKZ","PANEL ASS'Y"],["FPNL-A175QBKZ","PANEL ASS'Y (ES-T1490WA-RD)"],["FPNL-A176QBKZ","PANEL ASS'Y ( ES-T1290WA-BL )"],["FPNL-A177QBKZ","PANEL ASS'Y ( ES-T1290WA-PK )"],["FPNL-A178QBYZ","PANEL ASS'Y"],["FPNL-A187QBYZ","PANEL-DK"],["GBDY-A053QBFC"," TOP COVER"],["GBDY-A053QBFE","TOP COVER"],["GBDY-A053QBFG","TOP COVER ( ES-T89SJ-GR )"],["GBDY-A055QBFA","TOP COVER (BIG WHITE)"],["GBDY-A055QBFB","TOP COVER (BIG GREY)"],["GBDY-A055QBFC","TOP COVER"],["GBDY-A055QBFE","TOP COVER"],["GBDY-A055QBFG","TOP COVER ( ES-T1070SJ-GR )"],["GBDY-A055QBFH","TOP COVER"],["GBDY-A055QBFJ","TOP COVER"],["GBDY-A056QBFA","TOP COVER (SMALL WHITE"],["GBDY-A056QBFB","TOP COVER ( ES-T80MW-PK )"],["GBDY-A056QBFC","TOP COVER ( ES-T80MW-BK )"],["GBDY-A056QBFE","TOP COVER ( ES-T80MW-HK )"],["GBDY-A058QBFA","TOP COVER (ES-T77/ SMALL WHITE)"],["GBDY-A060QBFA","TOP COVER"],["GBDY-A060QBFB","TOP COVER"],["GBDY-A060QBFC","TOP COVER"],["GBDY-A061QBFB","TOP COVER ( ES-T90MW-PK )"],["GBDY-A061QBFC","TOP COVER ( ES-T90MW-BK )"],["GBDY-A061QBFE","TOP COVER ( ES-T90MW-HK )"],["GBDY-A063QBFA","TOP COVER (ES-T1490WA)"],["GBDY-A064QBFA","TOP COVER"],["GBDY-A064QBFB","TOP COVER"],["GBDY-A064QBFC","TOP COVER"],["GDAI-A017QBFA","PLASTIC BASE ASSY SMALL"],["GDAI-A017QBFC","PLASTIC BASE SMALL WHITE (LL-G/MW TYPE)"],["GDAI-A050QBFA","PLASTIC BASE"],["LSOU-A110QBFA","TUB (SMALL WHITE)"],["LSOU-A111QBFA","TUB (BIG WHITE)"],["LSOU-A111QBFB","TUB (BIG GREY)"],["LSOU-A128QBFA","TUB SMALL (MW TYPE)"],["LSOU-A140QBFA","TUB"],["LSOU-A152QBFA","TUB (ES-T77/SMALL WHITE)"],["LSOU-A161QBFA","TUB (ES-T98/BIG WHITE)"],["LSOU-A181QBFA","TUB"],["LSOU-A191QBFA","TUB ( ES-T1490WA )"],["LSOU-A197QBFA","TUB ( ES-T65/75NT)"],["PFILDA036QBFA","LINT FILTER"],["UAMI-A004QBEZ","HIJAB POUCH"],["CFTA-A768QBKZ","SPIN DRY LID ASS'Y"],["GFTATA288QBFG","WASHER  LID"],["GFTATA288QBFH","WASH LID"],["GFTATA288QBFJ","WASH LID"],["HPNLTA120QBRA","CONTROL PANEL (SILK)"],["HPNLTA121QBRA","CONTROL PANEL (SILK)"],["HPNLTA122QBRA","CONTROL PANEL (SILK)"],["MJNTPA011QBFC","WATER SUPPLY JOINT"],["PGIDMA034QBFC","WATER SUPPY GUIDE"],["PGIDMA034QBFE","WATER SUPPLY GUIDE"],["TINS-A243QBRZ","OPERATION MANUAL + WARRANTY"],["TINS-A259QBRZ","OPERATION MANUAL + WARRANTY"],["PREFLA141QBFA","7SEG REFLECTOR"],["PREFLA139QBFA","7SEG REFLECTOR-L"],["PREFLA138QBFA","7SEG REFLECTOR-R"],["GCOVAA330QBFB","BACK PANEL"],["GCOVAA336QBFB","BACK PANEL"],["HPNLCA308QBFA","CONTROL PANEL"],["HPNLCA311QBFA","CONTROL PANEL"],["PCOV-A755QBFA","DAMPER COVER L"],["PCOV-A762QBFA","DAMPER COVER L"],["PCOV-A756QBFA","DAMPER COVER R"],["PCOV-A763QBFA","DAMPER COVER R"],["PVLV-A074QBFZ","HOSE JOINT"],["CCOV-A239QBKZ","POWER CIRCUIT COVER K"],["PCASDA155QBFZ","REACTOR CASE"],["PCOVWA016QBFZ","REACTOR COVER"],["PREFLA137QBFA","REFLECTOR"],["PREFLA140QBFA","REFLECTOR"],["PREFLA142QBFA","REFLECTOR"],["CFTATB281QBKZ","TOP LID ASS'Y"],["CFTATB356QBKZ","TOP LID ASS'Y"],["CFTATB357QBKZ","TOP LID ASS'Y"],["PCOV-A748QBFB","TUB COVER"],["PCOV-A748QBFC","TUB COVER"],["PCOV-A751QBFC","TUB COVER"],["ZHOTM-009000D","3M HOTMELT 3748Q"],["LPLTMA219QBPZ","BACK PLATE"],["LSUB-A043QBPZ","CORNER PIECE FRONT"],["LSUB-A044QBPZ","CORNER PIECE REAR"],["ZYAKUZ000071Y","SALT"],["SSAKBA144QBEZ","SCREW BAG"],["RALMBA025QBZZ","BUZZER"],["RMOTCA087QBZZ","MOTOR (D05F-12PS2 01)"],["RMOTCA088QBZZ","MOTOR (ES-W90EW-H)"],["ZULTNA003QBZZ","URETHANE (HARDENER)"],["ZULTNB003QBZZ","URETHANE (PU RESIN)"],["ZGLYC-EP4000I","GREASE EP4000I"],["ZGLYC-SR3000I","GREASE SR3000I"],["VHIR100JFFA-1","FLASH MICRO COMPUTER IC"],["VHIR100LFFA-1","FLASH MICRO COMPUTER IC"],["NBLT-A066QBEZ","V BELT M18.6"],["NBLT-A065QBEZ","V BELT M19.2"],["LPIN-A070QBFZ","HINGE PIN"],["LHLD-A685QBFZ","HOSE HOLDER"],["LHLD-A687QBFZ","HOSE HOOK"],["PCOV-A663QBFA","PULSATOR COVER (ES-M1008T-SAK)"],["NPUL-A112QBFA","SCREW PULSATOR (ES-M1008/1108T-SAK)"],["PGUMMA029QBFA","RUBBER CUSHION"],["TCAUHA702QBRA","CAUTION LABEL"],["TCAUHA702QBRB","CAUTION LABEL"],["TCAUHA702QBRC","CAUTION LABEL"],["TCAUHA702QBRE","CAUTION LABEL"],["TCAUHA723QBRC","CAUTION LABEL"],["TCAUHA723QBRE","CAUTION LABEL"],["TCAUHA723QBRF","CAUTION LABEL"],["TCAUHA732QBRA","CAUTION LABEL"],["TCAUHA732QBRB","CAUTION LABEL"],["TCAUHA731QBRZ","INSTALLATION MANUAL"],["TCAUHA758QBRZ","JOINT INSTALL MANUAL"],["TINS-A278QBEZ","OPERATION MANUAL (SJ-17GH/SJ-19GH)"],["TINS-A280QBEZ","OPERATION MANUAL (SJ-17GH/SJ-19GH)"],["TINS-A287QBEZ","OPERATION MANUAL (SJ-17GH/SJ-19GH)"],["TLAB-B273QBRB","PICT SEAL"],["TLAB-B273QBRC","PICT SEAL"],["TLAB-B352QBRA","PICT SEAL"],["TLAB-B354QBRA","PICT SEAL"],["HDEC-B249QBEA","POP SHEET"],["HDEC-B265QBEA","POP SHEET"],["HDEC-B181QBEA","WARANTI POP"],["TGAN-A480QBEZ","WARRANTY CARD"],["TGAN-A542QBEZ","WARRANTY CARD"],["TGAN-A563QBEZ","WARRANTY CARD"],["PFLT-A186QBEZ","LEAD FELT"],["TLABMA420QBZZ","S/NO LABEL MATERIAL"],["TLABMA426QBZZ","S/NO. LABEL MATERIAL"],["TLAB-B455QBRZ","WELS LABEL (4 TICKS)"],["TLAB-B456QBRZ","WELS LABEL (4 TICKS)"],["TLAB-B457QBRZ","WELS LABEL (4 TICKS)"],["QW-VZC233QBZZ","AC LEAD ASS'Y"],["QW-VZC232QBZZ","LEAD WIRE ASS'Y"],["QW-VZC234QBZZ","LEAD WIRE ASS'Y"],["QW-VZC235QBZZ","LEAD WIRE ASS'Y"],["GFTA-A109QBFZ","BOTTOM COVER (ES-Q70EY)"],["CFTATB179QBKZ","TOP LID ASSEMBLY"],["CFTATB176QBKZ","WASHER LID ASS'Y"],["CFTATB178QBKZ","WASHER LID ASS'Y"],["VHPD3B5SURD-5S","7SEGMENT LED"],["VHP15SURCA7-F+","LIGHT EMITTING DIODE"],["VCKYCY1HB103KY","CAPACITOR (CC0603KRX7R9BB103/YAGEO)"],["RC-KZA244SDE0","CERAMIC CAPACITOR"],["RC-KZA256SDE0","CERAMIC CAPACITOR"],["VCCCCYHA102JY","CERAMIC CAPACITOR"],["VCKXCY1EP105KY","CERAMIC CAPACITOR"],["VCKYCY1HF103ZN","CERAMIC CAPACITOR"],["VCKYCY1EB104KY","CERAMIC CAPACITOR(CC0603KRX7R8BB104)"],["RSNSZA025QBZZ","WATER LEVEL SENSOR"],["CVLV-A122QBKZ","WATER SUPPLY VALVE"],["CVLV-A147QBKZ","WATER SUPPLY VALVE K"],["FHOS-A085QBKZ","WATER SUPPLY HOSE K"],["ZTAPEP25LB88I","POLYESTER TAPE"],["PDMP-A023QBEZ","DAMPER L"],["PDMP-A024QBEZ","DAMPER R"],["PMTR-A005QBEZ","HORIZONTAL METER"],["SPAD-A266QBFZ","BOTTOM PAD"],["SPAD-A268QBFZ","FRONT PAD"],["SPAD-A263QBEZ","INNER TUB HOLD PAD"],["SPAD-A282QBEZ","INNER TUB HOLD PAD"],["SPAD-A264QBFZ","UPPER PAD"],["CPAD-A164QBKZ","UPPER PAD K"],["ZFLUX-88-20KE","FLUX  LEAD FREE"],["QACC-A104QBEZ","AC CORD"],["QW-VZC198QBPZ","FLAT CABLE WIRE"],["TCAUHA757QBRA","CAUTION LABEL"],["TCAUHA764QBRA","CAUTION LABEL"],["PSEL-A419QBEB","COVER HIDING SCREW"],["PSEL-A467QBEA","COVER PLUG (AC CORD)"],["PFLT-A185QBEZ","HOSE FELT 20X80"],["PFLT-A183QBEZ","HOSE FELT 60X140"],["PFLT-A182QBEZ","HOSE FELT 70X160"],["TLABSA006QBRZ","NEUTRAL LABEL"],["TCAUHA851QBRZ","PACKING CAUTION LABEL"],["HDEC-B252QBRA","PANEL SHEET"],["HDEC-B269QBRA","PANEL SHEET"],["HDEC-B270QBRA","PANEL SHEET"],["HDEC-B271QBRA","PANEL SHEET"],["TLAB-B404QBRA","PICT SEAL"],["TLAB-B405QBRA","PICT SEAL"],["PSEL-A419QBEE","SCREW HIDING SEAL"],["PSEL-A419QBEA","SCREW HINDING SEAL"],["PSEL-A419QBEC","SCREW HINDING SEAL"],["PSEL-A419QBEH","SCREW HINDING SEAL"],["PSPO-A288QBEZ","EPE-SHEET"],["XUTUW40P14000","TAPPING SCREW"],["POIS-A007QBE0","OIL SEAL 75"],["CVLV-A104QBKZ","WATER SUPPLY VALVE"],["QACC-A110QBEZ","AC CORD"],["VHVTVR10471-1","VARISTOR"],["VHVTVR14511-1","VARISTOR"],["QW-VZC045QBZZ","AC LEAD ASS'Y"],["QW-VZC070QBZZ","AC LEAD ASS'Y"],["QW-VZB822QBPZ","FLAT CABLE WIRE"],["QW-VZC092QBPZ","FLAT CABLE WIRE"],["QW-VZC072QBZZ","INNER GROUNDING WIRE"],["QW-VZC073QBZZ","INNER GROUNDING WIRE"],["QW-VZB894QBPZ","LEAD WIRE"],["QW-VZB970QBZZ","LEAD WIRE ASS'Y"],["QW-VZB973QBZZ","LEAD WIRE ASS'Y"],["QW-VZC007QBZZ","LEAD WIRE ASS'Y"],["QW-VZC008QBZZ","LEAD WIRE ASS'Y"],["QW-VZC043QBZZ","LEAD WIRE ASS'Y"],["QW-VZC145QBZZ","LEAD WIRE ASS'Y"],["QW-VZC153QBZZ","LEAD WIRE ASS'Y"],["QW-VZB974QBZZ","LEAD WIRE HC"],["QW-VZC009QBZZ","LEAD WIRE HC"],["QW-VZC010QBZZ","LEAD WIRE HC"],["QW-VZC206QBZZ","LEAD WIRE HC"],["QW-VZB972QBZZ","LEAD WIRE HC 20F"],["QW-VZC207QBZZ","LEAD WIRE HC 20F"],["GCAB-A211QBEB","CABINET MATERIAL"],["GCAB-A211QBEC","CABINET MATERIAL"],["GCAB-A213QBEA","CABINET MATERIAL"],["GCAB-A213QBEB","CABINET MATERIAL"],["GCAB-A240QBEB","CABINET MATERIAL"],["RMOT-A244QBZZ","KITE DRAIN PUMP UNIT"],["CCAS-A381QBKZ","CIRCUIT CASE K"],["DKAG-A097QBKZ","INNER TUB BOTTOM ASSEMBLY"],["DKAG-A114QBKZ","INNER TUB BOTTOM ASSEMBLY"],["DKAG-A109QBKZ","INNER TUB BOTTOM ASS'Y"],["PZETJA034QBEZ","MOTOR SPACER LOWER"],["PZETJA033QBEZ","MOTOR SPACER UPPER"],["PCASDA161QBFZ","OPERATION CASE"],["PCASDA153QBFZ","OPERATION CIRCUIT CASE"],["PCASDA157QBFZ","OPERATION CIRCUIT CASE"],["LHLD-A819QBFZ","PACKING HOLDER"],["PCASDA154QBFZ","POWER CIRCUIT CASE"],["PCASDA158QBFZ","POWER CIRCUIT CASE"],["PCASDA162QBFZ","POWER CIRCUIT CASE"],["CCOV-A234QBKZ","POWER CIRCUIT COVER K"],["CCOV-A236QBKZ","POWER CIRCUIT COVER K"],["CCOV-A254QBKZ","POWER CIRCUIT COVER K"],["NPUL-A115QBFA","PULSATOR"],["NPUL-A120QBFA","PULSATOR 50A W/BOSS"],["NPUL-A120QBFB","PULSATOR 50A W/BOSS"],["PCOV-A754QBFA","PULSATOR COVER"],["PCOV-A754QBFB","PULSATOR COVER"],["PREFLA136QBFZ","REFLECTOR"],["PREFLA148QBFA","REFLECTOR"],["GCOVAA382QBFZ","TOP COVER BACK"],["GCOVAA407QBFZ","TOP COVER BACK"],["QSW-LA036QBZZ","READ SWITCH"],["PHOS-A420QBEA","DRAIN HOSE D"],["RMOTCA084QBZZ","MOTOR (ES-M1008/1108T-SAK)"],["RMOTCA086QBZZ","MOTOR (ES-M806P-GBK)"],["RMOTCA085QBZZ","MOTOR (ES-M906P-GBK)"],["RC-FZA009CBZZ","FILM CAPACITOR"],["RC-KZA082QBEZ","FILM CAPACITOR"],["QSPGCA005JBZZ","SURGE ABSORBER"],["PCOV-A657QBFB","FILTER COVER"],["PCOV-A662QBFA","FILTER COVER"],["PCOV-A657QBFA","FILTER COVER (ES-M806P-GBK)"],["CFIL-A139QBKZ","MESH FILTER ASSEMBLY"],["CFIL-A131QBKZ","MESH FILTER ASSEMBLY (ES-M1008/1108-SAK)"],["CLEV-A037QBKZ","SAFTY-SW LEVER ASSY"],["DKUT-A054QBYZ","WATER SUPPLY BOX K"],["DKUT-A055QBYZ","WATER SUPPLY BOX K"],["DKUT-A072QBYZ","WATER SUPPLY BOX K"],["YRSNPPZGY50QB","LIGHT GRAY PLAMASTER JP-9592-30A"],["YRSNPPZGY49QB","PP ELPRO P440J SCG"],["CHOS-A274QBKZ","DRAIN HOSE ASS'Y"],["CHOS-A276QBKZ","DRAIN HOSE ASS'Y"],["CPIP-A034QBKZ","PRESSURE PIPE (ES-M1008/1108T-SAK)"],["CPIP-A038QBKZ","PRESSURE PIPE UNIT"],["VHICD4069LS-1L","CD4069G SOP-14 T/R (INVERTER IC (UTC)"],["RC-EZA082QBPZ+","ERS1EM471G16B50T (ERECTROLYTIC CAPACITOR"],["RC-EZA102QBPZ+","ERS1VM471G20B50T (ERECTROLYTIC CAPACITOR"],["VHILM7805L--1","LM7805L-TF3-T (TRANSISTOR)"],["RC-QZA257QBEZ","CAPACITOR (BIG)"],["RC-QZA258QBEZ","CAPACITOR (SMALL)"],["PPAC-A103QBFZ","SEAL PACKING"],["MSPR-A389QBPZ","COIL SPRING"],["MSPR-A390QBPZ","LID SW-SP"],["QFS-TA001QBPZ","THERMAL FUSE"],["VRW-KS3CX220J","THERMAL-LINK RESISTOR"],["VCEAG31HW106M","ELECTROLYTIC CAP."],["VCEAB31AW227M","ELECTROLYTIC CAPACITOR"],["VCEABG1EC228M","ELECTROLYTIC CAPACITOR"],["VCEAG31HW105M","ELECTROLYTIC CAPACITOR (1mF/50V)"],["VCEAB31AW337M","ELECTROLYTIC CAPACITOR (2200mF/35V)"],["VSINK0112AC-1L","FET"],["QPWBFA205QBPZ","PRINTED WIRED BOARD"],["ZTAPEU38-18ME","UL TAPE"],["RLED-A049QBE0","LED (7-SEG)"],["VHGLTV816D+-1S","PHOTO COUPLER"],["VHGLTV814AV-1S","PHOTOCOUPLER"],["QACC-A113QBEZ","AC CORD ASS'Y (1500mm/3Pin/FLAT)SNI"],["GFTARA115QBFA","BACK COVER"],["JHNDPA094QBFC","CABINET HANDLE"],["JHNDPA094QBFE","CABINET HANDLE"],["PCOV-A749QBFA","DAMPER COVER L"],["PCOV-A750QBFA","DAMPER COVER R"],["CCAS-A285QBKZ","DETERGENT CASE (ES-M806P-GBK)"],["CCAS-A267QBKZ","DETERGENT CASE ASS'Y"],["CCAS-A316QBKZ","DETERGENT CASE ASS'Y"],["CCAS-A369QBKZ","DETERGENTCASE ASS'Y"],["LHLD-A822QBFZ","SEAL HOLDER"],["QCNCMA064QBZZ","CONNECTOR"],["QCNCMA081QBPZ","CONNECTOR"],["QCNCMA123QBPZ","CONNECTOR"],["QSW-MA023QBZZ","LID SWITCH (ES-M806/906P/1108T-SAK)"],["TSPCNB815QBRZ","ENERGY LABEL"],["TSPCNB817QBRZ","ENERGY LABEL"],["RCRM-A006QBPZ","CERAMIC RESONATOR"],["PGLSPA051QBEA","TOP LID GLASS"],["PGLSPA061QBEA","TOP LID GLASS"],["CMOT-A347QBKZ","DRAIN MOTOR"],["RMOTVA011QBZZ","INVERTER MOTOR"],["YRSNPPZGY47QB","PP BJ750 HANWHA"],["QSW-MA028QBZZ","STOP SWITCH"],["QSW-QA003QBZZ+","SWITCH"],["RC-QZA225QBEZ","CAPACITOR (ES-M1008T-SAK)"],["RC-QZA222QBEZ","CAPACITOR (ES-M806/906P/809/909)"],["SPAD-A294QBFZ","BOTTOM SHEET"],["SPAD-A296QBFZ","BOTTOM SHEET"],["SPAK-A111QBRZ","PACKING CASE"],["SPAK-A112QBRZ","PACKING CASE"],["SPAK-A113QBRZ","PACKING CASE"],["SPAK-A117QBRZ","PACKING CASE"],["SPAK-A118QBRZ","PACKING CASE"],["SPAK-A119QBRZ","PACKING CASE"],["SPAKCB228QBRZ","PACKING CASE"],["HDEC-B316QBEA","PANEL SHEET"],["HDEC-B317QBEA","PANEL SHEET"],["TLABNA178QBZZ","RATING LABEL MATERIAL"],["QFS-GA098QBPZ","FUSE"],["QFS-ZA003QBPZT","FUSE"],["QFS-GA108QBPZ","FUSE 250V 5A"],["QFS-GA107QBPZ","FUSE 250V 5A CERAMIC"],["YRSNPPZGY59QB","GRAY 582"],["YRSNPPZGY48QB","PM 3030 E - BLACK"],["VHSBT13180DL1","TRIAC"],["VHSBT208X80L2","TRIAC"],["VHDRFN1LAM6-1L","DIODE"],["VHIBM2P104QA-1","SWICHING IC"],["VS2SA1037AK-1L","TRANSISTOR"],["VS2SC2412K+-1L","TRANSISTOR"],["VSDTA123JKA-1L","TRANSISTOR"],["VSDTA143EK/-1+","TRANSISTOR"],["VSDTC143EK/-1+","TRANSISTOR"],["VSDTD113ZK+-1L","TRANSISTOR"],["VHEUDZVT5R1-1L","ZENER DIODE"],["VRD-B12EF101J","CARBON FILM RESISTOR"],["VRD-B12EF102J","CARBON FILM RESISTOR"],["VRD-B12EF103J","CARBON FILM RESISTOR"],["VRD-B12EF152J","CARBON FILM RESISTOR"],["VRD-B12EF181J","CARBON FILM RESISTOR"],["VRD-B12EF221J","CARBON FILM RESISTOR"],["VRD-B12EF301J","CARBON FILM RESISTOR"],["VRD-B12EF332J","CARBON FILM RESISTOR"],["VRD-B12EF681J","CARBON FILM RESISTOR"],["VRF-B12HF105J","CARBON FILM RESISTOR"],["VRS-B13AA510J","Chip ResiPCor (SJ-F420G-)"],["VRS-CY1JF332JN","CHIP RESISTOR"],["VRS-CY1JF333JN","CHIP RESISTORS"],["VRS-CY1JF000JN","FLAT CHIP RESISTOR"],["VRS-CY1JF101JN","FLAT CHIP RESISTOR"],["VRS-CY1JF102JN","FLAT CHIP RESISTOR"],["VRS-CY1JF103JN","FLAT CHIP RESISTOR"],["VRS-CY1JF151JN","FLAT CHIP RESISTOR"],["VRS-CY1JF153JN","FLAT CHIP RESISTOR"],["VRS-CY1JF222JN","FLAT CHIP RESISTOR"],["VRS-CY1JF223JN","FLAT CHIP RESISTOR"],["VRS-CY1JF242FN","FLAT CHIP RESISTOR"],["VRS-CY1JF301JN","FLAT CHIP RESISTOR"],["VRS-CY1JF472FN","FLAT CHIP RESISTOR"],["VRS-CY1JF472JN","FLAT CHIP RESISTOR"],["VRS-CY1JF682JN","FLAT CHIP RESISTOR"],["VRNB12HK2703F","METAL FILM RESISTOR"],["VRS-B13AA101J","METAL OXIDE FILM FIXED RESISTORS"],["VRS-L63DA683J","METAL OXIDE FILM FIXED RESISTORS"],["VRS-B13AA124J","METAL OXIDE RESISTOR"],["VRS-B13AA330J","METAL OXIDE RESISTOR"],["VRS-L63DA102J","METAL OXIDE RESISTOR"],["VRS-L63DA223J","METAL OXIDE RESISTOR"],["VRS-L63DA561J","METAL OXIDE RESISTOR"],["VRS-CY1JF622FN","RESISTOR"],["VRS-L63DA510J","RESISTOR"],["RC-EZA116QBPZ","ELECTROLYTIC CAP."],["VHD1G4A5+++-1T","DIODE"],["VHD1N4148PF-1Y","DIODE"],["VHEBZX5B10+-1T","ZENER DIODE"],["VHEBZX5B3V9-1T","ZENER DIODE"],["LX-HZA091QBEZ","LAMI TITE SCREW 10"],["LX-HZA094QBEZ","LAMI TITE SCREW 25"],["XWSS745-13000","SPRING WASHER"],["XCBS730P08000","TAPPING SCREW"],["XTTS740P18000","TAPPING SCREW"],["LX-HZA110QBEZ","TOP COVER SCREW 14"],["XWVS740-06000","WASHER"],["VHIKA7905PI-1","5V REGULATOR"],["RCILZA035QBPZ","COIL56MH"],["TLABTR001WJZZ","THERMAL RIBBON"],["RH-HXA045QBPZ+","THERMISTOR"],["FSPR-A175QBKZ","ANTI-VIB SUPPORT K-1"],["FSPR-A176QBKZ","ANTI-VIB SUPPORT K-1"],["FSPR-A177QBKZ","ANTI-VIB SUPPORT K-1 (ES-M1108T-SAK)"],["FSPR-A178QBKZ","ANTI-VIB SUPPORT K-2 (ES-M1008T-SAK)"],["RCIL-A029QBPZ","CHOKE COIL"],["RCILZA036QBPZ","REACTOR"],["RTRNWA019QBPZ","SW TRANSFORMER"],["PSEL-A313QBFZ","SEAL PACKING"],["VHRPR39MF51-1","SOLID STATE DEVICE"],["PDMP-A025QBEZ","DAMPER L"],["PDMP-A031QBEZ","DAMPER L"],["PDMP-A026QBEZ","DAMPER R"],["PDMP-A032QBEZ","DAMPER R"],["MLEV-A083QBFE","ADJUSTABLE FOOT NUT"],["NKAG-A228QBPZ","INNER TUB BODY"],["NKAG-A230QBPZ","INNER TUB BODY"],["LPLTMA253QBPZ","REINFORCEMENT PLATE"],["PSPO-A306QBEZ","CUSHioN H50*50*18"],["PSPO-A303QBEZ","CUSHION H80*50*18"],["PSPO-A301QBEZ","CUSHION S100*50*10.8"],["PSPO-A300QBEZ","CUSHION S50*50*10.8"],["PSPO-A302QBEZ","CUSHION S50*50*20.8"],["PSPO-A305QBEZ","CUSHioN S60*60*4.8"],["ZHNDAS65-K50E","SOLDER BAR SC02NP"],["HDEC-B145QBRA","PANEL SHEET"],["HDEC-B156QBRA","PANEL SHEET"],["HDEC-B157QBRA","PANEL SHEET"],["HDEC-B180QBRA","PANEL SHEET"],["HDEC-B182QBRA","PANEL SHEET"],["HDEC-B191QBRA","PANEL SHEET"],["HDEC-B193QBRA","PANEL SHEET"],["HDEC-B206QBRA","PANEL SHEET"],["HDEC-B264QBEA","PANEL SHEET"],["HDEC-B279QBEA","PANEL SHEET"],["HDEC-B280QBEA","PANEL SHEET"],["HDEC-B281QBEA","PANEL SHEET"],["HDEC-B287QBEA","PANEL SHEET"],["HDEC-B288QBEA","PANEL SHEET"],["HDEC-B289QBEA","PANEL SHEET"],["HDEC-B290QBEA","PANEL SHEET"],["HDEC-B291QBEA","PANEL SHEET"],["HDEC-B342QBEA","PANEL SHEET"],["HDEC-B221QBRA","PANEL SHEET (ES-MW135Z-S)"],["SPAD-A290QBFZ","BOTTOM PAD"],["SPAD-A312QBFZ","BOTTOM PAD"],["SPAD-A326QBFZ","CORNER PAD"],["SPAD-A269QBEZ","INNER TUB HOLD PAD"],["SPAD-A310QBFZ","INNER TUB HOLD PAD"],["SPAKAA008QB1Z","PROTECTIVE PAD"],["CPAD-A170QBKZ","UPPER PAD K"],["CPAD-A186QBFZ","UPPER PAD K"],["ZHNDAI301750E","SOLDER WIRE (LEAD FREE)"],["SSAKA0037CEZZ","POLY BAG 4 (205 x 382 mm)"],["SSAKHA065QBEZ","POLY COVER"],["SSAKHA066QBEZ","POLY COVER"],["PHOS-A417QBFZ","JOINT HOSE"],["PHOS-A419QBFZ","JOINT HOSE"],["FHOS-A073QBKZ","WATER SUPPLY HOSE K"],["FHOS-A074QBKZ","WATER SUPPLY HOSE K"],["VWRAQAS-0001E","JUMPER WIRE"],["RC-KZA292JBZZ","CERAMIC CAPACITOR"],["RC-QZA246QBPZ","CERAMIC CAPACITOR"],["PVLVEA187QBEZ","WATER SUPPLY VALVE"],["LX-BZA470QBEZ","MOTOR FIXING SCREW"],["LX-BZA445QBEZ","PC-SCREW SUS-B"],["LX-BZA468QBEZ","PC-SCREW SUS-B"],["LX-BZA469QBPZ","PULSATOR SCREW"],["LX-HZA093QBEZ","SHAFT FIXING SCREW"],["XUTWJ40P14000","TAPPING SCREW"],["LX-BZA416QBEZ","TAPPING SCREW M5*25"],["QACC-A112QBEZ","AC CORD"],["ZBOND-88-C30E","THREE BOND 2217H X 30ML"],["TLABVC109WJZZ","BARCODE LABEL NO SERI"],["TCAUHA743QBRZ","CAUTION LABEL HOT"],["TCAUHA722QBRZ","INSTALLATION MANUAL"],["TINS-A262QBEZ","OPERATION MANUAL"],["TINS-A265QBEZ","OPERATION MANUAL"],["TINS-A290QBEZ","OPERATION MANUAL"],["TINS-A291QBEZ","OPERATION MANUAL"],["TINS-A292QBEZ","OPERATION MANUAL"],["TINS-A295QBEZ","OPERATION MANUAL"],["TINS-A299QBEZ","OPERATION MANUAL"],["TINS-A304QBEZ","OPERATION MANUAL"],["TINS-A264QBEZ","OPERATION MANUAL (SJ-17GH/SJ-19GH)"],["TINS-A283QBEZ","OPERATION MANUAL (SJ-17GH/SJ-19GH)"],["TINS-A284QBEZ","OPERATION MANUAL (SJ-17GH/SJ-19GH)"],["TCAUHA701QBRZ","PACKING CAUTION LABEL"],["TCAUHA703QBRZ","PACKING CAUTION LABEL"],["TLABMA406QBZZ","WHITE LABEL MATERIAL"],["PHOS-A455QBFZ","RINSE HOSE"],["LSTPPA056QBEZ","CORD BUSH (BLACK)"],["LSTPPA058QBEZ","CORD BUSH (WHITE)"],["LBND-A180QBEZ","UNITY BAND"],["VHDGBJ1508+-1S","DIODE BRIDGE"],["QCNC-A089QBE0","CONNECTOR"],["QCNC-A090QBE0","CONNECTOR"],["QCNC-A097QBE0","CONNECTOR"],["QCNCMA053QBZZ","CONNECTOR"],["QCNCMA054QBZZ","CONNECTOR"],["QCNCMA071QBZZ","CONNECTOR"],["QCNCMA078QBPZ","CONNECTOR"],["QCNCMA107QBPZ","CONNECTOR"],["QCNCMA126QBPZ","CONNECTOR"],["RRLY-A013QBE0","RELAY"],["YRSNPPZGY57QB","GRAY 4.5 PPM 9JA224"],["PSHEMA143QBPZ","AL SHEET"],["PSHEMA142QBPZ","AL SHEET 70*45"],["PSHEMA136QBPZ","AL SHEET 90*90"],["PGUMMA028QBFA","RUBBER CUSHION (ES-M806P-GBK)"],["PCOV-A733QBFZ","RUBBER FOOT"],["PPAC-A109QBFZ","WATER SUPPLY PAC"],["LBNDKA095QBPZ","HOSE BAND 7"],["RTRNPA059QBPZ","TRANSFORMER"],["RCILZA031QBPZ","COIL"],["RMOTCA095QBZZ","MOTOR"],["RMOTVA013QBZZ","MOTOR (D05F-12PS2 01)"],["QPWBFA215QBPZ","PRINTED WIRED BOARD"],["QPWBFA217QBPZ","PRINTED WIRED BOARD"],["QPWBFA252QBPZ","PRINTED WIRED BOARD"],["LHLD-A705QBPZ","PUMP HOULDER"],["LANGHA055QBPZ","TRANSPORTATION ANGLE"],["LPLT-A189QBPZ","WATER SUPPLY PLATE 1"],["LPLT-A194QBPZ","WATER SUPPLY PLATE 2"],["FSPR-A205QBKZ","ANTI-VIB SUPPORT K-1"],["FSPR-A206QBKZ","ANTI-VIB SUPPORT K-2"],["LX-BZA422QBKZ","BASE FRAME SCREW (dia 6; L 10)"],["LX-NZA063QBEZ","CENTER NUT"],["CPLY-A088QBKZ","FAN PULLEY"],["CPLY-A075QBKZ","FAN PULLEY K"],["CPLY-A076QBKZ","FAN PULLEY K (ES-Q70EY-G) N.L.A"],["LX-BZA434QBEZ","HOLDER FIXING SCREW"],["LX-BZA423QBEZ","PC SCREW SUS"],["LX-BZA463QBEZ","PC-SCREW SUS-B"],["LX-WZA153QBWZ","PULSATOR WASHER (ES-N95MY-A)"],["XBPS750P12000","SCREW M5"],["LX-WZA177QBEZ","SEAL WASHER"],["LX-BZA414QBEZ","T SUPPORT SCREW"],["XUTS740P14000","TAPPING SCREW"],["XUTU840P14000","TAPPING SCREW"],["PRDARA046QBPZ","HEAT SINK (LOCAL)"],["GCOVAA332QBFB","BACK PANEL"],["GCOVAA335QBFB","BACK PANEL"],["CVLV-A114QBKZ","DRAIN VALVE ASS'Y"],["CVLV-A115QBKZ","DRAIN VALVE ASS'Y"],["CVLV-A117QBKZ","DRAIN VALVE ASS'Y (8&9Kgr)"],["PCAP-A104QBFZ","DRAIN VALVE CAP"],["LSOU-A202QBFZ","OUTER TUB"],["GBDYTA174QBFB","TOP COVER"],["GBDYTA198QBFA","TOP COVER"],["GBDYTA200QBFA","TOP COVER"],["GBDYTA211QBFA","TOP COVER"],["GBDYTA211QBFB","TOP COVER"],["GBDYTA172QBFB","TOP COVER (ES-M1109)"],["FBDY-A339QBTA","TOP COVER PA"],["FBDY-A339QBTB","TOP COVER PA"],["GBDYTA220QBTA","TOP COVER T"],["CFTATB203QBKZ","TOP LID ASS'Y(S)"],["CFTATB204QBKZ","TOP LID ASS'Y(S)"],["LSOU-A203QBFZ","OUTER TUB"],["CHLD-A292QBKZ","SHAFT ASSEMBLY"],["CHLD-A307QBKZ","SHAFT ASSEMBLY"],["QACC-A106QBEZ","AC CORD ASS'Y"]
+];
+
+const MASTER_MODELS = [
+  ["A3EXT65NTB","ES-T65NT-BL","TWINTUB"],["A3EXT65NTH","ES-T65NT-GY","TWINTUB"],
+  ["A3EXT70MWB","ES-T70MW-BL","TWINTUB"],["A3EXT70MWP","ES-T70MW-PK","TWINTUB"],
+  ["A3EXT70MWL","ES-T70MW-LC","TWINTUB"],["A3EXT79SJB","ES-T79SJ-BL","TWINTUB"],
+  ["A3EXT79SJP","ES-T79SJ-PK","TWINTUB"],["A3EXT89SJG","ES-T89SJ-GR","TWINTUB"],
+  ["A3EXT90MWB","ES-T90MW-BK","TWINTUB"],["A3EXT90MWH","ES-T90MW-HK","TWINTUB"],
+  ["A3EXT90MWP","ES-T90MW-PK","TWINTUB"],["A3EXT75NTB","ES-T75NT-BL","TWINTUB"],
+  ["A3EXT75NTP","ES-T75NT-PK","TWINTUB"],["A3EXT75NTH","ES-T75NT-GY","TWINTUB"],
+  ["A3EXT80MWB","ES-T80MW-BK","TWINTUB"],["A3EXT80MWH","ES-T80MW-HK","TWINTUB"],
+  ["A3EXT80MWP","ES-T80MW-PK","TWINTUB"],["A3EXT68MWB","ES-T68MW-BK","TWINTUB"],
+  ["A3EXT68MWP","ES-T68MW-PK","TWINTUB"],["A3EXT85CRB","ES-T85CR-BK","TWINTUB"],
+  ["A3EXT85CRP","ES-T85CR-PK","TWINTUB"],["A3EXT85CRV","ES-T85CR-VK","TWINTUB"],
+  ["A3EXT871DB","ES-T871DM-BL","TWINTUB"],["A3EXT871DP","ES-T871DM-PK","TWINTUB"],
+  ["A3EXT971DB","ES-T971DM-BL","TWINTUB"],["A3EXT971DP","ES-T971DM-PK","TWINTUB"],
+  ["A3EXT85NTP","ES-T85NT-PK","TWINTUB"],["A3EXT85NTL","ES-T85NT-LC","TWINTUB"],
+  ["A3EXT95NTP","ES-T95NT-PK","TWINTUB"],["A3EXT95NTL","ES-T95NT-LC","TWINTUB"],
+  ["A3EXT86CLH","ES-T86CL-HK","TWINTUB"],["A3EXT96CLH","ES-T96CL-HK","TWINTUB"],
+  ["A3EXT1290B","ES-T1290WA-BL","TWINTUB"],["A3EXT1290P","ES-T1290WA-PK","TWINTUB"],
+  ["A3EXT1490B","ES-T1490WA-BL","TWINTUB"],["A3EXT1490R","ES-T1490WA-RD","TWINTUB"],
+  ["A3EXT97CMB","ES-T97CM-BL","TWINTUB"],["A3EXT1070G","ES-T1070SJ-GR","TWINTUB"],
+  ["A3EXT95CRB","ES-T95CR-BK","TWINTUB"],["A3EXT95CRP","ES-T95CR-PK","TWINTUB"],
+  ["A3EXT95CRV","ES-T95CR-VK","TWINTUB"],["A3EXT99SJB","ES-T99SJ-BL","TWINTUB"],
+  ["A3EXT99SJP","ES-T99SJ-PK","TWINTUB"],["A3EXT1090B","ES-T1090-BK","TWINTUB"],
+  ["A3EXT1090P","ES-T1090-PK","TWINTUB"],["A3EXT1090V","ES-T1090-VK","TWINTUB"],
+  ["A3EXT1270B","ES-T1270SJ-BL","TWINTUB"],["A3EXT1270P","ES-T1270SJ-PK","TWINTUB"],
+  ["A3EXT77DAB","ES-T77DA-BK","TWINTUB"],["A3EXT77DAR","ES-T77DA-RK","TWINTUB"],
+  ["A3EXT79SJL","ES-T79SJ-LCT","TWINTUB"],["A3EXT79SJT","ES-T79SJ-BLT","TWINTUB"],
+  ["A3EXZ115YS","ES-M1150XT-SM","FULL AUTO"],["A3EXX105YS","ES-M1050XT-SA","FULL AUTO"],
+  ["A3EXX95VYS","ES-M9500XT-SA","FULL AUTO"],["A3EXX85VYS","ES-M8500XT-SA","FULL AUTO"],
+  ["A3EXY10PYH","ES-M1000T-GG","FULL AUTO"],["A3EXY90PYH","ES-M9000T-GG","FULL AUTO"],
+  ["A3EXY80PYH","ES-M8000T-GG","FULL AUTO"],["A3EXA80PYH","ES-M8000P-GG","FULL AUTO"],
+  ["A3EXA70PYH","ES-M7000P-GG","FULL AUTO"],["A3EXW90PYH","ES-M909T-GG","FULL AUTO"],
+  ["A3EXW80PYH","ES-M809T-GG","FULL AUTO"],["A3EXW10PYH","ES-M1009T-GG","FULL AUTO"],
+  ["A3EXK11HYS","ES-M1108T-SAK","FULL AUTO"],["A3EXW11HYH","ES-M1109T-GG","FULL AUTO"],
+  ["A3EXW12HYS","ES-M1209T-SA","FULL AUTO"],["A3EXK10HYS","ES-M1008T-SAK","FULL AUTO"],
+  ["A3EXW11SPS","ES-S115HP-SL (SPC)","FULL AUTO"],["A3EXW11SMS","ES-W1109S (SEM)","FULL AUTO"],
+  ["A3EXW90HPH","ES-S95HP-GY (SPC)","FULL AUTO"],["A3EXX105VW","ES-W105TWXT-SA (SSC 2.0)","FULL AUTO"],
+  ["A3EXX85VWH","ES-W85TWXT-SA (SSC 2.0)","FULL AUTO"],["A3EXX95VWH","ES-W95TWXT-SA (SSC 2.0)","FULL AUTO"],
+  ["A3EXW80GBH","ES-W80EW-H (BLD)","FULL AUTO"],["A3EXW90GBH","ES-W90EW-H (BLD)","FULL AUTO"],
+  ["A3EXW11HBS","ES-W110DS-S (BLD)","FULL AUTO"],["A3EXW10HBH","ES-W100DS-H (BLD)","FULL AUTO"],
+  ["A3EXW80HMH","ES-W809H (SEM)","FULL AUTO"],["A3EXW10SMH","ES-W1009S (SEM)","FULL AUTO"],
+  ["A3EXW80PZP","ES-MW105Z-P (PNG)","FULL AUTO"],["A3EXW11PZP","ES-MW135Z-P (PNG)","FULL AUTO"],
+  ["A3EXP105VW","ES-W105TWXT-SAP","FULL AUTO"],["A3EXW80HPH","ES-S85HP-GY (SPC)","FULL AUTO"],
+  ["A3EXW10SPH","ES-S105HP-GY (SPC)","FULL AUTO"],["A3EXW10HWH","ES-W100DS-H (SSC)","FULL AUTO"],
+  ["A3EXW11HWS","ES-W110DS-S (SSC)","FULL AUTO"],["A3EXP85VWH","ES-W85TWXT-SAP","FULL AUTO"],
+  ["A3EXW90GWH","ES-W90EW-H (SSC)","FULL AUTO"],["A3EXW11PGH","ES-MW135Z-S (GSO)","FULL AUTO"],
+  ["A3EXW90PGH","ES-MW115Z-H (GSO)","FULL AUTO"],["A3EXW80PGH","ES-MW105Z-H (GSO)","FULL AUTO"],
+  ["A3EXW10PGH","ES-MW125Z-H (GSO)","FULL AUTO"],["A3EXW80GVH","ES-W80GV-H (SVN)","FULL AUTO"],
+  ["A3EXK95HVS","ES-W95HV-S (SVN)","FULL AUTO"],["A3EXK78GVA","ES-W78GV-G (SVN)","FULL AUTO"],
+  ["A3EXK78GVH","ES-W78GV-H (SVN)","FULL AUTO"],["A3EXW11HVS","ES-W110HV-S (SVN)","FULL AUTO"],
+  ["A3EXW82GVH","ES-W82GV-H (SVN)","FULL AUTO"],["A3EXW102VH","ES-W102PV-H (SVN)","FULL AUTO"],
+  ["A3EXW10HVH","ES-W100PV-H (SVN)","FULL AUTO"],["A3EXX95HVS","ES-X95HV-S (SVN 2.0)","FULL AUTO"],
+  ["A3EXX105HV","ES-X105HV-S (SVN 2.0)","FULL AUTO"],["A3EXW80HTH","ES-W80HT-GY (STCL)","FULL AUTO"],
+  ["A3EXK80GTH","ES-U80GT-GY (STCL)","FULL AUTO"],["A3EXW90HTH","ES-W90HT-GY (STCL)","FULL AUTO"],
+  ["A3EXW10HTH","ES-W10HT-GY (STCL)","FULL AUTO"],["A3EXW11HTS","ES-W11HT-SL (STCL)","FULL AUTO"]
+];
+
+// ══════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════
+let db            = null;
+let SCRIPT_URL    = '';
+let draftParts    = [];
+let selectedModel = null;
+let sidebarCollapsed = false;
+let toastTimer    = null;
+let savedBadgeTimer = null;
+let allTickets    = [];
+
+// ─── In-memory cache: populated from Firebase listeners ───
+let allTxData   = [];   // all transaction rows
+let allProdData = [];   // all production records
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
+  SCRIPT_URL = localStorage.getItem('fm_script_url') || '';
+  const savedOp    = localStorage.getItem('fm_operator') || '';
+  const fbCfgStr   = localStorage.getItem('fm_firebase_config') || '';
+
+  document.getElementById('scriptUrl').value      = SCRIPT_URL;
+  document.getElementById('operatorName').value   = savedOp;
+  document.getElementById('firebaseConfig').value = fbCfgStr;
+
+  if (savedOp) {
+    document.getElementById('userLabel').textContent  = savedOp;
+    document.getElementById('userAvatar').textContent = savedOp.charAt(0).toUpperCase();
+  }
+
+  const today   = new Date().toISOString().split('T')[0];
+  document.getElementById('inputTanggal').value = today;
+  document.getElementById('prodTanggal').value  = today;
+
+  const dateStr = new Date().toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  document.getElementById('dashDate').textContent    = dateStr;
+  document.getElementById('dashSubDate').textContent = dateStr;
+
+  generateTicket();
+  filterModels();
+  updateInfoPanel();
+
+  if (fbCfgStr) {
+    initFirebase(fbCfgStr);
+  } else {
+    showConfigBanner();
+  }
+});
+
+// ══════════════════════════════════════════════════════
+// FIREBASE INIT + REALTIME LISTENERS
+// ══════════════════════════════════════════════════════
+function initFirebase(configStr) {
+  try {
+    const cfg = (typeof configStr === 'string') ? JSON.parse(configStr) : configStr;
+
+    // Remove existing apps cleanly
+    while (firebase.apps.length > 0) {
+      firebase.apps[0].delete();
+    }
+
+    firebase.initializeApp(cfg);
+    db = firebase.database();
+
+    // ─── Connection status indicator ───
+    db.ref('.info/connected').on('value', function(snap) {
+      setConnected(snap.val() === true);
+    });
+
+    // ─── REALTIME: transactions ───
+    // This single listener fires on EVERY device whenever ANY device writes/deletes a transaction.
+    db.ref('flowmate/transactions').on('value', function(snap) {
+      const val = snap.val() || {};
+      allTxData = Object.values(val)
+        .filter(function(r) { return r && r.kodePart; })
+        .sort(function(a, b) { return (b.createdAt || 0) - (a.createdAt || 0); });
+
+      // Flash dot to signal update received
+      flashDot();
+
+      // Re-render whichever screen is currently visible
+      var s = getCurrentScreen();
+      if (s === 'dashboard') renderDashboard();
+      if (s === 'stok')      renderStok();
+      if (s === 'riwayat')   renderRiwayat();
+
+      // Always update dashboard stats (badges may change)
+      if (s !== 'dashboard') updateDashboardStats();
+    });
+
+    // ─── REALTIME: production ───
+    db.ref('flowmate/production').on('value', function(snap) {
+      const val = snap.val() || {};
+      allProdData = Object.values(val)
+        .filter(function(r) { return r && r.internalModel; })
+        .sort(function(a, b) { return (b.createdAt || 0) - (a.createdAt || 0); });
+
+      if (getCurrentScreen() === 'dashboard') renderDashboard();
+    });
+
+    removeConfigBanner();
+    updateInfoPanel();
+    return true;
+  } catch(e) {
+    console.error('Firebase init error:', e);
+    toast('❌ Firebase error: ' + e.message, 'error');
+    return false;
+  }
+}
+
+function setConnected(connected) {
+  var badge = document.getElementById('connBadge');
+  var dot   = document.getElementById('connDot');
+  var text  = document.getElementById('connText');
+  if (!badge) return;
+  badge.className = 'conn-badge ' + (connected ? 'conn-online' : 'conn-offline');
+  text.textContent = connected ? 'Live' : 'Offline';
+  dot.classList.toggle('offline', !connected);
+
+  // Show/hide LIVE chips
+  ['dashLiveChip','txLiveChip','stokLiveChip','riwayatLiveChip'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = connected ? 'inline-flex' : 'none';
+  });
+
+  var fbStatus = document.getElementById('infoFbStatus');
+  if (fbStatus) {
+    fbStatus.innerHTML = connected
+      ? '<span style="color:var(--green);font-weight:700;">● Terhubung realtime</span>'
+      : '<span style="color:#999;">○ Tidak terhubung</span>';
+  }
+}
+
+function flashDot() {
+  var dot = document.getElementById('connDot');
+  if (!dot) return;
+  dot.classList.add('flash');
+  setTimeout(function() { dot.classList.remove('flash'); }, 400);
+}
+
+function getCurrentScreen() {
+  var el = document.querySelector('.screen.active');
+  return el ? el.id.replace('screen-', '') : '';
+}
+
+// ══════════════════════════════════════════════════════
+// DATA PROCESSING (pure functions, no network calls)
+// ══════════════════════════════════════════════════════
+function calcStok(txData) {
+  var map = {};
+  txData.forEach(function(tx) {
+    var key = tx.kodePart;
+    if (!key) return;
+    if (!map[key]) map[key] = { kodePart: key, namaPart: tx.namaPart || key, masuk: 0, keluar: 0, konsumsi: 0 };
+    if (tx.jenis === 'Supply')    map[key].masuk    += Number(tx.qty) || 0;
+    if (tx.jenis === 'Kebutuhan') map[key].keluar   += Number(tx.qty) || 0;
+    if (tx.jenis === 'Produksi')  map[key].konsumsi += Number(tx.qty) || 0;
+  });
+  return Object.values(map).map(function(s) {
+    return Object.assign({}, s, { saldo: s.masuk - s.keluar - s.konsumsi });
+  });
+}
+
+function calcDashboardStats(txData) {
+  var today     = new Date().toISOString().split('T')[0];
+  var totalMasuk = 0, totalKeluar = 0, txHariIni = 0;
+  var partsSet  = new Set();
+  txData.forEach(function(tx) {
+    if (tx.kodePart) partsSet.add(tx.kodePart);
+    if (tx.jenis === 'Supply')              totalMasuk  += Number(tx.qty) || 0;
+    if (tx.jenis === 'Kebutuhan' || tx.jenis === 'Produksi') totalKeluar += Number(tx.qty) || 0;
+    if (tx.tanggal === today)               txHariIni++;
+  });
+  var stok           = calcStok(txData);
+  var partsNegative  = stok.filter(function(s) { return s.saldo < 0; }).length;
+  return { totalMasuk, totalKeluar, txHariIni, totalParts: partsSet.size, partsNegative };
+}
+
+function groupByTicket(txData) {
+  var map = {};
+  txData.forEach(function(tx) {
+    var key = tx.txid || '–';
+    if (!map[key]) {
+      map[key] = {
+        txid: key, tanggal: tx.tanggal, jenis: tx.jenis,
+        signCMC: tx.signCMC || '', signProduksi: tx.signProduksi || '',
+        signNX: tx.signNX || '', signPartControl: tx.signPartControl || '',
+        operator: tx.operator || '',
+        parts: [], createdAt: tx.createdAt || 0
+      };
+    }
+    map[key].parts.push(tx);
+  });
+  return Object.values(map).sort(function(a, b) { return (b.createdAt || 0) - (a.createdAt || 0); });
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER FUNCTIONS
+// ══════════════════════════════════════════════════════
+function renderDashboard() {
+  var stats = calcDashboardStats(allTxData);
+  updateDashboardStats(stats);
+
+  // Recent transactions: group by txid, show 25 unique tickets
+  var ticketMap = {};
+  allTxData.forEach(function(t) {
+    var key = t.txid || '–';
+    if (!ticketMap[key]) {
+      ticketMap[key] = {
+        txid: key, tanggal: t.tanggal, jenis: t.jenis,
+        operator: t.operator || '', parts: [], createdAt: t.createdAt || 0
+      };
+    }
+    ticketMap[key].parts.push(t);
+  });
+  var recentTickets = Object.values(ticketMap)
+    .sort(function(a, b) { return (b.createdAt || 0) - (a.createdAt || 0); })
+    .slice(0, 25);
+
+  var tbody  = document.getElementById('recentBody');
+  if (recentTickets.length > 0) {
+    tbody.innerHTML = recentTickets.map(function(tk) {
+      var jenisList = tk.parts
+        .map(function(p) { return p.jenis; })
+        .filter(function(v, i, a) { return a.indexOf(v) === i; }).join(', ');
+      var jenisBadge = tk.parts.length === 1
+        ? '<span class="badge badge-' + badgeClass(tk.parts[0].jenis) + '">' + tk.parts[0].jenis + '</span>'
+        : '<span class="badge badge-ok">' + jenisList + '</span>';
+      return '<tr>' +
+        '<td class="td-code">' + tk.txid + '</td>' +
+        '<td>' + fmtDate(tk.tanggal) + '</td>' +
+        '<td colspan="2" style="color:#555;">' + tk.parts.length + ' part</td>' +
+        '<td>' + jenisBadge + '</td>' +
+        '<td class="td-number">' + tk.parts.reduce(function(s,p){return s+(Number(p.qty)||0);},0).toLocaleString('id-ID',{maximumFractionDigits:1}) + '</td>' +
+        '<td style="font-size:11px;color:#999;">' + (tk.operator || '') + '</td>' +
+        '</tr>';
+    }).join('');
+  } else {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:#999;">Belum ada transaksi</td></tr>';
+  }
+
+  // Production summary
+  var mBody = document.getElementById('modelOutputBody');
+  if (allProdData.length > 0) {
+    var prodMap = {};
+    allProdData.forEach(function(p) {
+      var k = p.internalModel;
+      if (!prodMap[k]) prodMap[k] = { internal: p.internalModel, external: p.externalModel, output: 0 };
+      prodMap[k].output += Number(p.qty) || 0;
+    });
+    mBody.innerHTML = Object.values(prodMap).map(function(m) {
+      return '<tr>' +
+        '<td class="td-code">' + m.internal + '</td>' +
+        '<td>' + m.external + '</td>' +
+        '<td class="td-number td-pos">' + fmtNum(m.output) + '</td>' +
+        '</tr>';
+    }).join('');
+  } else {
+    mBody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:20px;color:#999;">Belum ada data produksi</td></tr>';
+  }
+}
+
+function updateDashboardStats(stats) {
+  if (!stats) stats = calcDashboardStats(allTxData);
+  setStatCard('d-masuk',  'sc-masuk',  fmtNum(stats.totalMasuk));
+  setStatCard('d-keluar', 'sc-keluar', fmtNum(stats.totalKeluar));
+  setStatCard('d-txhari', 'sc-txhari', stats.txHariIni);
+  setStatCard('d-parts',  'sc-parts',  stats.totalParts);
+  document.getElementById('d-warn').textContent = stats.partsNegative > 0
+    ? '⚠️ ' + stats.partsNegative + ' part negatif'
+    : '✅ Semua stok normal';
+}
+
+function setStatCard(valId, cardId, val) {
+  var el   = document.getElementById(valId);
+  var card = document.getElementById(cardId);
+  if (!el) return;
+  if (el.textContent !== String(val)) {
+    el.textContent = val;
+    if (card) { card.classList.add('updated'); setTimeout(function() { card.classList.remove('updated'); }, 700); }
+  }
+}
+
+function renderStok() {
+  var search = (document.getElementById('stokSearch').value || '').toLowerCase();
+  var filter = document.getElementById('stokFilter').value;
+  var rows   = calcStok(allTxData);
+
+  if (search) rows = rows.filter(function(r) {
+    return r.kodePart.toLowerCase().includes(search) || r.namaPart.toLowerCase().includes(search);
+  });
+  if (filter === 'neg')  rows = rows.filter(function(r) { return r.saldo < 0; });
+  if (filter === 'zero') rows = rows.filter(function(r) { return r.saldo === 0; });
+
+  document.getElementById('stokCount').textContent = rows.length + ' part ditampilkan';
+
+  var tbody = document.getElementById('stokBody');
+  if (rows.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:#999;">' +
+      (allTxData.length === 0 ? 'Belum ada data transaksi.' : 'Tidak ada part sesuai filter.') + '</td></tr>';
+    return;
+  }
+  tbody.innerHTML = rows.slice(0, 400).map(function(r) {
+    var saldo = r.saldo;
+    var cls   = saldo < 0 ? 'td-neg' : saldo > 0 ? 'td-pos' : '';
+    return '<tr>' +
+      '<td class="td-code">' + r.kodePart + '</td>' +
+      '<td>' + r.namaPart + '</td>' +
+      '<td class="td-number">' + fmtNum(r.masuk) + '</td>' +
+      '<td class="td-number">' + fmtNum(r.keluar + r.konsumsi) + '</td>' +
+      '<td class="td-number ' + cls + '">' + fmtNum(saldo) + '</td>' +
+      '</tr>';
+  }).join('');
+}
+
+function renderRiwayat() {
+  var filterTgl    = document.getElementById('filterTgl').value;
+  var filterSearch = (document.getElementById('filterSearch').value || '').toLowerCase();
+  var filterJenis  = document.getElementById('filterJenis').value;
+
+  var filtered = allTxData;
+  if (filterTgl)    filtered = filtered.filter(function(t) { return t.tanggal === filterTgl; });
+  if (filterJenis)  filtered = filtered.filter(function(t) { return t.jenis === filterJenis; });
+  if (filterSearch) filtered = filtered.filter(function(t) {
+    return (t.txid || '').toLowerCase().includes(filterSearch) ||
+           (t.kodePart || '').toLowerCase().includes(filterSearch) ||
+           (t.namaPart || '').toLowerCase().includes(filterSearch);
+  });
+
+  allTickets = groupByTicket(filtered);
+  document.getElementById('riwayatCount').textContent = allTickets.length + ' tiket ditemukan';
+
+  var container = document.getElementById('ticketListBody');
+  if (allTickets.length === 0) {
+    container.innerHTML = '<div style="padding:24px;text-align:center;color:#999;">' +
+      (allTxData.length === 0 ? 'Belum ada transaksi.' : 'Tidak ada transaksi sesuai filter.') + '</div>';
+    return;
+  }
+  renderTicketList();
+}
+
+function renderTicketList() {
+  var container = document.getElementById('ticketListBody');
+  container.innerHTML = allTickets.map(function(tk, idx) {
+    var jenisList = tk.parts
+      .map(function(p) { return p.jenis; })
+      .filter(function(v, i, a) { return a.indexOf(v) === i; }).join(', ');
+    return '<div>' +
+      '<div class="ticket-list-item" id="tli-' + idx + '" onclick="toggleTicket(' + idx + ')">' +
+        '<div class="tli-left">' +
+          '<div class="tli-no">' + (tk.txid || '–') + '</div>' +
+          '<div class="tli-meta">' + fmtDate(tk.tanggal) + ' &nbsp;·&nbsp; ' + jenisList +
+            (tk.operator ? ' &nbsp;·&nbsp; ' + tk.operator : '') + '</div>' +
+        '</div>' +
+        '<div class="tli-right">' +
+          '<span class="tli-count">' + tk.parts.length + ' part</span>' +
+          '<button class="ticket-export-btn" onclick="event.stopPropagation();exportTicketCSV(' + idx + ')">📥 Excel</button>' +
+          '<span class="tli-chevron" id="chv-' + idx + '">▶</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="ticket-detail" id="td-' + idx + '">' +
+        '<div class="table-wrap"><table>' +
+          '<thead><tr><th>Kode Part</th><th>Nama Part</th><th>Jenis</th><th style="text-align:right;">Qty</th><th>Keterangan</th></tr></thead>' +
+          '<tbody>' + tk.parts.map(function(p) {
+            return '<tr>' +
+              '<td class="td-code">' + (p.kodePart || '') + '</td>' +
+              '<td>' + (p.namaPart || '') + '</td>' +
+              '<td><span class="badge badge-' + badgeClass(p.jenis) + '">' + (p.jenis || '') + '</span></td>' +
+              '<td class="td-number">' + (p.qty || '') + '</td>' +
+              '<td style="font-size:11px;color:#777;">' + (p.keterangan || '') + '</td>' +
+              '</tr>';
+          }).join('') + '</tbody>' +
+        '</table></div>' +
+        '<div class="ticket-signs">' +
+          '<div class="sign-box"><div class="sign-box-label">CMC</div><div class="sign-box-value">' + (tk.signCMC || '–') + '</div></div>' +
+          '<div class="sign-box"><div class="sign-box-label">Produksi</div><div class="sign-box-value">' + (tk.signProduksi || '–') + '</div></div>' +
+          '<div class="sign-box"><div class="sign-box-label">NX</div><div class="sign-box-value">' + (tk.signNX || '–') + '</div></div>' +
+          '<div class="sign-box"><div class="sign-box-label">Part Control</div><div class="sign-box-value">' + (tk.signPartControl || '–') + '</div></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// SIMPAN TRANSAKSI → Firebase
+// ══════════════════════════════════════════════════════
+async function simpanTransaksi() {
+  if (draftParts.length === 0)  { toast('Tambahkan minimal 1 part!', 'error'); return; }
+  if (!db)                      { toast('Firebase belum terhubung! Isi config di Setting.', 'error'); return; }
+
+  var signCMC  = document.getElementById('signCMC').value.trim();
+  var signProd = document.getElementById('signProduksi').value.trim();
+  var signNX   = document.getElementById('signNX').value.trim();
+  var signPC   = document.getElementById('signPartControl').value.trim();
+
+  var btn = document.getElementById('btnSimpan');
+  btn.innerHTML = '<span class="loading"></span> Menyimpan...';
+  btn.disabled  = true;
+
+  var txid     = consumeTicket();
+  var tanggal  = document.getElementById('inputTanggal').value;
+  var jam      = new Date().toTimeString().slice(0, 8);
+  var operator = localStorage.getItem('fm_operator') || 'Operator';
+  var now      = Date.now();
+
+  try {
+    // Atomic multi-path write: all parts in one update() call
+    var updates = {};
+    draftParts.forEach(function(p, i) {
+      var key = db.ref('flowmate/transactions').push().key;
+      updates['flowmate/transactions/' + key] = {
+        txid:            txid,
+        tanggal:         tanggal,
+        jam:             jam,
+        kodePart:        p.kode,
+        namaPart:        p.nama,
+        jenis:           p.jenis,
+        qty:             p.qty,
+        keterangan:      p.ket || '',
+        signCMC:         signCMC,
+        signProduksi:    signProd,
+        signNX:          signNX,
+        signPartControl: signPC,
+        operator:        operator,
+        createdAt:       now + i   // +i preserves order within same ticket
+      };
+    });
+
+    await db.ref().update(updates);
+
+    btn.innerHTML = '💾 Simpan Transaksi';
+    btn.disabled  = false;
+    toast('✅ ' + draftParts.length + ' baris tersimpan – tiket ' + txid, 'success');
+    resetInput();
+  } catch(e) {
+    btn.innerHTML = '💾 Simpan Transaksi';
+    btn.disabled  = false;
+    toast('❌ Gagal menyimpan: ' + e.message, 'error');
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// SIMPAN PRODUKSI → Firebase (+ optional GAS for BOM)
+// ══════════════════════════════════════════════════════
+async function simpanProduksi() {
+  if (!selectedModel) { toast('Pilih model terlebih dahulu!', 'error'); return; }
+  var qty = parseFloat(document.getElementById('prodQty').value);
+  if (!qty || qty <= 0) { toast('Jumlah unit harus > 0!', 'error'); return; }
+  if (!db) { toast('Firebase belum terhubung!', 'error'); return; }
+
+  var btn = document.getElementById('btnProduksi');
+  btn.innerHTML = '<span class="loading"></span> Memproses...';
+  btn.disabled  = true;
+
+  var tanggal  = document.getElementById('prodTanggal').value;
+  var ket      = document.getElementById('prodKet').value.trim();
+  var operator = localStorage.getItem('fm_operator') || 'Operator';
+
+  try {
+    // ── 1. Simpan record produksi ke Firebase ──────────────────────────────
+    var prodKey = db.ref('flowmate/production').push().key;
+    await db.ref('flowmate/production/' + prodKey).set({
+      internalModel: selectedModel.intModel,
+      externalModel: selectedModel.extModel,
+      tipe:          selectedModel.tipe,
+      qty:           qty,
+      tanggal:       tanggal,
+      keterangan:    ket,
+      operator:      operator,
+      createdAt:     Date.now()
+    });
+
+    // ── 2. Potong stok via BOM dari GAS → tulis Kebutuhan ke Firebase ─────
+    var bomMsg = '';
+    if (SCRIPT_URL) {
+      try {
+        btn.innerHTML = '<span class="loading"></span> Mengambil BOM...';
+
+        // Minta BOM untuk model ini dari Google Sheets via GAS
+        var bomData = await callScriptGET(SCRIPT_URL, {
+          action: 'getBOMForModel',
+          model:  selectedModel.extModel
+        });
+
+        if (Array.isArray(bomData) && bomData.length > 0) {
+          var updates  = {};
+          var dateStr  = tanggal.replace(/-/g,'');
+          var bomTxid  = 'PROD-' + dateStr + '-' + Date.now().toString().slice(-6);
+          var now      = Date.now();
+          var partCnt  = 0;
+          var skipCnt  = 0;
+
+          // Hitung total masuk per part dari data Firebase (stok saat ini)
+          var masukMap = {};
+          allTxData.forEach(function(tx) {
+            if (tx.jenis === 'Supply' && tx.kodePart) {
+              masukMap[tx.kodePart] = (masukMap[tx.kodePart] || 0) + (Number(tx.qty) || 0);
+            }
+          });
+
+          bomData.forEach(function(bom, i) {
+            if (!bom.kodePart || !(parseFloat(bom.qty) > 0)) return;
+            // Skip jika part belum pernah ada transaksi masuk (Supply = 0)
+            if ((masukMap[bom.kodePart] || 0) <= 0) { skipCnt++; return; }
+            // Hitung total kebutuhan, bulatkan floating point error
+            var totalQty = Math.round(parseFloat(bom.qty) * qty * 1e9) / 1e9;
+            if (totalQty <= 0) return;
+
+            var key = db.ref('flowmate/transactions').push().key;
+            updates['flowmate/transactions/' + key] = {
+              txid:            bomTxid,
+              tanggal:         tanggal,
+              jam:             new Date().toTimeString().slice(0, 8),
+              kodePart:        bom.kodePart,
+              namaPart:        bom.namaPart || bom.kodePart,
+              jenis:           'Kebutuhan',
+              qty:             totalQty,
+              keterangan:      'AUTO BOM | ' + selectedModel.extModel + ' | ' + qty + ' unit',
+              signCMC:         '',
+              signProduksi:    operator,
+              signNX:          '',
+              signPartControl: '',
+              operator:        operator,
+              createdAt:       now + i
+            };
+            partCnt++;
+          });
+
+          if (partCnt > 0) {
+            await db.ref().update(updates);
+            bomMsg = ' | ' + partCnt + ' part dikurangi' + (skipCnt > 0 ? ', ' + skipCnt + ' dilewati (stok 0)' : '');
+          } else {
+            bomMsg = ' | Semua part dilewati (belum ada Supply masuk)';
+          }
+        } else if (bomData && bomData.error) {
+          bomMsg = ' | BOM error: ' + bomData.error;
+        } else {
+          bomMsg = ' | BOM tidak ditemukan';
+        }
+      } catch(e2) {
+        // BOM opsional – produksi tetap tersimpan
+        bomMsg = ' | ⚠️ BOM gagal: ' + e2.message;
+        console.warn('BOM deduction skipped:', e2);
+      }
+    } else {
+      bomMsg = ' | (GAS URL kosong – stok tidak dipotong)';
+    }
+
+    btn.innerHTML = '🏭 Simpan Output Produksi';
+    btn.disabled  = false;
+    toast('✅ ' + selectedModel.extModel + ': ' + qty + ' unit' + bomMsg, 'success');
+    document.getElementById('prodQty').value   = '';
+    document.getElementById('prodKet').value   = '';
+    document.getElementById('prodInputCard').style.display = 'none';
+    selectedModel = null;
+    document.querySelectorAll('.model-card').forEach(function(c) { c.classList.remove('selected'); });
+  } catch(e) {
+    btn.innerHTML = '🏭 Simpan Output Produksi';
+    btn.disabled  = false;
+    toast('❌ Gagal: ' + e.message, 'error');
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// SETTING
+// ══════════════════════════════════════════════════════
+function saveSetting() {
+  var newUrl    = (document.getElementById('scriptUrl').value || '').trim();
+  var newOp     = (document.getElementById('operatorName').value || '').trim();
+  var fbCfgStr  = (document.getElementById('firebaseConfig').value || '').trim();
+
+  // Validate JSON before saving
+  if (fbCfgStr) {
+    try { JSON.parse(fbCfgStr); }
+    catch(e) { toast('❌ Firebase Config bukan JSON yang valid: ' + e.message, 'error'); return; }
+  }
+
+  try {
+    localStorage.setItem('fm_script_url',       newUrl);
+    localStorage.setItem('fm_operator',          newOp || 'Operator');
+    localStorage.setItem('fm_firebase_config',  fbCfgStr);
+  } catch(e) {
+    toast('❌ Gagal menyimpan ke localStorage: ' + e.message, 'error');
+    return;
+  }
+
+  SCRIPT_URL = newUrl;
+  var displayOp = newOp || 'Operator';
+  document.getElementById('userLabel').textContent  = displayOp;
+  document.getElementById('userAvatar').textContent = displayOp.charAt(0).toUpperCase();
+
+  var badge = document.getElementById('savedBadge');
+  badge.classList.add('show');
+  clearTimeout(savedBadgeTimer);
+  savedBadgeTimer = setTimeout(function() { badge.classList.remove('show'); }, 3000);
+
+  toast('✅ Setting tersimpan!', 'success');
+
+  if (fbCfgStr) {
+    var ok = initFirebase(fbCfgStr);
+    if (ok) { removeConfigBanner(); updateInfoPanel(); }
+  }
+}
+
+async function testFirebaseConn() {
+  var cfgStr = (document.getElementById('firebaseConfig').value || '').trim();
+  if (!cfgStr) { toast('Isi Firebase Config dulu!', 'error'); return; }
+  var status = document.getElementById('connStatus');
+  status.innerHTML = '<span class="loading" style="border-top-color:var(--red);border-color:#ddd;border-top-color:var(--red)"></span> Testing...';
+  var ok = initFirebase(cfgStr);
+  if (ok) {
+    setTimeout(function() {
+      var connected = db !== null;
+      status.innerHTML = connected
+        ? '✅ <span style="color:var(--green);">Firebase terhubung! Realtime sync aktif.</span>'
+        : '⚠️ <span style="color:var(--amber);">Config valid, menunggu koneksi…</span>';
+    }, 1500);
+  } else {
+    status.innerHTML = '❌ <span style="color:var(--red);">Gagal. Periksa kembali Firebase Config JSON.</span>';
+  }
+}
+
+function syncSettingForm() {
+  document.getElementById('scriptUrl').value      = SCRIPT_URL;
+  document.getElementById('operatorName').value   = localStorage.getItem('fm_operator') || '';
+  document.getElementById('firebaseConfig').value = localStorage.getItem('fm_firebase_config') || '';
+  updateInfoPanel();
+}
+
+function updateInfoPanel() {
+  var el = document.getElementById('infoTotalParts');
+  if (el) el.textContent = MASTER_PARTS.length + ' part (lokal)';
+  var em = document.getElementById('infoTotalModels');
+  if (em) em.textContent = MASTER_MODELS.length + ' model (' +
+    MASTER_MODELS.filter(function(m) { return m[2]==='TWINTUB'; }).length + ' Twintub + ' +
+    MASTER_MODELS.filter(function(m) { return m[2]==='FULL AUTO'; }).length + ' Full Auto)';
+}
+
+// ══════════════════════════════════════════════════════
+// LEGACY GAS (JSONP) — kept for BOM via GAS
+// ══════════════════════════════════════════════════════
+function callScriptGET(url, params) {
+  return new Promise(function(resolve, reject) {
+    var cbName  = 'fm_cb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+    var qs      = new URLSearchParams(params).toString();
+    var fullUrl = url + '?' + qs + '&callback=' + cbName;
+    var timeoutId = setTimeout(function() {
+      delete window[cbName];
+      var s = document.getElementById(cbName);
+      if (s) s.remove();
+      reject(new Error('Timeout'));
+    }, 10000);
+    window[cbName] = function(data) {
+      clearTimeout(timeoutId);
+      delete window[cbName];
+      var s = document.getElementById(cbName);
+      if (s) s.remove();
+      resolve(data);
+    };
+    var script = document.createElement('script');
+    script.id  = cbName;
+    script.src = fullUrl;
+    script.onerror = function() {
+      clearTimeout(timeoutId);
+      delete window[cbName];
+      script.remove();
+      reject(new Error('Network error'));
+    };
+    document.head.appendChild(script);
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// SIDEBAR + NAV
+// ══════════════════════════════════════════════════════
+function toggleSidebar() {
+  sidebarCollapsed = !sidebarCollapsed;
+  var sb  = document.getElementById('sidebar');
+  var btn = document.getElementById('sidebarToggle');
+  sb.classList.toggle('collapsed', sidebarCollapsed);
+  btn.textContent = sidebarCollapsed ? '▶' : '◀';
+}
+function openMobileSidebar() {
+  document.getElementById('sidebar').classList.add('mobile-open');
+  document.getElementById('sidebarOverlay').classList.add('show');
+}
+function closeMobileSidebar() {
+  document.getElementById('sidebar').classList.remove('mobile-open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+}
+
+var screenTitles = {
+  dashboard:'Dashboard Monitoring', input:'Input Transaksi',
+  produksi:'Output Produksi', stok:'Stok Part',
+  riwayat:'Riwayat Transaksi', setting:'Pengaturan'
+};
+
+function showScreen(name, el) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.querySelectorAll('.nav-item').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('screen-' + name).classList.add('active');
+  if (el) el.classList.add('active');
+  document.getElementById('topbarTitle').textContent = screenTitles[name] || '';
+  closeMobileSidebar();
+  // Render from cache immediately (Firebase listeners keep cache fresh)
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'stok')      renderStok();
+  if (name === 'riwayat')   renderRiwayat();
+  if (name === 'setting')   syncSettingForm();
+}
+
+// ══════════════════════════════════════════════════════
+// CONFIG BANNER
+// ══════════════════════════════════════════════════════
+function showConfigBanner() {
+  var main = document.querySelector('.main');
+  if (document.getElementById('configBanner')) return;
+  var banner = document.createElement('div');
+  banner.id = 'configBanner';
+  banner.className = 'config-banner';
+  banner.innerHTML = '⚠️ <strong>Belum terhubung ke Firebase.</strong> Buka <strong>Setting</strong> dan masukkan Firebase Config untuk mengaktifkan realtime sync.';
+  main.insertBefore(banner, main.firstChild);
+}
+function removeConfigBanner() {
+  var b = document.getElementById('configBanner');
+  if (b) b.remove();
+}
+
+// ══════════════════════════════════════════════════════
+// TICKET GENERATOR
+// ══════════════════════════════════════════════════════
+function generateTicket() {
+  var now     = new Date();
+  var yy      = String(now.getFullYear()).slice(2);
+  var mm      = String(now.getMonth() + 1).padStart(2, '0');
+  var dd      = String(now.getDate()).padStart(2, '0');
+  var dateKey = yy + mm + dd;
+  if (localStorage.getItem('fm_ticket_date') !== dateKey) {
+    localStorage.setItem('fm_ticket_date', dateKey);
+    localStorage.setItem('fm_ticket_seq',  '0');
+  }
+  var seq  = parseInt(localStorage.getItem('fm_ticket_seq') || '0') + 1;
+  var txid = 'WMPC-' + dateKey + '-' + String(seq).padStart(3, '0');
+  document.getElementById('ticketDisplay').textContent = txid;
+  return { txid, seq, dateKey };
+}
+function consumeTicket() {
+  var r = generateTicket();
+  localStorage.setItem('fm_ticket_seq', String(r.seq));
+  return r.txid;
+}
+
+// ══════════════════════════════════════════════════════
+// PART SEARCH
+// ══════════════════════════════════════════════════════
+function searchPart(val) {
+  var dropdown = document.getElementById('partDropdown');
+  var hint     = document.getElementById('searchHint');
+  if (val.length < 2) {
+    dropdown.classList.remove('show');
+    hint.textContent = 'Ketik minimal 2 karakter untuk mencari';
+    return;
+  }
+  var q       = val.toLowerCase();
+  var results = MASTER_PARTS.filter(function(p) {
+    return p[0].toLowerCase().includes(q) || p[1].toLowerCase().includes(q);
+  }).slice(0, 40);
+  hint.textContent = results.length + ' hasil ditemukan';
+  if (results.length === 0) { dropdown.classList.remove('show'); return; }
+  dropdown.innerHTML = results.map(function(p) {
+    var sc = p[0].replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    var sn = p[1].replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    return '<div class="search-item" onclick="selectPart(\'' + sc + '\',\'' + sn + '\')">' +
+      '<div class="item-code">' + p[0] + '</div>' +
+      '<div class="item-name">' + p[1] + '</div>' +
+      '</div>';
+  }).join('');
+  dropdown.classList.add('show');
+}
+function selectPart(code, name) {
+  document.getElementById('partSearch').value = code + ' – ' + name;
+  document.getElementById('inputKode').value  = code;
+  document.getElementById('inputNama').value  = name;
+  document.getElementById('partDropdown').classList.remove('show');
+  document.getElementById('inputQty').focus();
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.search-wrap')) document.getElementById('partDropdown').classList.remove('show');
+});
+
+// ══════════════════════════════════════════════════════
+// DRAFT
+// ══════════════════════════════════════════════════════
+function addToDraft() {
+  var kode  = document.getElementById('inputKode').value.trim();
+  var nama  = document.getElementById('inputNama').value.trim();
+  var qty   = parseFloat(document.getElementById('inputQty').value);
+  var jenis = document.getElementById('inputJenis').value;
+  var ket   = document.getElementById('inputKet').value.trim();
+  if (!kode)           { toast('Pilih part terlebih dahulu!', 'error'); return; }
+  if (!qty || qty <= 0){ toast('Qty harus lebih dari 0!', 'error'); return; }
+  draftParts.push({ kode, nama, qty, jenis, ket });
+  renderDraft();
+  ['partSearch','inputKode','inputNama','inputQty','inputKet'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+}
+function removeDraft(idx) { draftParts.splice(idx,1); renderDraft(); }
+function renderDraft() {
+  document.getElementById('draftCount').textContent = '(' + draftParts.length + ' item)';
+  var el = document.getElementById('draftList');
+  if (draftParts.length === 0) { el.innerHTML = '<div class="draft-empty">Belum ada part ditambahkan</div>'; return; }
+  el.innerHTML = draftParts.map(function(p, i) {
+    return '<div class="draft-item">' +
+      '<div class="draft-code">' + p.kode + '</div>' +
+      '<div class="draft-name">' + p.nama + '</div>' +
+      '<div class="draft-jenis"><span class="badge badge-' + (p.jenis==='Supply'?'supply':'kebutuhan') + '">' + p.jenis + '</span></div>' +
+      '<div class="draft-qty">' + p.qty + '</div>' +
+      '<div class="draft-del" onclick="removeDraft(' + i + ')">✕</div>' +
+      '</div>';
+  }).join('');
+}
+function resetInput() {
+  draftParts = [];
+  renderDraft();
+  ['partSearch','inputKode','inputNama','inputQty','inputKet',
+   'signCMC','signProduksi','signNX','signPartControl'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('inputJenis').selectedIndex = 0;
+  generateTicket();
+}
+
+// ══════════════════════════════════════════════════════
+// MODEL / PRODUKSI
+// ══════════════════════════════════════════════════════
+function filterModels() {
+  var tipe   = document.getElementById('prodTipe').value;
+  var search = document.getElementById('modelSearch').value.toLowerCase();
+  var grid   = document.getElementById('modelGrid');
+  var filtered = MASTER_MODELS.filter(function(m) {
+    return (!tipe || m[2] === tipe) &&
+      (!search || m[0].toLowerCase().includes(search) || m[1].toLowerCase().includes(search));
+  });
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div style="padding:20px;color:#999;font-size:13px;text-align:center;">Tidak ada model ditemukan</div>'; return;
+  }
+  grid.innerHTML = filtered.map(function(m) {
+    var si = m[0].replace(/'/g,"\\'");
+    var se = m[1].replace(/'/g,"\\'");
+    return '<div class="model-card" onclick="selectModel(\'' + si + '\',\'' + se + '\',\'' + m[2] + '\')" id="mc-' + m[0] + '">' +
+      '<div class="model-int">' + m[0] + '</div>' +
+      '<div class="model-ext">' + m[1] + '</div>' +
+      '<div class="model-type">' + m[2] + '</div>' +
+      '</div>';
+  }).join('');
+}
+function selectModel(intModel, extModel, tipe) {
+  document.querySelectorAll('.model-card').forEach(function(c) { c.classList.remove('selected'); });
+  var card = document.getElementById('mc-' + intModel);
+  if (card) card.classList.add('selected');
+  selectedModel = { intModel, extModel, tipe };
+  document.getElementById('selectedModelInt').textContent = intModel;
+  document.getElementById('selectedModelExt').textContent = extModel + ' (' + tipe + ')';
+  document.getElementById('prodInputCard').style.display = 'block';
+  document.getElementById('prodQty').focus();
+  document.getElementById('prodInputCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ══════════════════════════════════════════════════════
+// RIWAYAT HELPERS
+// ══════════════════════════════════════════════════════
+function toggleTicket(idx) {
+  var detail = document.getElementById('td-' + idx);
+  var chv    = document.getElementById('chv-' + idx);
+  var item   = document.getElementById('tli-' + idx);
+  var isOpen = detail.classList.contains('show');
+  document.querySelectorAll('.ticket-detail.show').forEach(function(el) { el.classList.remove('show'); });
+  document.querySelectorAll('.tli-chevron.open').forEach(function(el) { el.classList.remove('open'); });
+  document.querySelectorAll('.ticket-list-item.expanded').forEach(function(el) { el.classList.remove('expanded'); });
+  if (!isOpen) { detail.classList.add('show'); chv.classList.add('open'); item.classList.add('expanded'); }
+}
+function resetFilter() {
+  document.getElementById('filterTgl').value    = '';
+  document.getElementById('filterSearch').value = '';
+  document.getElementById('filterJenis').selectedIndex = 0;
+  renderRiwayat();
+}
+function exportTicketCSV(idx) {
+  var tk = allTickets[idx];
+  if (!tk) return;
+  var csv = '\uFEFF';
+  csv += 'No. Tiket:,' + tk.txid + '\n';
+  csv += 'Tanggal:,' + fmtDate(tk.tanggal) + '\n';
+  csv += 'Operator:,' + (tk.operator || '') + '\n';
+  csv += 'CMC:,' + (tk.signCMC || '') + '\nProduksi:,' + (tk.signProduksi || '') + '\nNX:,' + (tk.signNX || '') + '\nPart Control:,' + (tk.signPartControl || '') + '\n\n';
+  csv += 'No,Kode Part,Nama Part,Jenis,Qty,Keterangan\n';
+  tk.parts.forEach(function(p, i) {
+    csv += (i+1) + ',"' + (p.kodePart||'') + '","' + (p.namaPart||'') + '","' + (p.jenis||'') + '",' + (p.qty||'') + ',"' + (p.keterangan||'') + '"\n';
+  });
+  var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href   = url; a.download = (tk.txid||'tiket') + '_' + fmtDate(tk.tanggal).replace(/\//g,'-') + '.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('✅ Export berhasil!', 'success');
+}
+
+// ══════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════
+function toast(msg, type) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + (type || '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { el.classList.remove('show'); }, 3500);
+}
+function fmtNum(n) {
+  var num = parseFloat(n) || 0;
+  return num.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 });
+}
+function fmtDate(d) {
+  if (!d) return '';
+  var p = String(d).split('T')[0].split('-');
+  return p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : String(d);
+}
+function badgeClass(jenis) {
+  if (jenis === 'Supply')    return 'supply';
+  if (jenis === 'Kebutuhan') return 'kebutuhan';
+  if (jenis === 'Produksi')  return 'produksi';
+  return 'ok';
+}
+</script>
+</body>
+</html>

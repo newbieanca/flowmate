@@ -1291,6 +1291,10 @@ async function simpanTransaksi() {
     btn.innerHTML = '💾 Simpan Transaksi';
     btn.disabled  = false;
     toast('✅ ' + draftParts.length + ' baris tersimpan – tiket ' + txid, 'success');
+
+    // Mirror ke Google Sheets (fire-and-forget, non-blocking)
+    syncTransaksiToSheets(draftParts, txid, tanggal, jam, signCMC, signProd, signNX, signPC, operator);
+
     resetInput();
   } catch(e) {
     btn.innerHTML = '💾 Simpan Transaksi';
@@ -1329,6 +1333,9 @@ async function simpanProduksi() {
       operator:      operator,
       createdAt:     Date.now()
     });
+
+    // Mirror record produksi ke Sheets (fire-and-forget)
+    syncProduksiToSheets(selectedModel.intModel, selectedModel.extModel, selectedModel.tipe, qty, tanggal, ket, operator);
 
     // ── 2. Potong stok via BOM dari GAS → tulis Kebutuhan ke Firebase ─────
     var bomMsg = '';
@@ -1389,6 +1396,20 @@ async function simpanProduksi() {
           if (partCnt > 0) {
             await db.ref().update(updates);
             bomMsg = ' | ' + partCnt + ' part dikurangi' + (skipCnt > 0 ? ', ' + skipCnt + ' dilewati (stok 0)' : '');
+
+            // Mirror BOM rows ke Sheets (fire-and-forget, stagger per 20 baris)
+            var bomSyncRows = [];
+            bomData.forEach(function(bom) {
+              if (!bom.kodePart || !(parseFloat(bom.qty) > 0)) return;
+              if ((masukMap[bom.kodePart] || 0) <= 0) return;
+              var tq = Math.round(parseFloat(bom.qty) * qty * 1e9) / 1e9;
+              if (tq <= 0) return;
+              bomSyncRows.push({
+                kodePart: bom.kodePart, namaPart: bom.namaPart || bom.kodePart,
+                totalQty: tq, keterangan: 'AUTO BOM | ' + selectedModel.extModel + ' | ' + qty + ' unit'
+              });
+            });
+            syncBOMRowsToSheets(bomSyncRows, bomTxid, tanggal, operator);
           } else {
             bomMsg = ' | Semua part dilewati (belum ada Supply masuk)';
           }
@@ -1497,8 +1518,10 @@ function updateInfoPanel() {
 }
 
 // ══════════════════════════════════════════════════════
-// LEGACY GAS (JSONP) — kept for BOM via GAS
+// GAS (JSONP) — BOM query + Sheets mirror
 // ══════════════════════════════════════════════════════
+
+// Kirim GET request ke GAS, return Promise (untuk BOM query)
 function callScriptGET(url, params) {
   return new Promise(function(resolve, reject) {
     var cbName  = 'fm_cb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
@@ -1527,6 +1550,95 @@ function callScriptGET(url, params) {
       reject(new Error('Network error'));
     };
     document.head.appendChild(script);
+  });
+}
+
+// ── SHEETS MIRROR (fire-and-forget) ─────────────────────────────
+// Kirim data ke GAS untuk ditulis ke Sheets.
+// Non-blocking: UI tidak menunggu. Firebase data sudah aman.
+
+function fireToSheets(url, params) {
+  var cbName = 'fm_sync_' + Date.now() + '_' + Math.floor(Math.random() * 99999);
+  var script = document.createElement('script');
+  script.id  = cbName;
+  script.src = url + '?' + new URLSearchParams(params).toString() + '&callback=' + cbName;
+  window[cbName] = function() {
+    delete window[cbName];
+    var s = document.getElementById(cbName);
+    if (s) s.remove();
+  };
+  script.onerror = function() {
+    delete window[cbName];
+    script.remove();
+  };
+  setTimeout(function() {
+    delete window[cbName];
+    var s = document.getElementById(cbName);
+    if (s) s.remove();
+  }, 15000);
+  document.head.appendChild(script);
+}
+
+// Mirror transaksi (batch) → Sheets
+function syncTransaksiToSheets(parts, txid, tanggal, jam, signCMC, signProd, signNX, signPC, operator) {
+  if (!SCRIPT_URL) return;
+  var rows = parts.map(function(p) {
+    return {
+      txid: txid, tanggal: tanggal, jam: jam,
+      kodePart: p.kode, namaPart: p.nama, jenis: p.jenis,
+      qty: p.qty, keterangan: p.ket || '',
+      signCMC: signCMC, signProduksi: signProd,
+      signNX: signNX, signPartControl: signPC, operator: operator
+    };
+  });
+  var batchJson = JSON.stringify(rows);
+  if (batchJson.length <= 6000) {
+    fireToSheets(SCRIPT_URL, { action: 'syncTransaksiBatch', data: batchJson });
+  } else {
+    // Terlalu besar: kirim row per row
+    rows.forEach(function(row, i) {
+      setTimeout(function() {
+        fireToSheets(SCRIPT_URL, { action: 'syncTransaksi', data: JSON.stringify(row) });
+      }, i * 150);
+    });
+  }
+}
+
+// Mirror BOM auto-deduction rows → Sheets (stagger per 20 row)
+function syncBOMRowsToSheets(bomRows, txid, tanggal, operator) {
+  if (!SCRIPT_URL || !bomRows || bomRows.length === 0) return;
+  var jam = new Date().toTimeString().slice(0, 8);
+  var chunkSize = 20;
+  for (var i = 0; i < bomRows.length; i += chunkSize) {
+    (function(chunk, delay) {
+      setTimeout(function() {
+        var rows = chunk.map(function(r) {
+          return {
+            txid: txid, tanggal: tanggal, jam: jam,
+            kodePart: r.kodePart, namaPart: r.namaPart || r.kodePart,
+            jenis: 'Kebutuhan', qty: r.totalQty,
+            keterangan: r.keterangan || '',
+            signCMC: '', signProduksi: operator,
+            signNX: '', signPartControl: '', operator: operator
+          };
+        });
+        fireToSheets(SCRIPT_URL, { action: 'syncTransaksiBatch', data: JSON.stringify(rows) });
+      }, delay);
+    })(bomRows.slice(i, i + chunkSize), Math.floor(i / chunkSize) * 300);
+  }
+}
+
+// Mirror record produksi → Sheets
+function syncProduksiToSheets(internalModel, externalModel, tipe, qty, tanggal, ket, operator) {
+  if (!SCRIPT_URL) return;
+  fireToSheets(SCRIPT_URL, {
+    action: 'syncProduksi',
+    data: JSON.stringify({
+      internalModel: internalModel, externalModel: externalModel,
+      tipe: tipe, qty: qty, tanggal: tanggal,
+      jam: new Date().toTimeString().slice(0, 8),
+      keterangan: ket || '', operator: operator
+    })
   });
 }
 

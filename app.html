@@ -703,7 +703,7 @@ th span { font-size:9px; color:rgba(255,255,255,.35); }
               <th onclick="sortStok('masuk')" style="cursor:pointer;text-align:right;">Masuk <span id="sort-stok-masuk">↕</span></th>
               <th onclick="sortStok('keluar')" style="cursor:pointer;text-align:right;">Keluar <span id="sort-stok-keluar">↕</span></th>
               <th onclick="sortStok('saldo')" style="cursor:pointer;text-align:right;">Sisa Part <span id="sort-stok-saldo">↕</span></th>
-              <th style="text-align:right;color:var(--blue);" title="Detail desimal untuk sub-material (material habis pakai)">Sub Material</th>
+              <th style="text-align:right;color:var(--blue);" title="Sisa dalam satuan pack (maks 3 desimal) — hanya untuk sub-material. Sisa Part = nilai bulat, Sub Material = nilai presisi.">Sub Material<br><span style="font-size:9px;font-weight:400;opacity:.7;">(pack)</span></th>
             </tr></thead>
             <tbody id="stokBody"><tr><td colspan="6" style="text-align:center;padding:24px;color:#999;">Hubungkan ke Firebase untuk melihat data…</td></tr></tbody>
           </table>
@@ -1268,33 +1268,40 @@ function renderStok() {
     return;
   }
   tbody.innerHTML = rows.slice(0, 400).map(function(r) {
-    var saldo      = r.saldo;
+    var saldo      = r.saldo;  // unit aktual (gram/meter/dll)
     var cls        = saldo < 0 ? 'td-neg' : saldo > 0 ? 'td-pos' : '';
-    var isPacking  = packingMap[r.kodePart] && packingMap[r.kodePart] > 1;
+    var qtyPack    = (packingMap[r.kodePart] && packingMap[r.kodePart] > 1)
+                     ? packingMap[r.kodePart] : 0;
+    var isPacking  = qtyPack > 0;
 
-    // SISA PART: untuk sub-material tampilkan bilangan bulat (rounded), karena unit aktual (gram/meter)
-    // bisa menghasilkan desimal dari BOM deduction
+    // Masuk & Keluar: konversi ke pack untuk sub-material
+    var masukDisplay  = isPacking ? fmtNum(r.masuk / qtyPack) : fmtNum(r.masuk);
+    var keluarDisplay = isPacking ? fmtNum((r.keluar + r.konsumsi) / qtyPack) : fmtNum(r.keluar + r.konsumsi);
+
+    // Sisa Part: dalam pack, dibulatkan
+    // Contoh: saldo_aktual=109996.2, qtyPack=5500 → 109996.2÷5500=19.999 → round=20
+    var sisaPack    = isPacking ? saldo / qtyPack : saldo;
     var sisaDisplay = isPacking
-      ? Math.round(saldo).toLocaleString('id-ID')
+      ? Math.round(sisaPack).toLocaleString('id-ID')
       : fmtNum(saldo);
 
-    // SUB MATERIAL: angka presisi sampai 3 desimal, hilangkan trailing zeros
-    // Hanya ditampilkan untuk sub-material. Untuk part biasa tampilkan "–"
+    // Sub Material: dalam pack, maks 3 desimal (tidak dibulatkan)
+    // Contoh: 109996.2÷5500 = 19.999
     var subMatCell;
     if (isPacking) {
-      var precise = saldo.toFixed(3).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '');
-      var subCls  = saldo < 0 ? 'td-neg' : saldo > 0 ? 'td-pos' : '';
-      subMatCell  = '<td class="td-number ' + subCls + '" style="font-size:11px;color:var(--blue);">' +
-                    precise + '</td>';
+      var precVal = parseFloat(sisaPack.toFixed(3));
+      var precStr = precVal.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 });
+      var subCls  = sisaPack < 0 ? 'td-neg' : sisaPack > 0 ? 'td-pos' : '';
+      subMatCell  = '<td class="td-number ' + subCls + '" style="font-size:11px;color:var(--blue);">' + precStr + '</td>';
     } else {
-      subMatCell  = '<td class="td-number" style="color:#DDD;">–</td>';
+      subMatCell  = '<td class="td-number" style="color:#CCC;font-size:11px;">–</td>';
     }
 
     return '<tr>' +
       '<td class="td-code">' + r.kodePart + '</td>' +
       '<td>' + r.namaPart + '</td>' +
-      '<td class="td-number">' + fmtNum(r.masuk) + '</td>' +
-      '<td class="td-number">' + fmtNum(r.keluar + r.konsumsi) + '</td>' +
+      '<td class="td-number">' + masukDisplay + '</td>' +
+      '<td class="td-number">' + keluarDisplay + '</td>' +
       '<td class="td-number ' + cls + '">' + sisaDisplay + '</td>' +
       subMatCell +
       '</tr>';

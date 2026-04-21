@@ -963,8 +963,21 @@ var stokSort    = { col: 'kodePart', dir: 'asc' };
 var prodSort    = { col: 'tanggal',  dir: 'desc' };
 
 // ─── Sub-material packing map: { kodePart: qtyPerPacking } ────
-// Loaded from GAS. Parts not in this map have qtyPacking = 1.
+// Built synchronously from MASTER_PARTS[i][2] at startup.
+// Requires generateMasterPartsArray (GAS) to output 3-element format.
+// Optionally refreshed from GAS via loadPackingMap() for live updates.
 var packingMap  = {};
+// Build immediately — MASTER_PARTS format: ["kode","nama",qtyPacking]
+// Gracefully handles both old 2-element and new 3-element formats.
+(function() {
+  MASTER_PARTS.forEach(function(p) {
+    if (p.length >= 3 && p[2] && Number(p[2]) > 1) {
+      packingMap[p[0]] = Number(p[2]);
+    }
+  });
+  var cnt = Object.keys(packingMap).length;
+  if (cnt > 0) console.log('FLOWMATE: packingMap built from MASTER_PARTS — ' + cnt + ' sub-material parts');
+})();
 
 // ══════════════════════════════════════════════════════
 // INIT
@@ -1499,11 +1512,13 @@ async function simpanProduksi() {
           var partCnt  = 0;
           var skipCnt  = 0;
 
-          // Hitung total masuk per part dari data Firebase (stok saat ini)
+          // Hitung total masuk per part (dalam unit aktual, bukan pack)
+          // Sama persis dengan calcStok: Supply × qtyPacking
           var masukMap = {};
           allTxData.forEach(function(tx) {
             if (tx.jenis === 'Supply' && tx.kodePart) {
-              masukMap[tx.kodePart] = (masukMap[tx.kodePart] || 0) + (Number(tx.qty) || 0);
+              var pk = (packingMap[tx.kodePart] && packingMap[tx.kodePart] > 1) ? packingMap[tx.kodePart] : 1;
+              masukMap[tx.kodePart] = (masukMap[tx.kodePart] || 0) + (Number(tx.qty) || 0) * pk;
             }
           });
 
@@ -2161,7 +2176,11 @@ function addToDraft() {
   var ket   = document.getElementById('inputKet').value.trim();
   if (!kode)           { toast('Pilih part terlebih dahulu!', 'error'); return; }
   if (!qty || qty <= 0){ toast('Qty harus lebih dari 0!', 'error'); return; }
-  draftParts.push({ kode, nama, qty, jenis, ket });
+  // Simpan qty asli dalam satuan packing (roll/kaleng/dll).
+  // qtyPacking disertakan agar simpanTransaksi tahu multiplier-nya.
+  // Firebase menyimpan qty ASLI (packing), calcStok yg konversi ke unit aktual.
+  var qtyPacking = (packingMap[kode] && packingMap[kode] > 1) ? packingMap[kode] : 1;
+  draftParts.push({ kode: kode, nama: nama, qty: qty, jenis: jenis, ket: ket, qtyPacking: qtyPacking });
   renderDraft();
   ['partSearch','inputKode','inputNama','inputQty','inputKet'].forEach(function(id) {
     var el = document.getElementById(id);
@@ -2174,11 +2193,19 @@ function renderDraft() {
   var el = document.getElementById('draftList');
   if (draftParts.length === 0) { el.innerHTML = '<div class="draft-empty">Belum ada part ditambahkan</div>'; return; }
   el.innerHTML = draftParts.map(function(p, i) {
+    // Untuk sub-material Supply: tampilkan "10 roll × 55 = 550 unit" di kolom qty
+    var qtyDisplay = p.qty;
+    var qtyHint    = '';
+    if (p.jenis === 'Supply' && p.qtyPacking && p.qtyPacking > 1) {
+      var total = p.qty * p.qtyPacking;
+      qtyHint = '<div style="font-size:10px;color:var(--blue);margin-top:2px;">' +
+                '× ' + p.qtyPacking + ' = ' + total.toLocaleString('id-ID', {maximumFractionDigits:1}) + ' unit</div>';
+    }
     return '<div class="draft-item">' +
       '<div class="draft-code">' + p.kode + '</div>' +
-      '<div class="draft-name">' + p.nama + '</div>' +
+      '<div class="draft-name">' + p.nama + (qtyHint ? '<br>' + qtyHint : '') + '</div>' +
       '<div class="draft-jenis"><span class="badge badge-' + (p.jenis==='Supply'?'supply':'kebutuhan') + '">' + p.jenis + '</span></div>' +
-      '<div class="draft-qty">' + p.qty + '</div>' +
+      '<div class="draft-qty">' + qtyDisplay + '</div>' +
       '<div class="draft-del" onclick="removeDraft(' + i + ')">✕</div>' +
       '</div>';
   }).join('');
